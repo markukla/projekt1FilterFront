@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'projekt1FilterFront';
+  variable = 'some test variable';
 }

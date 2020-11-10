@@ -3,12 +3,17 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
+import {HttpClientModule} from '@angular/common/http';
+import {MaterialsComponent} from './materials/materials.component';
+
 @NgModule({
   declarations: [
-    AppComponent
-  ],
+    AppComponent,
+    MaterialsComponent
+    ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
