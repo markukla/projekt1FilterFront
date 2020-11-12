@@ -24,9 +24,15 @@
               "src/assets"
             ],
             "styles": [
+            "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
+
+
+
             ],
-            "scripts": []
+            "scripts": [
+
+            ]
           },
           "configurations": {
             "production": {
@@ -63,7 +69,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "projekt1FilterFront:build",
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "./proxy.conf.json"
           },
           "configurations": {
             "production": {

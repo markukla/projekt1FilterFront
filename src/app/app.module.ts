@@ -5,15 +5,26 @@ import { AppComponent } from './app.component';
 
 import {HttpClientModule} from '@angular/common/http';
 import {MaterialsComponent} from './materials/materials.component';
+import { CreateNewMaterialComponent } from './create-new-material/create-new-material.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SortDirective } from './directive/sort.directive';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    MaterialsComponent
+    MaterialsComponent,
+    CreateNewMaterialComponent,
+    SortDirective
     ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgbModule
+
   ],
   providers: [],
   bootstrap: [AppComponent]

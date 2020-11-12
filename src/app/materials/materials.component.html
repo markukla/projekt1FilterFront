@@ -1,8 +1,37 @@
 
-<div *ngFor="let material of materials">
-  <p> {{material.materialCode}}</p>
+<!--sss-->
 
 
 
-</div>
+<table class="table table-striped border mt-1">
+  <thead>
+  <tr>
+    <th [appSort]="materials" data-order="desc" data-name="materialCode" scope="col">Material Code <br></th>
+    <th [appSort]="materials" data-order="desc" data-name="materialName" scope="col">Material Name</th>
+
+  </tr>
+  <tr>
+    <th>
+      <input type="text" [(ngModel)]='serchInCode' (ngModelChange)="filterByCode()"  id="serchInCodes" placeholder="serchByCode" />
+    </th>
+  </tr>
+
+  </thead>
+  <tbody>
+
+
+
+  <tr *ngFor="let material of materials">
+    <td>{{material.materialCode}}</td>
+    <td>{{material.materialName}}</td>
+
+  </tr>
+  </tbody>
+</table>
+
+<!--component app-create-new-materia is a child of material component, it emits event which invokes methods of parent. So embeding components allows communication of variables by events emiting-->
+<app-create-new-material (newMaterialCreatedEvent)="pushCreatedNewMaterialToMaterialList($event)"></app-create-new-material>
+
+
+
 

@@ -1,0 +1,38 @@
+<div>
+
+  <!--
+  without <form> just using ng-model as a standalone control
+  <
+  div class="container">
+
+    <div class="row">
+      <div class="col-md-7 mrgnbtm">
+        <h2>Create User</h2>
+
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label for="materialCode">materialCode</label>
+              <input type="text" class="form-control" [(ngModel)]="materialCode" id="materialCode" aria-describedby="emailHelp" placeholder="Material Code">
+            </div>
+            <div class="form-group col-md-6">
+              <label for="materialName">Last Name</label>
+              <input type="text" class="form-control" [(ngModel)]="materialName" id="materialName" placeholder="new Material Name">
+            </div>
+          </div>
+
+          <button type="button"  class="btn btn-danger" (click)="onSubmit()">Create</button>
+
+      </div>
+      <div class="col-md-4 mrgnbtm">
+
+      </div>
+    </div>
+  </div>-->
+  <h2>CreateUser</h2>
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+    <input name="materialCode" ngModel required #materialCode="ngModel">
+    <input name="materialName" ngModel required #materialName="ngModel">
+    <button>Submit</button>
+  </form>
+
+  </div>
