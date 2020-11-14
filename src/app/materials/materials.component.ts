@@ -12,9 +12,6 @@ import {Material} from './material';
 export class MaterialsComponent implements OnInit {
   @Input()
   materials: Material[];
-  @Input() serchCondition: string;
-
-  property: 'materialCode';
   @Input()
   orginalMaterialsCopy: Material[];
 
