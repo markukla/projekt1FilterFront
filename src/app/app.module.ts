@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
@@ -9,6 +10,7 @@ import { CreateNewMaterialComponent } from './create-new-material/create-new-mat
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SortDirective } from './directive/sort.directive';
+import { SearchDirective } from './directive/search.directive';
 
 
 @NgModule({
@@ -16,7 +18,8 @@ import { SortDirective } from './directive/sort.directive';
     AppComponent,
     MaterialsComponent,
     CreateNewMaterialComponent,
-    SortDirective
+    SortDirective,
+    SearchDirective
     ],
   imports: [
     BrowserModule,

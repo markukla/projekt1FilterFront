@@ -68,8 +68,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "projekt1FilterFront:build",
-            "proxyConfig": "./proxy.conf.json"
+            "browserTarget": "projekt1FilterFront:build"
           },
           "configurations": {
             "production": {

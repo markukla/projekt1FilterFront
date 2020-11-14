@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import Material from '../../../project1FilterBackend/src/Models/Materials/material.entity';
 import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
+import {Material} from './materials/material';
 
 
 @Injectable({

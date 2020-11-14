@@ -12,7 +12,8 @@
   </tr>
   <tr>
     <th>
-      <input type="text" [(ngModel)]='serchInCode' (ngModelChange)="filterByCode()"  id="serchInCodes" placeholder="serchByCode" />
+
+      <input [appSearch]="materials" property="materialCode"  [(ngModel)]="serchCondition" [serchCondition]="serchCondition" [orginalArrayCopy]="orginalMaterialsCopy" id="serchInCodes" placeholder="serchByCode" />
     </th>
   </tr>
 
@@ -32,6 +33,6 @@
 <!--component app-create-new-materia is a child of material component, it emits event which invokes methods of parent. So embeding components allows communication of variables by events emiting-->
 <app-create-new-material (newMaterialCreatedEvent)="pushCreatedNewMaterialToMaterialList($event)"></app-create-new-material>
 
-
+<!-- [(ngModel)]='serchInCode' (ngModelChange)="filterByCode()-->
 
 

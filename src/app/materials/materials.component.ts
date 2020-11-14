@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {MaterialService} from '../material.service';
-import Material from '../../../../project1FilterBackend/src/Models/Materials/material.entity';
+
 import {dashCaseToCamelCase} from '@angular/compiler/src/util';
+import {Material} from './material';
 
 @Component({
   selector: 'app-materials',
@@ -9,8 +10,12 @@ import {dashCaseToCamelCase} from '@angular/compiler/src/util';
   styleUrls: ['./materials.component.css']
 })
 export class MaterialsComponent implements OnInit {
+  @Input()
   materials: Material[];
-  serchInCode: string;
+  @Input() serchCondition: string;
+
+  property: 'materialCode';
+  @Input()
   orginalMaterialsCopy: Material[];
 
   constructor(private materialService: MaterialService) {
@@ -21,11 +26,19 @@ export class MaterialsComponent implements OnInit {
     this.materialService.getMaterials()
       // clone the data object, using its known Config shape
       .subscribe((data) => {
-        this.materials = data;
-        this.orginalMaterialsCopy = data;
-      }
-        ); /*remember that it can not be {...data}
+          this.materials = data;
+
+        }
+      ); /*remember that it can not be {...data}
       cause it means to create new json object with collection inside {collection} and ngfor does not apply to objects*/
+    this.materialService.getMaterials()
+      // clone the data object, using its known Config shape
+      .subscribe((data) => {
+          this.orginalMaterialsCopy = data;
+
+        }
+      );
+
   }
 
   pushCreatedNewMaterialToMaterialList(material: Material): void {
@@ -39,10 +52,4 @@ export class MaterialsComponent implements OnInit {
 
   }
 
-  filterByCode(): void {
-    console.log(`filtering by: ${this.serchInCode}`);
-    this.materials = this.orginalMaterialsCopy.filter(
-      x => x.materialCode.includes(this.serchInCode)
-    );
-  }
 }
