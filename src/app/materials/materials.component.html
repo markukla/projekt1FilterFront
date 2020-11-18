@@ -1,5 +1,12 @@
 
 <!--sss-->
+<div>
+<div>
+
+  <a  [routerLink]="['/add']" routerLinkActive="active">
+    {{ createNewMaterialDescription }}
+  </a>
+</div>
 
 
 
@@ -12,7 +19,7 @@
   </tr>
   <tr>
     <th>
-<!--[orginalArrayCopy]="orginalMaterialsCopy" -->
+
       <input [appSearch]="materials" serchedColumn="materialCode" id="serchInCodes" placeholder="serchByCode" />
     </th>
   </tr>
@@ -30,9 +37,7 @@
   </tbody>
 </table>
 
-<!--component app-create-new-materia is a child of material component, it emits event which invokes methods of parent. So embeding components allows communication of variables by events emiting-->
-<app-create-new-material (newMaterialCreatedEvent)="pushCreatedNewMaterialToMaterialList($event)"></app-create-new-material>
+</div>
 
-<!-- [(ngModel)]='serchInCode' (ngModelChange)="filterByCode()-->
 
 

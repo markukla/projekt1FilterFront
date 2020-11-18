@@ -11,6 +11,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SortDirective } from './directive/sort.directive';
 import { SearchDirective } from './directive/search.directive';
+import {RouterModule} from '@angular/router';
 
 
 @NgModule({
@@ -26,7 +27,11 @@ import { SearchDirective } from './directive/search.directive';
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    NgbModule
+    NgbModule,
+    RouterModule.forRoot([
+      { path: '', component: MaterialsComponent },
+      { path: 'add', component: CreateNewMaterialComponent }
+    ])
 
   ],
   providers: [],

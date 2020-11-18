@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MaterialService} from '../material.service';
 
-import {dashCaseToCamelCase} from '@angular/compiler/src/util';
+
 import {Material} from './material';
 
 @Component({
@@ -14,6 +14,7 @@ export class MaterialsComponent implements OnInit {
   materials: Material[];
   @Input()
   orginalMaterialsCopy: Material[];
+  createNewMaterialDescription = 'Create new Material';
 
   constructor(private materialService: MaterialService) {
     this.getMaterials();
