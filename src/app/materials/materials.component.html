@@ -27,11 +27,15 @@
   </thead>
   <tbody>
 
-
-
   <tr *ngFor="let material of materials">
     <td>{{material.materialCode}}</td>
     <td>{{material.materialName}}</td>
+    <td>
+      <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
+      <br>
+      <button (click)="deleteMaterialById(material.id)" >Delete Material</button>
+
+    </td>
 
   </tr>
   </tbody>

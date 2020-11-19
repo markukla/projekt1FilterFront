@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core'
 import {FormBuilder, FormControl, FormGroup, NgModel, Validators} from '@angular/forms';
 import {MaterialService} from '../material.service';
 import {Material} from '../materials/material';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-create-new-material',
@@ -13,7 +13,8 @@ export class CreateNewMaterialComponent {
 
   constructor(private materialService: MaterialService,
               private formBuilder: FormBuilder,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private router: Router) {
 
   }
 
@@ -23,6 +24,7 @@ export class CreateNewMaterialComponent {
     this.materialService.addMaterials(f.value).subscribe((data: Material) => {
       console.log(data);
     });
+    this.router.navigateByUrl('/');
   }
 
 

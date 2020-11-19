@@ -11,6 +11,7 @@ import {Material} from './materials/material';
 export class MaterialService {
 
   rootURL = '/api';
+
   constructor(private http: HttpClient) {
   }
 
@@ -21,9 +22,20 @@ export class MaterialService {
   }
 
   // tslint:disable-next-line:typedef
-   addMaterials(material: Material): Observable<Material> {
+  addMaterials(material: Material): Observable<Material> {
     return this.http.post<Material>('http://localhost:5000/materials', material).pipe(catchError(this.handleError));
   }
+
+  deleteMaterialById(id: string): Observable<any> {
+    const deleteUrl = `http://localhost:5000/materials/${id}`;
+    return this.http.delete(deleteUrl).pipe(catchError(this.handleError));
+  }
+
+  updateMaterialById(id: string, material: Material): Observable<any> {
+    const deleteUrl = `http://localhost:5000/materials/${id}`;
+    return this.http.patch(deleteUrl, material).pipe(catchError(this.handleError));
+  }
+
   // tslint:disable-next-line:typedef
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
