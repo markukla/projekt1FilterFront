@@ -3,9 +3,7 @@ import {MaterialBackendService} from './material-backend.service';
 import {Material} from './materials/material';
 import {Observable} from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class MaterialTableService {
   materialList: Material[] = [];
   selectedId: number;

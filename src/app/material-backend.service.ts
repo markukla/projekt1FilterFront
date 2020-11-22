@@ -5,9 +5,7 @@ import {catchError} from 'rxjs/operators';
 import {Material} from './materials/material';
 
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class MaterialBackendService {
 
   rootURL = '/api';
@@ -31,9 +29,9 @@ export class MaterialBackendService {
     const deleteUrl = `http://localhost:5000/materials/${id}`;
     return this.http.patch<Material>(deleteUrl, material, { observe: 'response'}).pipe(catchError(this.handleError));
   }
-  findMaterialBycode (materiaCode: string): Observable<Material> {
-    const url = `http://localhost:5000/materials/?code=${materiaCode}`;
-    return this.http.get<Material>(url).pipe(catchError(this.handleError));
+  findMaterialBycode (materiaCode: string): Observable<boolean> {
+    const url = `http://localhost:5000/materials/materialCode/${materiaCode}`;
+    return this.http.get<boolean>(url).pipe(catchError(this.handleError));
 
   }
 

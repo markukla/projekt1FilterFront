@@ -14,6 +14,8 @@ import { SearchDirective } from './directive/search.directive';
 import {RouterModule} from '@angular/router';
 import { UpdateMaterialComponent } from './update-material/update-material.component';
 import {MaterialBackendService} from './material-backend.service';
+import {ValidateMaterialCodeUniqueService} from './validate-material-code-unique.service';
+import {MaterialTableService} from './material-table.service';
 
 
 
@@ -38,7 +40,7 @@ import {MaterialBackendService} from './material-backend.service';
     ])
 
   ],
-  providers: [MaterialBackendService],
+  providers: [MaterialBackendService, MaterialTableService, ValidateMaterialCodeUniqueService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

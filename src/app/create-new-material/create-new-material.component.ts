@@ -4,6 +4,7 @@ import {MaterialBackendService} from '../material-backend.service';
 import {Material} from '../materials/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MaterialTableService} from '../material-table.service';
+import {ValidateMaterialCodeUniqueService} from '../validate-material-code-unique.service';
 
 @Component({
   selector: 'app-create-new-material',
@@ -14,7 +15,9 @@ export class CreateNewMaterialComponent {
   operationMessage: string;
   showoperationMessage: boolean;
 
-  constructor(private materialTableService: MaterialTableService,
+  constructor(
+              private materialTableService: MaterialTableService,
+              public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
               private formBuilder: FormBuilder,
               private route: ActivatedRoute,
               private router: Router) {
@@ -23,7 +26,7 @@ export class CreateNewMaterialComponent {
 
   materialForm = new FormGroup({
     // tslint:disable-next-line:max-line-length
-    materialCode: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(6), Validators.maxLength(6)]),
+    materialCode: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(6), Validators.maxLength(6)], [this.validateMaterialCodeUniqueService.materialCodeValidator()]),
     materialName: new FormControl('', Validators.nullValidator && Validators.required),
   });
 
@@ -39,10 +42,10 @@ export class CreateNewMaterialComponent {
 
 
   onSubmit(): void {
+    console.log('on submit execution');
     this.showoperationMessage = true;
 
     const material: Material = this.materialTableService.addRecordToTable(this.materialForm.value);
-    console.log(` added material code = ${material.materialCode}`);
     if (material) {
       this.operationMessage = 'new material created';
     } else if (!material) {
