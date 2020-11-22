@@ -12,6 +12,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SortDirective } from './directive/sort.directive';
 import { SearchDirective } from './directive/search.directive';
 import {RouterModule} from '@angular/router';
+import { UpdateMaterialComponent } from './update-material/update-material.component';
+import {MaterialService} from './material.service';
+
 
 
 @NgModule({
@@ -20,7 +23,8 @@ import {RouterModule} from '@angular/router';
     MaterialsComponent,
     CreateNewMaterialComponent,
     SortDirective,
-    SearchDirective
+    SearchDirective,
+    UpdateMaterialComponent,
     ],
   imports: [
     BrowserModule,
@@ -34,7 +38,7 @@ import {RouterModule} from '@angular/router';
     ])
 
   ],
-  providers: [],
+  providers: [MaterialService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

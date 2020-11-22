@@ -1,10 +1,22 @@
-import {AfterContentChecked, AfterViewChecked, AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  AfterViewInit,
+  Component, EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import {MaterialService} from '../material.service';
 
 
 import {Material} from './material';
 import {NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {NavigationEvent} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-view-model';
+import {NgModel} from '@angular/forms';
+import {MaterialTableService} from '../material-table.service';
 
 @Component({
   selector: 'app-materials',
@@ -20,12 +32,16 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;
   updatedMaterrial: Material;
+  deleteButtonInfo: string;
+  showUpdateForm = false;
+  updateButtonInfo;
+  materialId: number;
 
-  constructor(private materialService: MaterialService,
+  constructor(public materialTableService: MaterialTableService,
               private router: Router) {
   }
-
-  getMaterials(): void {
+/*
+* getMaterials(): void {
     this.materialService.getMaterials()
       // clone the data object, using its known Config shape
       .subscribe((data) => {
@@ -42,20 +58,11 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
         this.getMaterials();
 
       });
-  }
-
-  updateMaterialById(id: string, material: Material): void {
-    this.materialService.updateMaterialById(id, material)
-
-      .subscribe((data) => {
-          this.updatedMaterrial = data;
-
-        }
-      );
-  }
+  }*/
   ngOnInit(): void {
-    this.getMaterials();
-    this.refreshComponentVievAfterNavigation();
+    this.materials = this.materialTableService.getMaterialsTable();
+    this.deleteButtonInfo = 'delete Material';
+    this.updateButtonInfo = 'update material';
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -70,13 +77,27 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   ngAfterViewChecked(): void {
 
   }
-
-  refreshComponentVievAfterNavigation(): void  {
-  this.router.events.subscribe((evt) => {
-  if (evt) {
-    this.getMaterials();
+/*refreshComponentVievAfterNavigation(): void {
+    this.router.events.subscribe((evt) => {
+      if (evt) {
+        this.getMaterials();
+      }
+    });
   }
-});
-}
+   updateTableAfterMaterialUpdated(material: Material): void {
+    for (let i = 0; i < this.materials.length; i++ ){
+      if (this.materials[i].id === material.id){
+        this.materials[i] = material;
+      }
+    }
+  */
+    /*
+    does not work because for each use copy of orginal array
+    this.materials.map((m: Material) => {
+      if (m.id === material.id){
+        m = material;
+        console.log(`m.materialCode= ${m.materialCode}`);
+      }
+    });*/
+        }
 
-}

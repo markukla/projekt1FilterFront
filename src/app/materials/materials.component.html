@@ -1,6 +1,6 @@
 
 <!--sss-->
-<div>
+
 <div>
 
   <a  [routerLink]="['/add']" routerLinkActive="active">
@@ -8,7 +8,7 @@
   </a>
 </div>
 
-
+<div class="materialComponent">
 
 <table class="table table-striped border mt-1">
   <thead>
@@ -33,15 +33,19 @@
     <td>
       <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
       <br>
-      <button (click)="deleteMaterialById(material.id)" >Delete Material</button>
-
+      <button (click)="this.materialTableService.deleteRecordById(material.id)" [title]="deleteButtonInfo" >x</button>
+<button (click)=" this.showUpdateForm = true; this.materialTableService.selectedId=material.id;" [title]="updateButtonInfo">u</button>
     </td>
 
   </tr>
   </tbody>
 </table>
-
 </div>
+
+<app-update-material *ngIf="this.showUpdateForm" class="updateMaterial"></app-update-material>
+
+
+
 
 
 

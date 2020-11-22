@@ -3,6 +3,7 @@ import {FormBuilder, FormControl, FormGroup, NgModel, Validators} from '@angular
 import {MaterialService} from '../material.service';
 import {Material} from '../materials/material';
 import {ActivatedRoute, Router} from '@angular/router';
+import {MaterialTableService} from '../material-table.service';
 
 @Component({
   selector: 'app-create-new-material',
@@ -11,7 +12,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 })
 export class CreateNewMaterialComponent {
 
-  constructor(private materialService: MaterialService,
+  constructor(private materialTableService: MaterialTableService,
               private formBuilder: FormBuilder,
               private route: ActivatedRoute,
               private router: Router) {
@@ -21,9 +22,7 @@ export class CreateNewMaterialComponent {
 
   // tslint:disable-next-line:typedef
   onSubmit(f: NgModel) {
-    this.materialService.addMaterials(f.value).subscribe((data: Material) => {
-      console.log(data);
-    });
+    this.materialTableService.addRecordToTable(f.value);
     this.router.navigateByUrl('/');
   }
 

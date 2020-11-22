@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
@@ -14,10 +14,7 @@ export class MaterialService {
 
   constructor(private http: HttpClient) {
   }
-
-
-  // tslint:disable-next-line:typedef
-  getMaterials() {
+  getMaterials(): Observable<Material[]> {
     return this.http.get<Material[]>('http://localhost:5000/materials');
   }
 
@@ -52,4 +49,6 @@ export class MaterialService {
     return throwError(
       `Something bad happened: please try again later`);
   }
+
+
 }

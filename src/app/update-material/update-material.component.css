@@ -1,5 +1,6 @@
-.createMaterial {
-  position: absolute;
+.updateMaterial {
+  position:absolute;
+  z-index: 99;
 
 
   left: 50%;
