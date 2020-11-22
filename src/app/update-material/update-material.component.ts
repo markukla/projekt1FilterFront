@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Material} from '../materials/material';
-import {MaterialService} from '../material.service';
+import {MaterialBackendService} from '../material-backend.service';
 import {MaterialTableService} from '../material-table.service';
 
 @Component({
@@ -15,10 +15,6 @@ export class UpdateMaterialComponent implements OnInit {
     materialName: new FormControl('', Validators.nullValidator && Validators.required),
   });
   materialId: number;
-  updatedMaterial: Material;
-  @Output()
-  updatedMaterialEvent = new EventEmitter<Material>();
-
   constructor(private materialTableService: MaterialTableService) {
   }
 

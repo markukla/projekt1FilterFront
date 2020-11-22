@@ -9,7 +9,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import {MaterialService} from '../material.service';
+import {MaterialBackendService} from '../material-backend.service';
 
 
 import {Material} from './material';

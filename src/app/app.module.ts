@@ -13,7 +13,7 @@ import { SortDirective } from './directive/sort.directive';
 import { SearchDirective } from './directive/search.directive';
 import {RouterModule} from '@angular/router';
 import { UpdateMaterialComponent } from './update-material/update-material.component';
-import {MaterialService} from './material.service';
+import {MaterialBackendService} from './material-backend.service';
 
 
 
@@ -38,7 +38,7 @@ import {MaterialService} from './material.service';
     ])
 
   ],
-  providers: [MaterialService],
+  providers: [MaterialBackendService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

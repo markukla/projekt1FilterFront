@@ -1,5 +1,5 @@
 import {Injectable, OnInit} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Material} from './materials/material';
@@ -8,29 +8,33 @@ import {Material} from './materials/material';
 @Injectable({
   providedIn: 'root'
 })
-export class MaterialService {
+export class MaterialBackendService {
 
   rootURL = '/api';
-
   constructor(private http: HttpClient) {
   }
-  getMaterials(): Observable<Material[]> {
-    return this.http.get<Material[]>('http://localhost:5000/materials');
+  getMaterials(): Observable<HttpResponse<Material[]>> {
+    return this.http.get<Material[]>('http://localhost:5000/materials', { observe: 'response'});
   }
 
   // tslint:disable-next-line:typedef
-  addMaterials(material: Material): Observable<Material> {
-    return this.http.post<Material>('http://localhost:5000/materials', material).pipe(catchError(this.handleError));
+  addMaterials(material: Material): Observable<HttpResponse<Material>> {
+    return this.http.post<Material>('http://localhost:5000/materials', material, { observe: 'response'}).pipe(catchError(this.handleError));
   }
 
-  deleteMaterialById(id: string): Observable<any> {
+  deleteMaterialById(id: string): Observable<HttpResponse<any>> {
     const deleteUrl = `http://localhost:5000/materials/${id}`;
-    return this.http.delete(deleteUrl).pipe(catchError(this.handleError));
+    return this.http.delete(deleteUrl,  { observe: 'response'}).pipe(catchError(this.handleError));
   }
 
-  updateMaterialById(id: string, material: Material): Observable<any> {
+  updateMaterialById(id: string, material: Material): Observable<HttpResponse<Material>> {
     const deleteUrl = `http://localhost:5000/materials/${id}`;
-    return this.http.patch(deleteUrl, material).pipe(catchError(this.handleError));
+    return this.http.patch<Material>(deleteUrl, material, { observe: 'response'}).pipe(catchError(this.handleError));
+  }
+  findMaterialBycode (materiaCode: string): Observable<Material> {
+    const url = `http://localhost:5000/materials/?code=${materiaCode}`;
+    return this.http.get<Material>(url).pipe(catchError(this.handleError));
+
   }
 
   // tslint:disable-next-line:typedef

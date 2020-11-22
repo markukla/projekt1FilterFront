@@ -1,5 +1,5 @@
 
-export interface Material {
+export class Material {
   id?: number;
   materialCode: string;
   materialName: string;

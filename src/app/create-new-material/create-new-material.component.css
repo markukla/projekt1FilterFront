@@ -16,3 +16,29 @@
 
   padding: 10px;
 }
+.closeButton {
+  position: absolute;
+  left: 94%;
+  top: 0%;
+}
+.addButon {
+  position: relative;
+  left: 40%;
+  bottom: 10%;
+
+}
+#materialCodeLabel {
+  width: max-content;
+}
+.form-control {
+  position: relative;
+  width: max-content;
+}
+.label {
+  position: relative;
+  width: max-content;
+}
+.validatorInfo {
+  position: relative;
+  width: max-content;
+}
