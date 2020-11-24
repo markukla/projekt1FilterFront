@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MaterialTableService} from '../material-table.service';
 import {ValidateMaterialCodeUniqueService} from '../validate-material-code-unique.service';
 import BackendErrorResponse from '../ErrorHandling/backendErrorResponse';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-create-new-material',
@@ -47,8 +48,9 @@ export class CreateNewMaterialComponent implements OnInit{
     console.log('on submit execution');
     this.showoperationMessage = true;
     try{
+      console.log('try execution');
       const material = await this.materialTableService.addRecordToTable(this.materialForm.value);
-      console.log(`material.messageTouser ${material.messageTouser}`);
+      console.log(`material Code= ${material.materialCode}`);
       if (material) {
         this.operationMessage = 'new material created';
       }
@@ -56,8 +58,8 @@ export class CreateNewMaterialComponent implements OnInit{
         this.operationMessage = 'something went wrong try again';
       }
       } catch (e) {
-      this.operationMessage = `an error occured: ${e.message}`;
-    }
+      console.log(`catch execution`);
+      this.operationMessage = `an error occured`;}
     setTimeout(() => {
      this.showoperationMessage = false;
    }, 2000);

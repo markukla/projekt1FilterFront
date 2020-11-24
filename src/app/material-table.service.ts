@@ -22,8 +22,8 @@ export class MaterialTableService {
     return this.materialList;
   }
 
-  addRecordToTable(material: Material): Promise<any> {
-    return new Promise<any>(resolve => {
+  addRecordToTable(material: Material): Promise<Material> {
+    return new Promise<Material>(resolve => {
       this.materialBackendService.addMaterials(material).subscribe(
         (response) => {
           this.materialList.push(response.body);

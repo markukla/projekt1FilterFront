@@ -1,0 +1,51 @@
+<div class="createMaterial">
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"close"'>x</button>
+  <h2>Login</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label class="label" for="email" id="emailId">email</label>
+        <input type="text" class="form-control" formControlName="email" id="email"
+               placeholder="email">
+        <div  *ngIf="email.invalid && (email.dirty || email.touched)"
+              class="alert alert-danger">
+<!---->
+          <div class="validatorInfo" *ngIf="email.errors.required">
+            email is required.
+          </div>
+          <div class="validatorInfo" *ngIf="email.errors.email">
+            email must be valid email adress.
+          </div>
+
+        </div>
+        <div class="form-group col-md-6">
+          <label class="label" for="password">Password</label>
+          <input type="text" class="form-control" formControlName="password" id="password"
+                 placeholder="password">
+          <div *ngIf="password.invalid && (password.dirty || password.touched)"
+               class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="password.errors.required">
+              password is required.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="addButon">
+      <button type="submit" [disabled]="!loginForm.valid" class="btn btn-danger">Create</button>
+    </div>
+  </form>
+
+  <div *ngIf="this.showoperationMessage">
+    <textarea>{{operationMessage}}</textarea>
+  </div>
+</div>
+
+
+
+
+
+
+

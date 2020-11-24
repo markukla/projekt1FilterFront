@@ -11,27 +11,31 @@ import {Material} from './materials/material';
 export class MaterialBackendService {
 
   rootURL = '/api';
+
   constructor(private http: HttpClient) {
   }
+
   getMaterials(): Observable<HttpResponse<Material[]>> {
-    return this.http.get<Material[]>('http://localhost:5000/materials', { observe: 'response'});
+    return this.http.get<Material[]>('http://localhost:5000/materials', {observe: 'response'});
   }
 
   // tslint:disable-next-line:typedef
   addMaterials(material: Material): Observable<HttpResponse<Material>> {
-    return this.http.post<Material>('http://localhost:5000/materials', material, { observe: 'response'}).pipe(catchError(this.handleError));
+    // tslint:disable-next-line:max-line-length
+    return this.http.post<Material>('http://localhost:5000/materials', material, {observe: 'response'})/*.pipe(catchError(this.handleError))*/;
   }
 
   deleteMaterialById(id: string): Observable<HttpResponse<any>> {
     const deleteUrl = `http://localhost:5000/materials/${id}`;
-    return this.http.delete(deleteUrl,  { observe: 'response'}).pipe(catchError(this.handleError));
+    return this.http.delete(deleteUrl, {observe: 'response'}).pipe(catchError(this.handleError));
   }
 
   updateMaterialById(id: string, material: Material): Observable<HttpResponse<Material>> {
     const deleteUrl = `http://localhost:5000/materials/${id}`;
-    return this.http.patch<Material>(deleteUrl, material, { observe: 'response'}).pipe(catchError(this.handleError));
+    return this.http.patch<Material>(deleteUrl, material, {observe: 'response'}).pipe(catchError(this.handleError));
   }
-  findMaterialBycode (materiaCode: string): Observable<boolean> {
+
+  findMaterialBycode(materiaCode: string): Observable<boolean> {
     const url = `http://localhost:5000/materials/materialCode/${materiaCode}`;
     return this.http.get<boolean>(url).pipe(catchError(this.handleError));
 
