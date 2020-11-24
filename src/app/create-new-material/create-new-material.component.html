@@ -19,6 +19,9 @@
           <div class="validatorInfo" *ngIf="materialCode.errors.maxlength">
             MaterialCode must be at most 6 characters long.
           </div>
+          <div class="has-text-danger" *ngIf="materialCode.errors?.taken">  <!--error name is name of error in async validatod:ValidateMaterialCodeUniqueService-->
+            This materialCode is already taken!
+          </div>
 
         </div>
         <div class="form-group col-md-6">

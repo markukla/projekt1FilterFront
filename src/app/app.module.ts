@@ -40,7 +40,7 @@ import {MaterialTableService} from './material-table.service';
     ])
 
   ],
-  providers: [MaterialBackendService, MaterialTableService, ValidateMaterialCodeUniqueService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -5,7 +5,9 @@ import {catchError} from 'rxjs/operators';
 import {Material} from './materials/material';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class MaterialBackendService {
 
   rootURL = '/api';

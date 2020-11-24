@@ -1,14 +1,15 @@
 import {Injectable} from '@angular/core';
 import {MaterialBackendService} from './material-backend.service';
 import {Material} from './materials/material';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
+import BackendErrorResponse from './ErrorHandling/backendErrorResponse';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class MaterialTableService {
   materialList: Material[] = [];
   selectedId: number;
-  addedMaterial: Material;
-
   constructor(private materialBackendService: MaterialBackendService) {
   }
 
@@ -21,17 +22,14 @@ export class MaterialTableService {
     return this.materialList;
   }
 
-  addRecordToTable(material: Material): Material {
-        this.materialBackendService.addMaterials(material).subscribe(
-      (response) => {
-        this.materialList.push(response.body);
-        /*if (response.body instanceof Material) {
-
-         }*/
-        this.addedMaterial = response.body;
-        console.log(`addedMaterial.materialCode= ${this.addedMaterial.materialCode}`);
-      });
-        return this.addedMaterial;
+  addRecordToTable(material: Material): Promise<any> {
+    return new Promise<any>(resolve => {
+      this.materialBackendService.addMaterials(material).subscribe(
+        (response) => {
+          this.materialList.push(response.body);
+          resolve(response.body);
+        });
+    });
   }
 
   updateTableRecord(id: number, material: Material): void {
