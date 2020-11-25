@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Material} from '../../materials/material';
+import {Material} from '../../materials/MaterialsMainComponent/material';
 import {Observable} from 'rxjs';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import LogInDto from '../authenticationTypesAndClasses/login.dto';

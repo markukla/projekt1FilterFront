@@ -9,14 +9,14 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import {MaterialBackendService} from '../material-backend.service';
+import {MaterialBackendService} from '../MaterialServices/material-backend.service';
 
 
 import {Material} from './material';
 import {NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {NavigationEvent} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-view-model';
 import {NgModel} from '@angular/forms';
-import {MaterialTableService} from '../material-table.service';
+import {MaterialTableService} from '../MaterialServices/material-table.service';
 
 @Component({
   selector: 'app-materials',

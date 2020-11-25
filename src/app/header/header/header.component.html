@@ -1,5 +1,27 @@
+<div *ngIf="this.loggedUserRole && this.loggedUserRole === this.admin">
+  <span>
+    <a [routerLink]="['/orders']" routerLinkActive="active"> Orders</a>
+  <a [routerLink]="['/businessPartners']" routerLinkActive="active"> Partners</a>
+  <a [routerLink]="['/materials']" routerLinkActive="active"> Materials</a>
+  <a [routerLink]="['/products']" routerLinkActive="active"> Products</a>
+     <a [routerLink]="['/login']" routerLinkActive="active"> Login</a>
+  </span>
 
-<div>
-  <a [routerLink]="['/login']" routerLinkActive="active"> Login</a>
+</div>
+<div *ngIf="this.loggedUserRole && this.loggedUserRole === this.editor">
+  <span>
+     <a [routerLink]="['/orders']" routerLinkActive="active"> Orders</a>
+    <a [routerLink]="['/businessPartners']" routerLinkActive="active"> Partners</a>
+    <a [routerLink]="['/login']" routerLinkActive="active"> Login</a>
+  </span>
+
+</div>
+<div *ngIf="this.loggedUserRole && this.loggedUserRole === this.partner">
+  <span>
+     <a [routerLink]="['/orders']" routerLinkActive="active"> Orders</a>
+    <a [routerLink]="['/login']" routerLinkActive="active"> Login</a>
+  </span>
+
+
 </div>
 

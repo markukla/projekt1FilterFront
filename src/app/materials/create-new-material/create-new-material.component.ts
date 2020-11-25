@@ -1,11 +1,11 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, NgModel, Validators} from '@angular/forms';
-import {MaterialBackendService} from '../material-backend.service';
-import {Material} from '../materials/material';
+import {MaterialBackendService} from '../MaterialServices/material-backend.service';
+import {Material} from '../MaterialsMainComponent/material';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MaterialTableService} from '../material-table.service';
-import {ValidateMaterialCodeUniqueService} from '../validate-material-code-unique.service';
-import BackendErrorResponse from '../ErrorHandling/backendErrorResponse';
+import {MaterialTableService} from '../MaterialServices/material-table.service';
+import {ValidateMaterialCodeUniqueService} from '../MaterialServices/validate-material-code-unique.service';
+import BackendErrorResponse from '../../helpers/ErrorHandling/backendErrorResponse';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({

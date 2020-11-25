@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Material} from '../materials/material';
-import {MaterialBackendService} from '../material-backend.service';
-import {MaterialTableService} from '../material-table.service';
+import {Material} from '../MaterialsMainComponent/material';
+import {MaterialBackendService} from '../MaterialServices/material-backend.service';
+import {MaterialTableService} from '../MaterialServices/material-table.service';
 
 @Component({
   selector: 'app-update-material',

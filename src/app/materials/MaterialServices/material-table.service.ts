@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {MaterialBackendService} from './material-backend.service';
-import {Material} from './materials/material';
+import {Material} from '../MaterialsMainComponent/material';
 import {Observable, of} from 'rxjs';
-import BackendErrorResponse from './ErrorHandling/backendErrorResponse';
+import BackendErrorResponse from '../../helpers/ErrorHandling/backendErrorResponse';
 
 @Injectable({
   providedIn: 'root'

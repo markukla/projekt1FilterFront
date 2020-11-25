@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import {MaterialTableService} from '../../../material-table.service';
-import {ValidateMaterialCodeUniqueService} from '../../../validate-material-code-unique.service';
+import {AfterContentChecked, Component, OnInit} from '@angular/core';
+import {MaterialTableService} from '../../../materials/MaterialServices/material-table.service';
+import {ValidateMaterialCodeUniqueService} from '../../../materials/MaterialServices/validate-material-code-unique.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationBackendService} from '../../AuthenticationServices/authentication.backend.service';
@@ -11,7 +11,7 @@ import {AuthenticationService} from '../../AuthenticationServices/authentication
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterContentChecked{
 
   operationMessage: string;
   showoperationMessage: boolean;
@@ -63,5 +63,8 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterContentChecked(): void {
   }
 }
