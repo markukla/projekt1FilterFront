@@ -17,5 +17,9 @@
 
         <button type="submit" [disabled]="!materialForm.valid" class="btn btn-danger">Update</button>
       </form>
+
+    </div>
+    <div *ngIf="operationStatusMessage">
+<p>{{operationStatusMessage}}</p>
     </div>
   </div>

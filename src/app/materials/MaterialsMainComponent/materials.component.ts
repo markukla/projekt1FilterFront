@@ -38,31 +38,36 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   materialId: number;
 
   constructor(public materialTableService: MaterialTableService,
+              public materialBackendService: MaterialBackendService,
               private router: Router) {
   }
-/*
-* getMaterials(): void {
-    this.materialService.getMaterials()
-      // clone the data object, using its known Config shape
-      .subscribe((data) => {
-          this.materials = data;
 
-        }
-      );
-  }
+  /*
+  * getMaterials(): void {
+      this.materialService.getMaterials()
+        // clone the data object, using its known Config shape
+        .subscribe((data) => {
+            this.materials = data;
 
-  deleteMaterialById(id: number): any {
-    this.materialService.deleteMaterialById(String(id))
-      .subscribe((data) => {
-        this.deleTedMaterialMessage = data;
-        this.getMaterials();
+          }
+        );
+    }
 
-      });
-  }*/
+    deleteMaterialById(id: number): any {
+      this.materialService.deleteMaterialById(String(id))
+        .subscribe((data) => {
+          this.deleTedMaterialMessage = data;
+          this.getMaterials();
+
+        });
+    }*/
   ngOnInit(): void {
-    this.materials = this.materialTableService.getMaterialsTable();
+    this.getMaterials();
+    this.materialId = this.materialTableService.selectedId;
     this.deleteButtonInfo = 'delete Material';
     this.updateButtonInfo = 'update material';
+
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -77,27 +82,40 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   ngAfterViewChecked(): void {
 
   }
-/*refreshComponentVievAfterNavigation(): void {
-    this.router.events.subscribe((evt) => {
-      if (evt) {
-        this.getMaterials();
-      }
-    });
-  }
-   updateTableAfterMaterialUpdated(material: Material): void {
-    for (let i = 0; i < this.materials.length; i++ ){
-      if (this.materials[i].id === material.id){
-        this.materials[i] = material;
-      }
-    }
-  */
-    /*
-    does not work because for each use copy of orginal array
-    this.materials.map((m: Material) => {
-      if (m.id === material.id){
-        m = material;
-        console.log(`m.materialCode= ${m.materialCode}`);
-      }
-    });*/
+
+  /*refreshComponentVievAfterNavigation(): void {
+      this.router.events.subscribe((evt) => {
+        if (evt) {
+          this.getMaterials();
         }
+      });
+    }
+     updateTableAfterMaterialUpdated(material: Material): void {
+      for (let i = 0; i < this.materials.length; i++ ){
+        if (this.materials[i].id === material.id){
+          this.materials[i] = material;
+        }
+      }
+    */
+
+  /*
+  does not work because for each use copy of orginal array
+  this.materials.map((m: Material) => {
+    if (m.id === material.id){
+      m = material;
+      console.log(`m.materialCode= ${m.materialCode}`);
+    }
+  });*/
+  getMaterials(): void {
+    this.materialBackendService.getMaterials().subscribe((materials) => {
+      this.materialTableService.materialList.length = 0;
+      this.materialTableService.materialList = materials.body;
+      this.materials = this.materialTableService.getMaterialsTable();
+    });
+
+  }
+  deleteMaterial()
+
+
+}
 

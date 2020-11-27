@@ -29,8 +29,8 @@ export class CreateNewMaterialComponent implements OnInit{
 
   materialForm = new FormGroup({
     // tslint:disable-next-line:max-line-length
-    materialCode: new FormControl('', [Validators.nullValidator, Validators.required, /*Validators.minLength(6),*/  Validators.maxLength(6)], [this.validateMaterialCodeUniqueService.materialCodeValidator()]),
-    materialName: new FormControl('', Validators.nullValidator && Validators.required),
+    materialCode: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(6),   Validators.maxLength(6)], [this.validateMaterialCodeUniqueService.materialCodeValidator()]),
+    materialName: new FormControl('', [Validators.nullValidator && Validators.required], [this.validateMaterialCodeUniqueService.materialNameValidator()]),
   }, {updateOn: 'blur'}); /*blur means if user clicks outside the control*/
 
   // tslint:disable-next-line:typedef

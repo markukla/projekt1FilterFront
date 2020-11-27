@@ -26,6 +26,7 @@ import { ProductBottomComponent } from './Products/ProductBottom/product-bottom/
 import { UsersComponent } from './Users/users/users.component';
 import { BusinessPartnersComponent } from './BusinessPartners/business-partners/business-partners.component';
 import { ProductTypeComponent } from './Products/ProductType/product-type/product-type.component';
+import {ErrorsInterceptorService} from './helpers/interceptors/intercept-errors.service';
 
 
 
@@ -68,7 +69,11 @@ import { ProductTypeComponent } from './Products/ProductType/product-type/produc
       ])
 
   ],
-  providers: [ {provide: HTTP_INTERCEPTORS, useClass: AddAuthorizationCookieInterceptorService, multi: true}],
+  providers: [
+
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptorService, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AddAuthorizationCookieInterceptorService, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -20,4 +20,14 @@ export class ValidateMaterialCodeUniqueService  {
     );
   };
   }
+
+  materialNameValidator(): AsyncValidatorFn {
+    return (
+      ctrl: AbstractControl
+    ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+      return this.materialBackendService. findMaterialByName(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
+        catchError(() => of(null))
+      );
+    };
+  }
 }

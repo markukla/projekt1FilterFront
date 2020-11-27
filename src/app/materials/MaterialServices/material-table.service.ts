@@ -10,48 +10,31 @@ import BackendErrorResponse from '../../helpers/ErrorHandling/backendErrorRespon
 export class MaterialTableService {
   materialList: Material[] = [];
   selectedId: number;
-  constructor(private materialBackendService: MaterialBackendService) {
+  constructor() {
   }
 
 
   getMaterialsTable(): Material[] {
-    this.materialBackendService.getMaterials().subscribe((response) => {
-      this.materialList.length = 0;
-      this.materialList.push(...response.body);
-    });
     return this.materialList;
   }
 
-  addRecordToTable(material: Material): Promise<Material> {
-    return new Promise<Material>(resolve => {
-      this.materialBackendService.addMaterials(material).subscribe(
-        (response) => {
-          this.materialList.push(response.body);
-          resolve(response.body);
-        });
-    });
+  addRecordToTable(material: Material): void {
+          this.materialList.push(material);
   }
 
-  updateTableRecord(id: number, material: Material): void {
-    this.materialBackendService.updateMaterialById(String(id), material).subscribe(
-      (response) => {
+  updateTableRecord(id: number, updatedMaterial: Material): void {
         for (let i = 0; i < this.materialList.length; i++) {
-          if (this.materialList[i].id === response.body.id) {
-            this.materialList[i] = response.body;
+          if (this.materialList[i].id === updatedMaterial.id) {
+            this.materialList[i] = updatedMaterial;
           }
         }
-      });
   }
 
   deleteRecordById(id: number): any {
-    this.materialBackendService.deleteMaterialById(String(id))
-      .subscribe((response) => {
-        this.materialList.forEach((material: Material, index: number) => {
+    this.materialList.forEach((material: Material, index: number) => {
           if (material.id === id) {
             this.materialList.splice(index, 1);
           }
         });
-      });
-
   }
 }
