@@ -1,0 +1,110 @@
+<div class="createMaterial">
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
+  <h2>Dodaj nowego użytkownika</h2>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label class="label" for="fullName" id="materialCodeLabel">Imię i nazwisko</label>
+        <input type="text" class="form-control" formControlName="fulName" id="fullName"
+               placeholder="Imię i nazwisko">
+        <div  *ngIf="fulName.invalid && (fulName.dirty || fulName.touched)"
+              class="alert alert-danger">
+
+          <div class="validatorInfo" *ngIf="fulName.errors.required">
+            To pole jest wymagane
+          </div>
+
+
+        </div>
+        <div class="form-group col-md-6">
+          <label class="label" for="email">Email</label>
+          <input type="text" class="form-control" formControlName="email" id="email"
+                 placeholder="email">
+          <div *ngIf="email.invalid && (email.dirty || email.touched)"
+               class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="email.errors.required">
+              Email jest wymagany
+            </div>
+            <div class="validatorInfo" *ngIf="email.errors?.taken">
+              Podany email jest już zajęty
+            </div>
+            <div class="validatorInfo" *ngIf="email.errors.email">
+              Podany email musi być prawidłowym adresem email.
+            </div>
+          </div>
+
+        </div>
+        <div class="form-group col-md-6">
+          <label class="label" for="password">Hasło</label>
+          <input type="password" class="form-control" formControlName="password" id="password"
+                 placeholder="Hasło">
+          <div *ngIf="password.invalid && (password.dirty || password.touched)"
+               class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="password.errors.required">
+              Hasło jest wymagane
+            </div>
+            <div class="validatorInfo" *ngIf="password.errors.minlength">
+             Hasło musi zawierać co najmniej 8 znaków
+            </div>
+
+            <div class="validatorInfo" *ngIf="password.hasError('hasNumber')">
+              Hasło musi zawierać co najmniej 2 cyfry
+            </div>
+            <div class="validatorInfo" *ngIf="password.hasError('hasCapitalCase')">
+              Hasło musi zawierać co najmniej 1 duża literę
+            </div>
+            <div class="validatorInfo" *ngIf="password.hasError('hasSmallCase')">
+              Hasło musi zawierać co najmniej 1 mała literę
+            </div>
+          </div>
+
+        </div>
+        <div class="form-group col-md-6">
+          <label class="label" for="confirmPassword">Powtórz Hasło</label>
+          <input type="password" class="form-control" formControlName="confirmPassword" id="confirmPassword"
+                 placeholder="Powtórz Hasło">
+          <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
+               class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="confirmPassword.errors.required">
+              Powtórzenie hasła jest wymagane
+            </div>
+            <div class="validatorInfo" *ngIf="userForm.errors?.NoPassswordMatch">
+              Hasła są niezgodne
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="form-group col-md-6">
+          <Span>
+            <label for="active" class="label">Aktywny</label><input type="checkbox" class="form-control" formControlName="active" id="active">
+          </Span>
+
+        </div>
+        <div class="form-group col-md-6">
+          <span>
+            <label for="isAdmin" class="label">Status Administratora</label><input type="checkbox" class="form-control" formControlName="isAdmin" id="isAdmin">
+          </span>
+
+        </div>
+      </div>
+    </div>
+    <div class="addButon">
+      <button type="submit" [disabled]="!userForm.valid" class="btn btn-danger">Zapisz</button>
+    </div>
+  </form>
+
+  <div *ngIf="operationStatusMessage">
+    <textarea>{{operationStatusMessage}}</textarea>
+  </div>
+</div>
+
+
+
+
+
+

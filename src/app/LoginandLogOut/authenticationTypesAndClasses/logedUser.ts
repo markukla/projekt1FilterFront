@@ -1,4 +1,4 @@
-import User from './user';
+import User from '../../Users/users/userTypes/user';
 import TokenData from './tokenData';
 
 class LoggedUser {

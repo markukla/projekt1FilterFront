@@ -15,25 +15,23 @@ import {HttpErrorResponse} from '@angular/common/http';
 })
 export class CreateNewMaterialComponent implements OnInit{
   operationMessage: string;
-  showoperationMessage: boolean;
-  materialCreated: boolean;
+  showoperationStatusMessage: string;
 
   constructor(
-              private materialTableService: MaterialTableService,
+              private materialbackendService: MaterialBackendService,
               public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
               private formBuilder: FormBuilder,
               private route: ActivatedRoute,
               private router: Router) {
 
   }
-
   materialForm = new FormGroup({
     // tslint:disable-next-line:max-line-length
     materialCode: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(6),   Validators.maxLength(6)], [this.validateMaterialCodeUniqueService.materialCodeValidator()]),
+    // tslint:disable-next-line:max-line-length
     materialName: new FormControl('', [Validators.nullValidator && Validators.required], [this.validateMaterialCodeUniqueService.materialNameValidator()]),
-  }, {updateOn: 'blur'}); /*blur means if user clicks outside the control*/
-
-  // tslint:disable-next-line:typedef
+  }, {updateOn: 'change'});
+// tslint:disable-next-line:typedef
   get materialCode() {
     return this.materialForm.get('materialCode');
   }
@@ -42,33 +40,25 @@ export class CreateNewMaterialComponent implements OnInit{
   get materialName() {
     return this.materialForm.get('materialName');
   }
-
-
- async onSubmit(): Promise<void> {
-    console.log('on submit execution');
-    this.showoperationMessage = true;
-    try{
-      console.log('try execution');
-      const material = await this.materialTableService.addRecordToTable(this.materialForm.value);
-      console.log(`material Code= ${material.materialCode}`);
-      if (material) {
-        this.operationMessage = 'new material created';
-      }
-      else {
-        this.operationMessage = 'something went wrong try again';
-      }
-      } catch (e) {
-      console.log(`catch execution`);
-      this.operationMessage = `an error occured`;}
-    setTimeout(() => {
-     this.showoperationMessage = false;
-   }, 2000);
+  onSubmit(): void {
+    this.materialbackendService.addMaterials(this.materialForm.value).subscribe((material) => {
+      this.showoperationStatusMessage = 'Dodano nowego użytkwonika';
+      this.cleanOperationMessage();
+    }, error => {
+      this.showoperationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego użytkownika. Spróbuj ponownie';
+      this.cleanOperationMessage();
+    });
  }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl('/users');
   }
 
   ngOnInit(): void {
+  }
+  cleanOperationMessage(): void {
+    setTimeout(() => {
+      this.showoperationStatusMessage = null;
+    }, 2000);
   }
 
 }

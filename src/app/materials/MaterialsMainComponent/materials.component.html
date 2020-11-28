@@ -3,7 +3,7 @@
 
 <div>
 
-  <a  [routerLink]="['/add']" routerLinkActive="active">
+  <a  [routerLink]="['/materials/add']" routerLinkActive="active">
     {{ createNewMaterialDescription }}
   </a>
 </div>
@@ -13,15 +13,18 @@
 <table class="table table-striped border mt-1">
   <thead>
   <tr>
-    <th [appSort]="materials" data-order="desc" data-name="materialCode" scope="col">Material Code <br></th>
-    <th [appSort]="materials" data-order="desc" data-name="materialName" scope="col">Material Name</th>
+    <th [appSort]="materials" data-order="desc" data-name="materialCode" scope="col">Kod Materiału <br></th>
+    <th [appSort]="materials" data-order="desc" data-name="materialName" scope="col">Nazwa Materiału</th>
+    <th>ilość</th>
 
   </tr>
   <tr>
     <th>
 
-      <input [appSearch]="materials" serchedColumn="materialCode" id="serchInCodes" placeholder="serchByCode" />
+      <input [appSearch]="materials" serchedColumn="materialCode" id="serchInCodes" placeholder="Wyszukaj" />
     </th>
+    <th><input [appSearch]="materials" serchedColumn="materialName" id="serchInNames" placeholder="Wyszukaj" /></th>
+  <th>{{this.recordNumbers}}</th>
   </tr>
 
   </thead>
@@ -33,8 +36,8 @@
     <td>
       <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
       <br>
-      <button (click)="this.materialTableService.deleteRecordById(material.id)" [title]="deleteButtonInfo" >x</button>
-<button (click)=" this.showUpdateForm = true; this.materialTableService.selectedId=material.id;" [title]="updateButtonInfo">u</button>
+      <button (click)="this.deleteSelectedRecord(material.id)" [title]="deleteButtonInfo" >x</button>
+<button (click)="updateSelectedRecord(material.id);" [title]="updateButtonInfo">u</button>
     </td>
 
   </tr>
@@ -42,7 +45,7 @@
 </table>
 </div>
 
-<app-update-material *ngIf="this.showUpdateForm" class="updateMaterial"></app-update-material>
+
 
 
 

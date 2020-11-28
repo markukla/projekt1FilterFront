@@ -1,5 +1,5 @@
 import {AfterContentChecked, AfterViewChecked, Component, OnInit} from '@angular/core';
-import RoleEnum from '../../LoginandLogOut/authenticationTypesAndClasses/roleEnum';
+import RoleEnum from '../../Users/users/userTypes/roleEnum';
 import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 import {NavigationStart, Router, RouterEvent} from '@angular/router';
 

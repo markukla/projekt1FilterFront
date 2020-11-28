@@ -1,0 +1,76 @@
+
+<!--sss-->
+
+<div>
+
+  <a  [routerLink]="['/users/add']" routerLinkActive="active">
+   Dodaj nowego użytkownika
+  </a>
+</div>
+
+<div class="materialComponent">
+
+  <table class="table table-striped border mt-1">
+    <thead>
+    <tr>
+      <th> L.p <br></th>
+      <th> Imię i Nazwisko> </th>
+      <th>Email</th>
+
+    </tr>
+    <tr>
+      <th></th>
+      <th>
+
+        <input [appSearchAdmins]="admins" serchedColumn="fullName" id="serchByNames" placeholder="Wyszukaj" />
+      </th>
+      <th><input [appSearch]="admins" serchedColumn="email" id="serchByEmails" placeholder="Wyszukaj" /></th>
+
+    </tr>
+
+    </thead>
+    <tbody>
+    <p>Administratorzy</p>
+    <tr *ngFor="let admin of admins; let i=index">
+      <td>{{i+1}}</td>
+      <td>{{admin.fulName}}</td>
+      <td>{{admin.email}}</td>
+      <td>
+        <br>
+        <button>Zmień Hasło</button>
+        <button (click)="updateSelectedRecord(admin.id);" [title]="updateButtonInfo">u</button>
+        <button>Zablokuj</button>
+        <button (click)="this.deleteSelectedRecord(admin.id)" [title]="deleteButtonInfo" >x</button>
+
+      </td>
+
+    </tr>
+    </tbody>
+    <tbody>
+    <p>Edytorzy</p>
+    <tr *ngFor="let editor of editors;let i=index">
+      <td>{{i+1}}</td>
+      <td>{{editor.fulName}}</td>
+      <td>{{editor.email}}</td>
+      <td>
+        <br>
+        <button>Zmień Hasło</button>
+        <button (click)="updateSelectedRecord(editor.id);" [title]="updateButtonInfo">u</button>
+        <button>Zablokuj</button>
+        <button (click)="this.deleteSelectedRecord(editor.id)" [title]="deleteButtonInfo" >x</button>
+
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+

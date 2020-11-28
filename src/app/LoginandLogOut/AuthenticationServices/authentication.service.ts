@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import LoggedUser from '../authenticationTypesAndClasses/logedUser';
-import User from '../authenticationTypesAndClasses/user';
+import User from '../../Users/users/userTypes/user';
 import TokenData from '../authenticationTypesAndClasses/tokenData';
-import RoleEnum from '../authenticationTypesAndClasses/roleEnum';
+import RoleEnum from '../../Users/users/userTypes/roleEnum';
 
 @Injectable({
   providedIn: 'root'

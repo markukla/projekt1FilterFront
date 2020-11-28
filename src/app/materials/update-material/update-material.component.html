@@ -1,21 +1,22 @@
 <div class="updateMaterial">
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
 <div class="container">
   <div class="row">
     <div class="col-md-7 mrgnbtm">
-      <h2>Create User</h2>
+      <h2>Aktualizuj Materiał</h2>
       <form [formGroup]="materialForm" (ngSubmit)="onSubmit()">
         <div class="row">
           <div class="form-group col-md-6">
-            <label for="materialCode">Material Code</label>
-            <input type="text" class="form-control" formControlName="materialCode" id="materialCode"  placeholder="Material Code">
+            <label for="materialCode">Kod materiału</label>
+            <input type="text" class="form-control" formControlName="materialCode" id="materialCode"  placeholder="Kod materiału">
           </div>
           <div class="form-group col-md-6">
-            <label for="materialName">Last Name</label>
-            <input type="text" class="form-control" formControlName="materialName" id="materialName" placeholder="Material Name">
+            <label for="materialName">Nazwa Materiału</label>
+            <input type="text" class="form-control" formControlName="materialName" id="materialName" placeholder="Nazwa Materiału">
           </div>
         </div>
 
-        <button type="submit" [disabled]="!materialForm.valid" class="btn btn-danger">Update</button>
+        <button type="submit" [disabled]="!materialForm.valid" class="btn btn-danger">Zatwierdź</button>
       </form>
 
     </div>

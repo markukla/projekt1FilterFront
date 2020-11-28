@@ -10,7 +10,7 @@ import { CreateNewMaterialComponent } from './materials/create-new-material/crea
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SortDirective } from './helpers/directive/sort.directive';
-import { SearchDirective } from './helpers/directive/search.directive';
+import { MaterialSearchDirective } from './helpers/directive/ForMaterials/material-search.directive';
 import {RouterModule} from '@angular/router';
 import { UpdateMaterialComponent } from './materials/update-material/update-material.component';
 import {MaterialBackendService} from './materials/MaterialServices/material-backend.service';
@@ -23,10 +23,15 @@ import { OrdersComponent } from './Orders/orders/orders.component';
 import { ProductComponent } from './Products/ProductMainComponent/product/product.component';
 import { ProductTopComponent } from './Products/ProductTop/product-top/product-top.component';
 import { ProductBottomComponent } from './Products/ProductBottom/product-bottom/product-bottom.component';
-import { UsersComponent } from './Users/users/users.component';
+import { UsersComponent } from './Users/UsersMainComponent/users.component';
 import { BusinessPartnersComponent } from './BusinessPartners/business-partners/business-partners.component';
 import { ProductTypeComponent } from './Products/ProductType/product-type/product-type.component';
 import {ErrorsInterceptorService} from './helpers/interceptors/intercept-errors.service';
+import { AdminSerchDirective } from './helpers/directive/ForUsers/admin-serch.directive';
+import { EditorsSearchDirectiveDirective } from './helpers/directive/ForUsers/editors-search-directive.directive';
+import { UpdateUserComponent } from './Users/update-user/update-user.component';
+import { CreateNewUserComponent } from './Users/create-new-user/create-new-user.component';
+import { ChangePasswordComponent } from './Users/change-password/change-password.component';
 
 
 
@@ -36,7 +41,7 @@ import {ErrorsInterceptorService} from './helpers/interceptors/intercept-errors.
     MaterialsComponent,
     CreateNewMaterialComponent,
     SortDirective,
-    SearchDirective,
+    MaterialSearchDirective,
     UpdateMaterialComponent,
     LoginComponent,
     HeaderComponent,
@@ -47,6 +52,11 @@ import {ErrorsInterceptorService} from './helpers/interceptors/intercept-errors.
     UsersComponent,
     BusinessPartnersComponent,
     ProductTypeComponent,
+    AdminSerchDirective,
+    EditorsSearchDirectiveDirective,
+    UpdateUserComponent,
+    CreateNewUserComponent,
+    ChangePasswordComponent,
     ],
   imports: [
     BrowserModule,
@@ -57,14 +67,16 @@ import {ErrorsInterceptorService} from './helpers/interceptors/intercept-errors.
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
       { path: 'orders', component: OrdersComponent},
+      {path: 'materials', component: MaterialsComponent },
       { path: 'materials/add', component: CreateNewMaterialComponent},
+      { path: 'materials/update', component: UpdateMaterialComponent},
       { path: 'users', component: UsersComponent},
+      { path: 'users/add', component: CreateNewUserComponent},
       { path: 'businessPartners', component: BusinessPartnersComponent},
       { path: 'products', component: ProductComponent},
       { path: 'products/bottom', component: ProductBottomComponent},
       { path: 'products/top', component: ProductTopComponent},
       { path: 'products/productsTypes', component: ProductTopComponent},
-      {path: 'materials', component: MaterialsComponent },
       {path: 'login', component: LoginComponent }
       ])
 

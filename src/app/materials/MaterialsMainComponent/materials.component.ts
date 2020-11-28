@@ -13,7 +13,7 @@ import {MaterialBackendService} from '../MaterialServices/material-backend.servi
 
 
 import {Material} from './material';
-import {NavigationEnd, NavigationStart, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {NavigationEvent} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-view-model';
 import {NgModel} from '@angular/forms';
 import {MaterialTableService} from '../MaterialServices/material-table.service';
@@ -31,15 +31,18 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   createNewMaterialDescription = 'Create new Material';
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;
-  updatedMaterrial: Material;
+  operationStatusMessage: string;
   deleteButtonInfo: string;
   showUpdateForm = false;
   updateButtonInfo;
   materialId: number;
+  recordNumbers: number;
+
 
   constructor(public materialTableService: MaterialTableService,
               public materialBackendService: MaterialBackendService,
-              private router: Router) {
+              private router: Router,
+              private activedIdParam: ActivatedRoute) {
   }
 
   /*
@@ -62,18 +65,19 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
         });
     }*/
   ngOnInit(): void {
-    this.getMaterials();
+    this.getRecords();
     this.materialId = this.materialTableService.selectedId;
     this.deleteButtonInfo = 'delete Material';
     this.updateButtonInfo = 'update material';
-
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
   }
 
   ngAfterContentChecked(): void {
+    if (this.materials){
+      this.recordNumbers = this.materials.length;
+    }
   }
 
   ngAfterViewInit(): void {
@@ -106,7 +110,7 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
       console.log(`m.materialCode= ${m.materialCode}`);
     }
   });*/
-  getMaterials(): void {
+  getRecords(): void {
     this.materialBackendService.getMaterials().subscribe((materials) => {
       this.materialTableService.materialList.length = 0;
       this.materialTableService.materialList = materials.body;
@@ -114,8 +118,17 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
     });
 
   }
-  deleteMaterial()
 
+  deleteSelectedRecord(materialId: number): void {
+    this.materialBackendService.deleteMaterialById(String(materialId)).subscribe((response) => {
+      this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
+    }, error => {
+      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+    });
+  }
 
+  updateSelectedRecord(materialId: number): void {
+    this.materialTableService.selectedId = materialId;
+    this.router.navigateByUrl('/materials/update');
+  }
 }
-
