@@ -24,7 +24,7 @@ import { ProductComponent } from './Products/ProductMainComponent/product/produc
 import { ProductTopComponent } from './Products/ProductTop/product-top/product-top.component';
 import { ProductBottomComponent } from './Products/ProductBottom/product-bottom/product-bottom.component';
 import { UsersComponent } from './Users/UsersMainComponent/users.component';
-import { BusinessPartnersComponent } from './BusinessPartners/business-partners/business-partners.component';
+import { BusinessPartnersComponent } from './BusinessPartners/business-partners/BusinessPartnerMainComponent/business-partners.component';
 import { ProductTypeComponent } from './Products/ProductType/product-type/product-type.component';
 import {ErrorsInterceptorService} from './helpers/interceptors/intercept-errors.service';
 import { AdminSerchDirective } from './helpers/directive/ForUsers/admin-serch.directive';
@@ -32,6 +32,10 @@ import { EditorsSearchDirectiveDirective } from './helpers/directive/ForUsers/ed
 import { UpdateUserComponent } from './Users/update-user/update-user.component';
 import { CreateNewUserComponent } from './Users/create-new-user/create-new-user.component';
 import { ChangePasswordComponent } from './Users/change-password/change-password.component';
+import { BusinessPartnerChangePasswordComponent } from './BusinessPartners/business-partners/ChangePassword/business-partner-change-password/business-partner-change-password.component';
+import { CreateBusinesPartnerComponent } from './BusinessPartners/business-partners/CreateBusinessPartner/create-busines-partner/create-busines-partner.component';
+import { UpdateBusinessPartnerComponent } from './BusinessPartners/business-partners/UpdateBusinessPartner/update-business-partner/update-business-partner.component';
+import { PartersSearchDirective } from './helpers/directive/ForPartners/parters-search.directive';
 
 
 
@@ -57,6 +61,10 @@ import { ChangePasswordComponent } from './Users/change-password/change-password
     UpdateUserComponent,
     CreateNewUserComponent,
     ChangePasswordComponent,
+    BusinessPartnerChangePasswordComponent,
+    CreateBusinesPartnerComponent,
+    UpdateBusinessPartnerComponent,
+    PartersSearchDirective,
     ],
   imports: [
     BrowserModule,
