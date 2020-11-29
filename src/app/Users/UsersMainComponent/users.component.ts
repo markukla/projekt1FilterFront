@@ -7,6 +7,7 @@ import {UsersTableService} from '../UserServices/users-table.service';
 import {UserBackendService} from '../UserServices/user-backend.service';
 import User from '../users/userTypes/user';
 import {UserHasAdminRole, UserHasEditorRoleButIsNotAdmin} from '../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
+import BlockUserDto from '../users/userTypes/blockUseDto';
 
 @Component({
   selector: 'app-users',
@@ -19,8 +20,6 @@ export class UsersComponent implements OnInit, AfterContentChecked {
   admins: User[];
   editors: User[];
   @Input()
-
-
   deleTedMessage: any;
   operationStatusMessage: string;
   deleteButtonInfo: string;
@@ -28,6 +27,7 @@ export class UsersComponent implements OnInit, AfterContentChecked {
   updateButtonInfo;
   selectedId: number;
   recordNumbers: number;
+
 
 
   constructor(public userTableService: UsersTableService,
@@ -40,8 +40,30 @@ export class UsersComponent implements OnInit, AfterContentChecked {
   ngOnInit(): void {
     this.getRecords();
     this.selectedId = this.userTableService.selectedId;
-    this.deleteButtonInfo = 'delete Material';
-    this.updateButtonInfo = 'update material';
+    this.deleteButtonInfo = 'usuń';
+    this.updateButtonInfo = 'modyfikuj dane';
+  }
+
+  setBlockButtonActionInfoMessage(user: User): string{
+   let blockButtonActionInfoMessage: string;
+   if (user && user.active) {
+       blockButtonActionInfoMessage = 'Zablokuj';
+    }
+    else {
+      blockButtonActionInfoMessage = 'Odblokuj';
+    }
+   return blockButtonActionInfoMessage;
+  }
+
+  setBlockButtonStatusMessage(user: User): string {
+    let blockButtonStatusMessage: string;
+    if (user && user.active) {
+   blockButtonStatusMessage = 'Aktywny';
+}
+else {
+    blockButtonStatusMessage = 'Zablokowany';
+}
+    return blockButtonStatusMessage;
   }
 
   ngAfterContentChecked(): void {
@@ -96,9 +118,35 @@ export class UsersComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  updateSelectedRecord(materialId: number): void {
-    this.userTableService.selectedId = materialId;
+  updateSelectedRecord(userId: number): void {
+    this.userTableService.selectedId = userId;
     this.router.navigateByUrl('/users/update');
+  }
+  blockOrUnblockUser(user: User): void {
+    let updatedActiveStatus: boolean;
+    if (user.active){
+      /*if uset taken as input is active method set new avtive to false and oposite*/
+      updatedActiveStatus = false;
+    }
+    else {
+      updatedActiveStatus = true;
+    }
+    const blockUserDto: BlockUserDto = {
+      active: updatedActiveStatus
+    };
+    // tslint:disable-next-line:no-shadowed-variable
+    this.userBackendService.blodkUserById(String(user.id), blockUserDto).subscribe((user) => {
+      if (user.body.active) {
+        this.operationStatusMessage = 'uzytkownik został odblokowany';
+      }
+      else {
+        this.operationStatusMessage = 'uzytkownik został zablokowany';
+      }
+    });
+  }
+  changePaswordForUserId(id: number): void {
+    this.userTableService.selectedId = id;
+    this.router.navigateByUrl('/users/changePassword');
   }
 
 }

@@ -28,19 +28,31 @@ export class UserValidatorService {
     };
   }
   // tslint:disable-next-line:typedef
-   passwordMatchValidator(control: AbstractControl): ValidatorFn {
-    const password: string = control.get('password').value; // get password from our password form control
-    const confirmPassword: string = control.get('confirmPassword').value; // get password from our confirmPassword form control
-    // compare is the password math
-     let valid = true;
-    if (password !== confirmPassword) {
-      // if they don't match, set an error in our confirmPassword form control
-      control.get('confirmPassword').setErrors({ NoPassswordMatch: true });
-      valid = false;
-    }
-    return valid ? null : { NoPassswordMatch: true } ;
+   passwordMatchValidator( error: ValidationErrors): ValidatorFn {
+     return (control: AbstractControl): { [key: string]: any } => {
+       const password: string = control.get('password').value; // get password from our password form control
+       const confirmPassword: string = control.get('confirmPassword').value; // get password from our confirmPassword form control
+       // compare is the password math
+       let valid = true;
+       if (password !== confirmPassword) {
+         // if they don't match, set an error in our confirmPassword form control
+         control.get('confirmPassword').setErrors({NoPassswordMatch: true});
+         valid = false;
+       }
+       return valid ? null : error;
+     };
   }
   emailAsyncValidator(): AsyncValidatorFn {
+    return (
+      ctrl: AbstractControl
+    ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+      return this.userBackendService.findUserByEmail(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
+        catchError(() => of(null))
+      );
+    };
+  }
+
+  emailAsyncValidatorForUpdate(id: string): AsyncValidatorFn {
     return (
       ctrl: AbstractControl
     ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {

@@ -67,8 +67,8 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   ngOnInit(): void {
     this.getRecords();
     this.materialId = this.materialTableService.selectedId;
-    this.deleteButtonInfo = 'delete Material';
-    this.updateButtonInfo = 'update material';
+    this.deleteButtonInfo = 'usuń';
+    this.updateButtonInfo = 'modyfikuj dane';
   }
 
   ngOnChanges(changes: SimpleChanges): void {

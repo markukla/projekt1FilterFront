@@ -37,7 +37,7 @@ export class CreateNewUserComponent implements OnInit {
     active: new FormControl(false),
     // tslint:disable-next-line:max-line-length
     isAdmin: new FormControl(false)
-  }, {updateOn: 'change', validators: [this.userValidatorService.passwordMatchValidator]});
+  }, {updateOn: 'change', validators: [this.userValidatorService.passwordMatchValidator({NoPassswordMatch: true})]});
 
   // tslint:disable-next-line:typedef
   get fulName() {
@@ -70,13 +70,14 @@ export class CreateNewUserComponent implements OnInit {
     this.userBackendService.addUsers(this.userForm.value).subscribe((user) => {
       this.operationStatusMessage = 'Dodano nowego użytkownika';
       this.cleanOperationMessage();
+      this.userForm.reset();
     }, error => {
       this.operationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego użytkownika';
       this.cleanOperationMessage();
     });
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/materials');
+    this.router.navigateByUrl('/users');
   }
 
   ngOnInit(): void {

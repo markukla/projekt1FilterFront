@@ -18,16 +18,6 @@
       <th>Email</th>
 
     </tr>
-    <tr>
-      <th></th>
-      <th>
-
-        <input [appSearchAdmins]="admins" serchedColumn="fullName" id="serchByNames" placeholder="Wyszukaj" />
-      </th>
-      <th><input [appSearch]="admins" serchedColumn="email" id="serchByEmails" placeholder="Wyszukaj" /></th>
-
-    </tr>
-
     </thead>
     <tbody>
     <p>Administratorzy</p>
@@ -37,9 +27,9 @@
       <td>{{admin.email}}</td>
       <td>
         <br>
-        <button>Zmień Hasło</button>
+        <button (click)="changePaswordForUserId(admin.id)" [title]="'zmień hasło'">Zmień Hasło</button>
         <button (click)="updateSelectedRecord(admin.id);" [title]="updateButtonInfo">u</button>
-        <button>Zablokuj</button>
+        <button [title]="setBlockButtonActionInfoMessage(admin)" (click)="blockOrUnblockUser(admin)">{{setBlockButtonStatusMessage(admin)}}</button>
         <button (click)="this.deleteSelectedRecord(admin.id)" [title]="deleteButtonInfo" >x</button>
 
       </td>
@@ -54,9 +44,9 @@
       <td>{{editor.email}}</td>
       <td>
         <br>
-        <button>Zmień Hasło</button>
+        <button (click)="changePaswordForUserId(editor.id)" [title]="'zmień hasło'">Zmień Hasło</button>
         <button (click)="updateSelectedRecord(editor.id);" [title]="updateButtonInfo">u</button>
-        <button>Zablokuj</button>
+        <button [title]="setBlockButtonActionInfoMessage(editor)" (click)="blockOrUnblockUser(editor)">{{setBlockButtonStatusMessage(editor)}}</button>
         <button (click)="this.deleteSelectedRecord(editor.id)" [title]="deleteButtonInfo" >x</button>
 
       </td>

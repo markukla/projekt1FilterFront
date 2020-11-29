@@ -10,6 +10,8 @@ import {UsersTableService} from './users-table.service';
 import {EditorsTableService} from './editors-table.service';
 import CreatePrivilegedUserDto from '../users/userTypes/createUserDto';
 import UpdatePrivilegedUserWithouTPasswordDto from '../users/userTypes/updatePriviligedUser';
+import CHangePasswordByAdminDto from '../users/userTypes/changePasswordDto';
+import BlockUserDto from '../users/userTypes/blockUseDto';
 
 @Injectable({
   providedIn: 'root'
@@ -72,5 +74,18 @@ export class UserBackendService {
   findUserByEmail(email: string): Observable<boolean> {
     const getUrl = `${this.rootURL}/users/emails/${email}`;
     return this.http.get<boolean>(getUrl);
+  }
+  changeUserPasswordById(id: string, passwordData: CHangePasswordByAdminDto): Observable<HttpResponse<User>> {
+    const url = `${this.rootURL}/users/${id}/changePassword`;
+    return this.http.patch<User>(url, passwordData, { observe: 'response'} );
+  }
+  blodkUserById(id: string, activeData: BlockUserDto): Observable<HttpResponse<User>> {
+    const url = `${this.rootURL}/users/${id}/blockOrUnblock`;
+    return this.http.patch<User>(url, activeData, { observe: 'response'}).pipe(
+      // tslint:disable-next-line:no-shadowed-variable
+      tap((user) => {
+        this.usersTableService.updateTableRecord(Number(id), user.body);
+
+      }));
   }
 }

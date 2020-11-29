@@ -72,6 +72,8 @@ import { ChangePasswordComponent } from './Users/change-password/change-password
       { path: 'materials/update', component: UpdateMaterialComponent},
       { path: 'users', component: UsersComponent},
       { path: 'users/add', component: CreateNewUserComponent},
+      { path: 'users/update', component: UpdateUserComponent},
+      { path: 'users/changePassword', component: ChangePasswordComponent},
       { path: 'businessPartners', component: BusinessPartnersComponent},
       { path: 'products', component: ProductComponent},
       { path: 'products/bottom', component: ProductBottomComponent},

@@ -1,8 +1,7 @@
 class UpdatePrivilegedUserWithouTPasswordDto {
   fulName: string;
   email: string;
-  active: boolean;
   isAdmin: boolean;
-
+  active: boolean;
 }
 export default UpdatePrivilegedUserWithouTPasswordDto;

@@ -5,6 +5,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationBackendService} from '../../AuthenticationServices/authentication.backend.service';
 import {AuthenticationService} from '../../AuthenticationServices/authentication.service';
+import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,7 @@ export class LoginComponent implements OnInit, AfterContentChecked{
     // tslint:disable-next-line:max-line-length
     email: new FormControl('', [Validators.nullValidator, Validators.required, /*Validators.minLength(6),*/   Validators.email]),
     password: new FormControl('', Validators.nullValidator && Validators.required),
-  }, {updateOn: 'blur'}); /*blur means if user clicks outside the control*/
+  }, {updateOn: 'change'}); /*blur means if user clicks outside the control*/
 
   // tslint:disable-next-line:typedef
   get email() {
@@ -50,14 +51,19 @@ export class LoginComponent implements OnInit, AfterContentChecked{
     this.showoperationMessage = true;
     this.loginBackendService.login(this.loginForm.value).subscribe((logedUser) => {
       this.loginService.setLogedUserUserAndToken(logedUser.body);
-      this.operationMessage = 'you are logged in';
+      this.router.navigateByUrl('/orders');
     }, error => {
-      this.operationMessage = `Wrong email or password= ${error.message}`;
+      const backendErrorMessage = getBackendErrrorMesage(error);
+      if (backendErrorMessage.includes('wrong email or password')) {
+        this.operationMessage = `Nieprawidłowy email lub hasło`;
+      }
+      else if (backendErrorMessage.includes('your account is inactive')) {
+        this.operationMessage = `Twoje konto jest nieaktywne, skontaktuj się z administratorem.`;
+      }
+      else {
+        this.operationMessage = `Wystąpił błąd. Spróbuj ponownie`;
+      }
     });
-    setTimeout(() => {
-      this.showoperationMessage = false;
-      this.router.navigateByUrl('/materials');
-    }, 1000);
   }
   closeAndGoBack(): void {
   }

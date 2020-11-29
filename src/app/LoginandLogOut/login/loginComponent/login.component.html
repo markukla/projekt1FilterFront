@@ -1,5 +1,4 @@
 <div class="createMaterial">
-  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"close"'>x</button>
   <h2>Login</h2>
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div class="row">
@@ -34,12 +33,12 @@
       </div>
     </div>
     <div class="addButon">
-      <button type="submit" [disabled]="!loginForm.valid" class="btn btn-danger">Create</button>
+      <button type="submit" [disabled]="!loginForm.valid" class="btn btn-danger">Zaloguj</button>
     </div>
   </form>
 
   <div *ngIf="this.showoperationMessage">
-    <textarea>{{operationMessage}}</textarea>
+    <p>{{operationMessage}}</p>
   </div>
 </div>
 
