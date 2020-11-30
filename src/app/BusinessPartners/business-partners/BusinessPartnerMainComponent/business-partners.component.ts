@@ -5,6 +5,8 @@ import {UserBackendService} from '../../../Users/UserServices/user-backend.servi
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserHasAdminRole, UserHasEditorRoleButIsNotAdmin} from '../../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
 import BlockUserDto from '../../../Users/users/userTypes/blockUseDto';
+import {BusinessPartnerTableService} from '../BusinessPartnerServices/business-partner-table.service';
+import {BusinesPartnerBackendService} from '../BusinessPartnerServices/busines-partner-backend.service';
 
 @Component({
   selector: 'app-business-partners',
@@ -13,9 +15,7 @@ import BlockUserDto from '../../../Users/users/userTypes/blockUseDto';
 })
 export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
   @Input()
-  allPriviligedUsers: User[];
-  admins: User[];
-  editors: User[];
+  partners: User[];
   @Input()
   deleTedMessage: any;
   operationStatusMessage: string;
@@ -27,16 +27,14 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
 
 
 
-  constructor(public userTableService: UsersTableService,
-              public userBackendService: UserBackendService,
+  constructor(public tableService: BusinessPartnerTableService,
+              public backendService: BusinesPartnerBackendService,
               private router: Router,
               private activedIdParam: ActivatedRoute) {
-    this.admins = [];
-    this.editors = [];
   }
   ngOnInit(): void {
     this.getRecords();
-    this.selectedId = this.userTableService.selectedId;
+    this.selectedId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
     this.updateButtonInfo = 'modyfikuj dane';
   }
@@ -64,60 +62,30 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
   }
 
   ngAfterContentChecked(): void {
-    if (this.allPriviligedUsers){
-      this.recordNumbers = this.allPriviligedUsers.length;
-    }
-    if (this.allPriviligedUsers && this.admins){
-      this.updateAdminsTable();
-    }
-    if (this.allPriviligedUsers && this.editors) {
-      this.updateEditorsTable();
+    if (this.partners){
+      this.recordNumbers = this.partners.length;
     }
   }
   getRecords(): void {
-    this.userBackendService.getAllPriviligedUsers().subscribe((users) => {
-      this.userTableService.tableRecords.length = 0;
-      this.userTableService.tableRecords = users.body;
-      this.allPriviligedUsers = this.userTableService.getTableRecords();
-      this.updateAdminsTable();
-      this.updateEditorsTable();
-      console.log(`this admins= ${this.admins}`);
-      if (this.admins){
-        this.admins.forEach((admin) => {
-          console.log(admin.fulName);
-        });
-      }
+    this.backendService.getAllRecords().subscribe((users) => {
+      this.tableService.tableRecords.length = 0;
+      this.tableService.tableRecords = users.body;
+      this.partners = this.tableService.getTableRecords();
     });
 
-  }
-  updateAdminsTable(): void {
-    this.admins.length = 0;
-    this.allPriviligedUsers.forEach((user) => {
-      if (UserHasAdminRole(user)){
-        this.admins.push(user);
-      }
-    });
-  }
-  updateEditorsTable(): void {
-    this.editors.length = 0;
-    this.allPriviligedUsers.forEach((user) => {
-      if (UserHasEditorRoleButIsNotAdmin(user)){
-        this.editors.push(user);
-      }
-    });
   }
 
   deleteSelectedRecord(materialId: number): void {
-    this.userBackendService.deleteUserlById(String(materialId)).subscribe((response) => {
-      this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
+    this.backendService.deleteOneRecordById(String(materialId)).subscribe((response) => {
+      this.operationStatusMessage = 'Usunięto Partnera Biznesowego z bazy Danych';
     }, error => {
-      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc Parntera Biznesowego';
     });
   }
 
   updateSelectedRecord(userId: number): void {
-    this.userTableService.selectedId = userId;
-    this.router.navigateByUrl('/users/update');
+    this.tableService.selectedId = userId;
+    this.router.navigateByUrl('/businessPartners/update');
   }
   blockOrUnblockUser(user: User): void {
     let updatedActiveStatus: boolean;
@@ -132,7 +100,7 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
       active: updatedActiveStatus
     };
     // tslint:disable-next-line:no-shadowed-variable
-    this.userBackendService.blodkUserById(String(user.id), blockUserDto).subscribe((user) => {
+    this.backendService.blodkUserById(String(user.id), blockUserDto).subscribe((user) => {
       if (user.body.active) {
         this.operationStatusMessage = 'uzytkownik został odblokowany';
       }
@@ -142,9 +110,11 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
     });
   }
   changePaswordForUserId(id: number): void {
-    this.userTableService.selectedId = id;
-    this.router.navigateByUrl('/users/changePassword');
+    this.tableService.selectedId = id;
+    this.router.navigateByUrl('/businessPartners/changePassword');
   }
 
 
+  showOrders(id: number): void {
+  }
 }

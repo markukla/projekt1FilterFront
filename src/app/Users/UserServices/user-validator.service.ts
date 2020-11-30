@@ -56,7 +56,7 @@ export class UserValidatorService {
     return (
       ctrl: AbstractControl
     ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
-      return this.userBackendService.findUserByEmail(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
+      return this.userBackendService.findOtherUserByEmail(ctrl.value, id).pipe(map(istaken => (istaken  ? { taken: true } : null)),
         catchError(() => of(null))
       );
     };

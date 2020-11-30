@@ -3,12 +3,13 @@ import {UserBackendService} from '../../../Users/UserServices/user-backend.servi
 import {AbstractControl, AsyncValidatorFn, ValidationErrors, ValidatorFn} from '@angular/forms';
 import {Observable, of} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
+import {BusinesPartnerBackendService} from './busines-partner-backend.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusinessPartnerValidatorService {
-  constructor(private userBackendService: UserBackendService) {
+  constructor(private partnerBackendService: BusinesPartnerBackendService) {
   }
 
   patternValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
@@ -44,7 +45,7 @@ export class BusinessPartnerValidatorService {
     return (
       ctrl: AbstractControl
     ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
-      return this.userBackendService.findUserByEmail(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
+      return this.partnerBackendService.findUserByEmail(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
         catchError(() => of(null))
       );
     };
@@ -54,7 +55,7 @@ export class BusinessPartnerValidatorService {
     return (
       ctrl: AbstractControl
     ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
-      return this.userBackendService.findUserByEmail(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
+      return this.partnerBackendService.findOtherUserByEmail(ctrl.value, id).pipe(map(istaken => (istaken  ? { taken: true } : null)),
         catchError(() => of(null))
       );
     };

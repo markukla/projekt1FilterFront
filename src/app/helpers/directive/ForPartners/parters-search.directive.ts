@@ -1,5 +1,6 @@
 import {AfterContentChecked, Directive, ElementRef, HostListener, Input, Renderer2} from '@angular/core';
 import {MaterialBackendService} from '../../../materials/MaterialServices/material-backend.service';
+import {BusinesPartnerBackendService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/busines-partner-backend.service';
 
 @Directive({
   selector: '[appPartersSearch]'
@@ -20,7 +21,7 @@ export class PartersSearchDirective implements AfterContentChecked{
 
   constructor(private renderer: Renderer2,
               private targetElement: ElementRef,
-              private materialBackendService: MaterialBackendService) {
+              private backendService: BusinesPartnerBackendService) {
     this.allowOrginalArrayCopyChange = true;
   }
 
@@ -30,8 +31,8 @@ export class PartersSearchDirective implements AfterContentChecked{
   @HostListener('input')
 // tslint:disable-next-line:typedef
   serchTable() {
-    this.materialBackendService.getMaterials().subscribe((materials) => {
-      this.orginalArrayCopy = materials.body;
+    this.backendService.getAllRecords().subscribe((users) => {
+      this.orginalArrayCopy = users.body;
       const elem = this.targetElement.nativeElement;
 
       // tslint:disable-next-line:max-line-length

@@ -8,6 +8,9 @@ import {tap} from 'rxjs/operators';
 import UpdatePrivilegedUserWithouTPasswordDto from '../../../Users/users/userTypes/updatePriviligedUser';
 import CHangePasswordByAdminDto from '../../../Users/users/userTypes/changePasswordDto';
 import BlockUserDto from '../../../Users/users/userTypes/blockUseDto';
+import CreateBusinessPartnerDto from '../../BusinessPartnerTypes/createBusinessPartnerDto';
+import UpdateBussinessPartnerWithoutPassword from '../../BusinessPartnerTypes/updateBusinessPartnerDto';
+import {BusinessPartnerTableService} from './business-partner-table.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,51 +20,55 @@ export class BusinesPartnerBackendService {
   rootURL = 'http://localhost:5000';
 
   constructor(private http: HttpClient,
-              private usersTableService: UsersTableService
+              private partnerTableService: BusinessPartnerTableService
   ) {
   }
 
-  getAllPriviligedUsers(): Observable<HttpResponse<User[]>> {
+  getAllRecords(): Observable<HttpResponse<User[]>> {
     return this.http.get<User[]>(this.rootURL + '/business_partners', {observe: 'response'});
   }
   // tslint:disable-next-line:typedef
-  addUsers(createUser: CreatePrivilegedUserDto): Observable<HttpResponse<User>> {
+  addOneRecord(createpartner: CreateBusinessPartnerDto): Observable<HttpResponse<User>> {
     // tslint:disable-next-line:max-line-length
-    return this.http.post<User>(this.rootURL + '/business_partners', createUser, {observe: 'response'}).pipe(
+    return this.http.post<User>(this.rootURL + '/business_partners', createpartner, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((user) => {
-        this.usersTableService.addRecordToTable(user.body);
+        this.partnerTableService.addRecordToTable(user.body);
       }));
   }
 
-  deleteUserlById(id: string): Observable<HttpResponse<any>> {
+  deleteOneRecordById(id: string): Observable<HttpResponse<any>> {
     const deleteUrl = `${this.rootURL}/business_partners/${id}`;
     return this.http.delete(deleteUrl, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((material) => {
-        this.usersTableService.deleteRecordById(Number(id));
+        this.partnerTableService.deleteRecordById(Number(id));
       }));
   }
 
-  updateUserById(id: string, updateUserDto: UpdatePrivilegedUserWithouTPasswordDto): Observable<HttpResponse<User>> {
+  updateRecordById(id: string, updateUserDto: UpdateBussinessPartnerWithoutPassword): Observable<HttpResponse<User>> {
     const updateUrl = `${this.rootURL}/business_partners/${id}`;
     return this.http.patch<User>(updateUrl, updateUserDto, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((user) => {
-        this.usersTableService.updateTableRecord(Number(id), user.body);
+        this.partnerTableService.updateTableRecord(Number(id), user.body);
 
       }));
   }
   // tslint:disable-next-line:typedef
 
 
-  findUserById(id: string): Observable<HttpResponse<User>> {
+  findRecordById(id: string): Observable<HttpResponse<User>> {
     const getUrl = `${this.rootURL}/business_partners/${id}`;
     return this.http.get<User>(getUrl, {observe: 'response'} );
   }
 
   findUserByEmail(email: string): Observable<boolean> {
     const getUrl = `${this.rootURL}/business_partners/emails/${email}`;
+    return this.http.get<boolean>(getUrl);
+  }
+  findOtherUserByEmail(email: string, id: string): Observable<boolean>{
+    const getUrl = `${this.rootURL}/business_partners/${id}/emails/${email}`;
     return this.http.get<boolean>(getUrl);
   }
   changeUserPasswordById(id: string, passwordData: CHangePasswordByAdminDto): Observable<HttpResponse<User>> {
@@ -73,7 +80,7 @@ export class BusinesPartnerBackendService {
     return this.http.patch<User>(url, activeData, { observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((user) => {
-        this.usersTableService.updateTableRecord(Number(id), user.body);
+        this.partnerTableService.updateTableRecord(Number(id), user.body);
 
       }));
   }

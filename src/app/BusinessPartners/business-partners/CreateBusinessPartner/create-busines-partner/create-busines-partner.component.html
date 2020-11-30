@@ -5,7 +5,41 @@
   <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="form-group col-md-6">
-        <label class="label" for="fullName" id="materialCodeLabel">Imię i nazwisko</label>
+        <label class="label" for="partnercode" >Kod</label>
+        <input type="text" class="form-control" formControlName="code" id="partnercode"
+               placeholder="Kod">
+        <div  *ngIf="code.invalid && (code.dirty || code.touched)"
+              class="alert alert-danger">
+
+          <div class="validatorInfo" *ngIf="code.errors.required">
+            <label
+              class="text-danger">
+              To pole jest wymagane
+            </label>
+
+          </div>
+
+
+        </div>
+        <div class="form-group col-md-6">
+          <label class="label" for="businesPartnerCompanyName" >Kod</label>
+          <input type="text" class="form-control" formControlName="businesPartnerCompanyName" id="businesPartnerCompanyName"
+                 placeholder="Nazwa Partnera Handlowego">
+          <div  *ngIf="businesPartnerCompanyName.invalid && (businesPartnerCompanyName.dirty || businesPartnerCompanyName.touched)"
+                class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="businesPartnerCompanyName.errors.required">
+              <label
+                class="text-danger">
+                To pole jest wymagane
+              </label>
+
+            </div>
+
+
+          </div>
+      <div class="form-group col-md-6">
+        <label class="label" for="fullName" >Imię i nazwisko</label>
         <input type="text" class="form-control" formControlName="fulName" id="fullName"
                placeholder="Imię i nazwisko">
         <div  *ngIf="fulName.invalid && (fulName.dirty || fulName.touched)"
@@ -104,16 +138,12 @@
           </Span>
 
         </div>
-        <div class="form-group col-md-6">
-          <span>
-            <label for="isAdmin" class="label">Status Administratora</label><input type="checkbox" class="form-control" formControlName="isAdmin" id="isAdmin">
-          </span>
-
-        </div>
       </div>
     </div>
     <div class="addButon">
       <button type="submit" [disabled]="!userForm.valid" class="btn btn-danger">Zapisz</button>
+    </div>
+      </div>
     </div>
   </form>
 

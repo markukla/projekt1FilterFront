@@ -75,6 +75,10 @@ export class UserBackendService {
     const getUrl = `${this.rootURL}/users/emails/${email}`;
     return this.http.get<boolean>(getUrl);
   }
+  findOtherUserByEmail(email: string, id: string): Observable<boolean>{
+    const getUrl = `${this.rootURL}/users/${id}/emails/${email}`;
+    return this.http.get<boolean>(getUrl);
+  }
   changeUserPasswordById(id: string, passwordData: CHangePasswordByAdminDto): Observable<HttpResponse<User>> {
     const url = `${this.rootURL}/users/${id}/changePassword`;
     return this.http.patch<User>(url, passwordData, { observe: 'response'} );

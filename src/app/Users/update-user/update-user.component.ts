@@ -13,7 +13,7 @@ import {UserHasAdminRole} from '../../helpers/otherGeneralUseFunction/checkUserR
 })
 export class UpdateUserComponent implements OnInit, AfterContentChecked {
   operationStatusMessage: string;
-  selectedId: string;
+  selectedId = String(this.userTableService.selectedId);
 
   constructor(
     private userBackendService: UserBackendService,
@@ -22,19 +22,16 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
-    this.selectedId = String(this.userTableService.selectedId);
-
   }
 
-  // @ts-ignore
   userForm = new FormGroup({
     // tslint:disable-next-line:max-line-length
     fulName: new FormControl('', [Validators.nullValidator, Validators.required]),
     // tslint:disable-next-line:max-line-length
     email: new FormControl('', {
-      updateOn: 'blur',
+      updateOn: 'change',
       validators: [Validators.nullValidator, Validators.required, Validators.email],
-      asyncValidators: [this.userValidatorService.emailAsyncValidator()]
+      asyncValidators: [this.userValidatorService.emailAsyncValidatorForUpdate(this.selectedId)]
     }),
     active: new FormControl(false),
     // tslint:disable-next-line:max-line-length

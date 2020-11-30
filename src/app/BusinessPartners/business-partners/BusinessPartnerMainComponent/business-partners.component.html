@@ -3,8 +3,8 @@
 
 <div>
 
-  <a  [routerLink]="['/users/add']" routerLinkActive="active">
-    Dodaj nowego użytkownika
+  <a  [routerLink]="['/businessPartners/add']" routerLinkActive="active">
+    Dodaj Nowego Partner Handlowego
   </a>
 </div>
 
@@ -13,41 +13,35 @@
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
-      <th> L.p <br></th>
-      <th> Imię i Nazwisko> </th>
-      <th>Email</th>
+      <th [appSort]="partners" data-order="desc" data-name="code" scope="col"> Kod <br></th>
+      <th [appSort]="partners" data-order="desc" data-name="businesPartnerCompanyName" scope="col"> Nazwa Partnera Handlowego> </th>
+      <th [appSort]="partners" data-order="desc" data-name="fulName" scope="col">Imię i nazwisko</th>
+      <th [appSort]="partners" data-order="desc" data-name="email" scope="col">Email</th>
+      <th>Ilość</th>
 
+    </tr>
+    <tr>
+      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="code"  placeholder="Wyszukaj"/> </th>
+      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="businesPartnerCompanyName"  placeholder="Wyszukaj"/>  </th>
+      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="fulName"  placeholder="Wyszukaj"/></th>
+      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="email"  placeholder="Wyszukaj"/></th>
+      <th>{{recordNumbers}}</th>
     </tr>
     </thead>
     <tbody>
-    <p>Administratorzy</p>
-    <tr *ngFor="let admin of admins; let i=index">
-      <td>{{i+1}}</td>
-      <td>{{admin.fulName}}</td>
-      <td>{{admin.email}}</td>
+
+    <tr *ngFor="let partner of partners; let i=index">
+      <td>{{partner.code}}</td>
+      <td>{{partner.businesPartnerCompanyName}}</td>
+      <td>{{partner.fulName}}</td>
+      <td>{{partner.email}}</td>
       <td>
         <br>
-        <button (click)="changePaswordForUserId(admin.id)" [title]="'zmień hasło'">Zmień Hasło</button>
-        <button (click)="updateSelectedRecord(admin.id);" [title]="updateButtonInfo">u</button>
-        <button [title]="setBlockButtonActionInfoMessage(admin)" (click)="blockOrUnblockUser(admin)">{{setBlockButtonStatusMessage(admin)}}</button>
-        <button (click)="this.deleteSelectedRecord(admin.id)" [title]="deleteButtonInfo" >x</button>
-
-      </td>
-
-    </tr>
-    </tbody>
-    <tbody>
-    <p>Edytorzy</p>
-    <tr *ngFor="let editor of editors;let i=index">
-      <td>{{i+1}}</td>
-      <td>{{editor.fulName}}</td>
-      <td>{{editor.email}}</td>
-      <td>
-        <br>
-        <button (click)="changePaswordForUserId(editor.id)" [title]="'zmień hasło'">Zmień Hasło</button>
-        <button (click)="updateSelectedRecord(editor.id);" [title]="updateButtonInfo">u</button>
-        <button [title]="setBlockButtonActionInfoMessage(editor)" (click)="blockOrUnblockUser(editor)">{{setBlockButtonStatusMessage(editor)}}</button>
-        <button (click)="this.deleteSelectedRecord(editor.id)" [title]="deleteButtonInfo" >x</button>
+        <button (click)="changePaswordForUserId(partner.id)" [title]="'zmień hasło'">Zmień Hasło</button>
+        <button (click)="updateSelectedRecord(partner.id);" [title]="updateButtonInfo">aktualizuj</button>
+        <button [title]="setBlockButtonActionInfoMessage(partner)" (click)="blockOrUnblockUser(partner)">{{setBlockButtonStatusMessage(partner)}}</button>
+        <button (click)="showOrders(partner.id);" [title]="'Zapytania o indeks worka'">zapytania</button>
+        <button (click)="this.deleteSelectedRecord(partner.id)" [title]="deleteButtonInfo" >x</button>
 
       </td>
 

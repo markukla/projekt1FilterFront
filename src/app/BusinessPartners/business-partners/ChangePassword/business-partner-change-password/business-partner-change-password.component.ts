@@ -6,6 +6,9 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import CHangePasswordByAdminDto from '../../../../Users/users/userTypes/changePasswordDto';
 import {UserHasAdminRole} from '../../../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
+import {BusinesPartnerBackendService} from '../../BusinessPartnerServices/busines-partner-backend.service';
+import {BusinessPartnerTableService} from '../../BusinessPartnerServices/business-partner-table.service';
+import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/business-partner-validator.service';
 
 @Component({
   selector: 'app-business-partner-change-password',
@@ -18,22 +21,22 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
   selectedId: string;
 
   constructor(
-    private userBackendService: UserBackendService,
-    private userTableService: UsersTableService,
-    public userValidatorService: UserValidatorService,
+    private backendService: BusinesPartnerBackendService,
+    private tableService: BusinessPartnerTableService,
+    public validatorService: BusinessPartnerValidatorService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
-    this.selectedId = String(this.userTableService.selectedId);
+    this.selectedId = String(this.tableService.selectedId);
 
   }
 
   // @ts-ignore
   userForm = new FormGroup({
     // tslint:disable-next-line:max-line-length
-    password: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(8),  this.userValidatorService.patternValidator(/(?=(.*\d){2})/, { hasNumber: true }), this.userValidatorService.patternValidator(/[A-Z]/, { hasCapitalCase: true }), this.userValidatorService.patternValidator(/[a-z]/, { hasSmallCase: true })]),
+    password: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(8),  this.validatorService.patternValidator(/(?=(.*\d){2})/, { hasNumber: true }), this.validatorService.patternValidator(/[A-Z]/, { hasCapitalCase: true }), this.validatorService.patternValidator(/[a-z]/, { hasSmallCase: true })]),
     confirmPassword: new FormControl('', [Validators.required]),
-  }, {updateOn: 'change', validators: [this.userValidatorService.passwordMatchValidator({NoPassswordMatch: true})]});
+  }, {updateOn: 'change', validators: [this.validatorService.passwordMatchValidator({NoPassswordMatch: true})]});
 
   // tslint:disable-next-line:typedef
   get confirmPassword() {
@@ -49,7 +52,7 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
   }
   onSubmit(): void {
     const changePasswordData: CHangePasswordByAdminDto = {newPassword: this.password.value};
-    this.userBackendService.changeUserPasswordById(this.selectedId, changePasswordData).subscribe((user) => {
+    this.backendService.changeUserPasswordById(this.selectedId, changePasswordData).subscribe((user) => {
       this.operationStatusMessage = 'Hasło zostało zmienione';
       this.cleanOperationMessage();
     }, error => {
@@ -70,7 +73,7 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
     }, 2000);
   }
   getSelectedUserData(): void {
-    this.userBackendService.findUserById(this.selectedId).subscribe((user) => {
+    this.backendService.findRecordById(this.selectedId).subscribe((user) => {
       if (user.body) {
         this.userFulname = user.body.fulName;
         this.userEmail = user.body.email;

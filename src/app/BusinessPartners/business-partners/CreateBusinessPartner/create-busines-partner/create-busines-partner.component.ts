@@ -3,6 +3,8 @@ import {UserBackendService} from '../../../../Users/UserServices/user-backend.se
 import {UserValidatorService} from '../../../../Users/UserServices/user-validator.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
+import {BusinesPartnerBackendService} from '../../BusinessPartnerServices/busines-partner-backend.service';
+import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/business-partner-validator.service';
 
 @Component({
   selector: 'app-create-busines-partner',
@@ -14,8 +16,8 @@ export class CreateBusinesPartnerComponent implements OnInit {
   operationStatusMessage: string;
 
   constructor(
-    private userBackendService: UserBackendService,
-    public userValidatorService: UserValidatorService,
+    private bakcendService: BusinesPartnerBackendService,
+    public validatorService: BusinessPartnerValidatorService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
@@ -25,21 +27,30 @@ export class CreateBusinesPartnerComponent implements OnInit {
   // @ts-ignore
   userForm = new FormGroup({
     // tslint:disable-next-line:max-line-length
+    code: new FormControl('', [Validators.nullValidator, Validators.required]),
+    businesPartnerCompanyName: new FormControl('', [Validators.nullValidator, Validators.required]),
     fulName: new FormControl('', [Validators.nullValidator, Validators.required]),
     // tslint:disable-next-line:max-line-length
-    email: new FormControl('', {updateOn: 'blur', validators: [Validators.nullValidator, Validators.required, Validators.email], asyncValidators: [this.userValidatorService.emailAsyncValidator()]}),
+    email: new FormControl('', {updateOn: 'change', validators: [Validators.nullValidator, Validators.required, Validators.email], asyncValidators: [this.validatorService.emailAsyncValidator()]}),
     // tslint:disable-next-line:max-line-length
-    password: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(8),  this.userValidatorService.patternValidator(/(?=(.*\d){2})/, { hasNumber: true }), this.userValidatorService.patternValidator(/[A-Z]/, { hasCapitalCase: true }), this.userValidatorService.patternValidator(/[a-z]/, { hasSmallCase: true })]),
+    password: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(8),  this.validatorService.patternValidator(/(?=(.*\d){2})/, { hasNumber: true }), this.validatorService.patternValidator(/[A-Z]/, { hasCapitalCase: true }), this.validatorService.patternValidator(/[a-z]/, { hasSmallCase: true })]),
     confirmPassword: new FormControl('', [Validators.required]),
     // tslint:disable-next-line:max-line-length
     active: new FormControl(false),
     // tslint:disable-next-line:max-line-length
-    isAdmin: new FormControl(false)
-  }, {updateOn: 'change', validators: [this.userValidatorService.passwordMatchValidator({NoPassswordMatch: true})]});
+  }, {updateOn: 'change', validators: [this.validatorService.passwordMatchValidator({NoPassswordMatch: true})]});
 
   // tslint:disable-next-line:typedef
   get fulName() {
     return this.userForm.get('fulName');
+  }
+  // tslint:disable-next-line:typedef
+  get code() {
+    return this.userForm.get('code');
+  }
+  // tslint:disable-next-line:typedef
+  get businesPartnerCompanyName() {
+    return this.userForm.get('businesPartnerCompanyName');
   }
   // tslint:disable-next-line:typedef
   get confirmPassword() {
@@ -65,7 +76,7 @@ export class CreateBusinesPartnerComponent implements OnInit {
 
 
   onSubmit(): void {
-    this.userBackendService.addUsers(this.userForm.value).subscribe((user) => {
+    this.bakcendService.addOneRecord(this.userForm.value).subscribe((user) => {
       this.operationStatusMessage = 'Dodano nowego użytkownika';
       this.cleanOperationMessage();
       this.userForm.reset();
@@ -75,7 +86,7 @@ export class CreateBusinesPartnerComponent implements OnInit {
     });
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/users');
+    this.router.navigateByUrl('/businessPartners');
   }
 
   ngOnInit(): void {

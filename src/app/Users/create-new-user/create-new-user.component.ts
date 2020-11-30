@@ -29,7 +29,7 @@ export class CreateNewUserComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     fulName: new FormControl('', [Validators.nullValidator, Validators.required]),
     // tslint:disable-next-line:max-line-length
-    email: new FormControl('', {updateOn: 'blur', validators: [Validators.nullValidator, Validators.required, Validators.email], asyncValidators: [this.userValidatorService.emailAsyncValidator()]}),
+    email: new FormControl('', {updateOn: 'change', validators: [Validators.nullValidator, Validators.required, Validators.email], asyncValidators: [this.userValidatorService.emailAsyncValidator()]}),
     // tslint:disable-next-line:max-line-length
     password: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(8),  this.userValidatorService.patternValidator(/(?=(.*\d){2})/, { hasNumber: true }), this.userValidatorService.patternValidator(/[A-Z]/, { hasCapitalCase: true }), this.userValidatorService.patternValidator(/[a-z]/, { hasSmallCase: true })]),
     confirmPassword: new FormControl('', [Validators.required]),
