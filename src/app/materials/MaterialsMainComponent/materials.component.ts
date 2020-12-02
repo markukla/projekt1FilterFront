@@ -111,16 +111,16 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
     }
   });*/
   getRecords(): void {
-    this.materialBackendService.getMaterials().subscribe((materials) => {
-      this.materialTableService.materialList.length = 0;
-      this.materialTableService.materialList = materials.body;
-      this.materials = this.materialTableService.getMaterialsTable();
+    this.materialBackendService.getRecords().subscribe((materials) => {
+      this.materialTableService.records.length = 0;
+      this.materialTableService.records = materials.body;
+      this.materials = this.materialTableService.getRecords();
     });
 
   }
 
   deleteSelectedRecord(materialId: number): void {
-    this.materialBackendService.deleteMaterialById(String(materialId)).subscribe((response) => {
+    this.materialBackendService.deleteRecordById(String(materialId)).subscribe((response) => {
       this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
     }, error => {
       this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';

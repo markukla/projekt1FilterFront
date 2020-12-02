@@ -15,7 +15,7 @@ export class ValidateMaterialCodeUniqueService  {
  return (
     ctrl: AbstractControl
   ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
-    return this.materialBackendService.findMaterialBycode(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
+    return this.materialBackendService.findRecordBycode(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
       catchError(() => of(null))
     );
   };
@@ -25,7 +25,7 @@ export class ValidateMaterialCodeUniqueService  {
     return (
       ctrl: AbstractControl
     ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
-      return this.materialBackendService. findMaterialByName(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
+      return this.materialBackendService. findRecordByName(ctrl.value).pipe(map(istaken => (istaken  ? { taken: true } : null)),
         catchError(() => of(null))
       );
     };

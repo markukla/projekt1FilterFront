@@ -8,32 +8,32 @@ import BackendErrorResponse from '../../helpers/ErrorHandling/backendErrorRespon
   providedIn: 'root'
 })
 export class MaterialTableService {
-  materialList: Material[] = [];
+  records: Material[] = [];
   selectedId: number;
   constructor() {
   }
 
 
-  getMaterialsTable(): Material[] {
-    return this.materialList;
+  getRecords(): Material[] {
+    return this.records;
   }
 
   addRecordToTable(material: Material): void {
-          this.materialList.push(material);
+          this.records.push(material);
   }
 
   updateTableRecord(id: number, updatedMaterial: Material): void {
-        for (let i = 0; i < this.materialList.length; i++) {
-          if (this.materialList[i].id === updatedMaterial.id) {
-            this.materialList[i] = updatedMaterial;
+        for (let i = 0; i < this.records.length; i++) {
+          if (this.records[i].id === updatedMaterial.id) {
+            this.records[i] = updatedMaterial;
           }
         }
   }
 
   deleteRecordById(id: number): any {
-    this.materialList.forEach((material: Material, index: number) => {
+    this.records.forEach((material: Material, index: number) => {
           if (material.id === id) {
-            this.materialList.splice(index, 1);
+            this.records.splice(index, 1);
           }
         });
   }

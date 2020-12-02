@@ -41,7 +41,7 @@ export class CreateNewMaterialComponent implements OnInit{
     return this.materialForm.get('materialName');
   }
   onSubmit(): void {
-    this.materialbackendService.addMaterials(this.materialForm.value).subscribe((material) => {
+    this.materialbackendService.addRecords(this.materialForm.value).subscribe((material) => {
       this.showoperationStatusMessage = 'Dodano nowego użytkwonika';
       this.cleanOperationMessage();
     }, error => {

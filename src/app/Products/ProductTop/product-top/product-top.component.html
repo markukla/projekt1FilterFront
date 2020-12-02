@@ -1,1 +1,55 @@
-<p>product-top works!</p>
+
+<!--sss-->
+
+<div>
+
+  <a  [routerLink]="['/products/tops']" routerLinkActive="active">
+    {{ createNewMaterialDescription }}
+  </a>
+</div>
+
+<div class="materialComponent">
+
+  <table class="table table-striped border mt-1">
+    <thead>
+    <tr>
+      <th [appSort]="records" data-order="desc" data-name="code" scope="col">Kod wykończenia góry <br></th>
+      <th [appSort]="records" data-order="desc" data-name="name" scope="col">Nazwa wykończenia góry</th>
+      <th>ilość</th>
+
+    </tr>
+    <tr>
+      <th>
+
+        <input class="tableSearchInput" [appProductTopSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
+      </th>
+      <th><input class="tableSearchInput" [appProductTopSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
+      <th>{{this.recordNumbers}}</th>
+    </tr>
+
+    </thead>
+    <tbody>
+
+    <tr *ngFor="let record of records">
+      <td>{{record.code}}</td>
+      <td>{{record.name}}</td>
+      <td>
+        <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
+        <br>
+        <button (click)="this.deleteSelectedRecord(record.id)" [title]="deleteButtonInfo" >x</button>
+        <button (click)="updateSelectedRecord(record.id);" [title]="updateButtonInfo">u</button>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+

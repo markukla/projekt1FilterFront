@@ -10,29 +10,28 @@ import {MaterialTableService} from './material-table.service';
   providedIn: 'root'
 })
 export class MaterialBackendService {
-
-  rootURL = '/api';
-
+  rootURL = 'http://localhost:5000';
+  endpointUrl = '/materials';
   constructor(private http: HttpClient,
               private materialTableService: MaterialTableService) {
   }
 
-  getMaterials(): Observable<HttpResponse<Material[]>> {
-    return this.http.get<Material[]>('http://localhost:5000/materials', {observe: 'response'});
+  getRecords(): Observable<HttpResponse<Material[]>> {
+    return this.http.get<Material[]>(this.rootURL + this.endpointUrl, {observe: 'response'});
   }
 
   // tslint:disable-next-line:typedef
-  addMaterials(material: Material): Observable<HttpResponse<Material>> {
+  addRecords(material: Material): Observable<HttpResponse<Material>> {
     // tslint:disable-next-line:max-line-length
-    return this.http.post<Material>('http://localhost:5000/materials', material, {observe: 'response'}).pipe(
+    return this.http.post<Material>(this.rootURL + this.endpointUrl, material, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((material) => {
         this.materialTableService.addRecordToTable(material.body);
       }));
   }
 
-  deleteMaterialById(id: string): Observable<HttpResponse<any>> {
-    const deleteUrl = `http://localhost:5000/materials/${id}`;
+  deleteRecordById(id: string): Observable<HttpResponse<any>> {
+    const deleteUrl = `${this.rootURL + this.endpointUrl}/${id}`;
     return this.http.delete(deleteUrl, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((material) => {
@@ -40,8 +39,8 @@ export class MaterialBackendService {
       }));
   }
 
-  updateMaterialById(id: string, material: Material): Observable<HttpResponse<Material>> {
-    const updateUrl = `http://localhost:5000/materials/${id}`;
+  updateRecordById(id: string, material: Material): Observable<HttpResponse<Material>> {
+    const updateUrl = `${this.rootURL + this.endpointUrl}/${id}`;
     return this.http.patch<Material>(updateUrl, material, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((material) => {
@@ -49,37 +48,18 @@ export class MaterialBackendService {
       }));
   }
 
-  findMaterialBycode(materiaCode: string): Observable<boolean> {
-    const url = `http://localhost:5000/materials/materialCode/${materiaCode}`;
+  findRecordBycode(materiaCode: string): Observable<boolean> {
+    const url = `${this.rootURL + this.endpointUrl}/codes/${materiaCode}`;
     return this.http.get<boolean>(url);
 
   }
-  findMaterialByName(materiaName: string): Observable<boolean> {
-    const url = `http://localhost:5000/materials/materialName/${materiaName}`;
+  findRecordByName(materiaName: string): Observable<boolean> {
+    const url = `${this.rootURL + this.endpointUrl}/names/${materiaName}`;
     return this.http.get<boolean>(url);
 
   }
-
-  // tslint:disable-next-line:typedef
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error.message);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        `message was: ${error.error}`);
-    }
-    // Return an observable with a user-facing error message.
-    return throwError(
-      `Something bad happened: please try again later`);
-  }
-
-
-  findMaterialById(materialToUpdateId: string): Observable<HttpResponse<Material>> {
-    const getUrl = `http://localhost:5000/materials/${materialToUpdateId}`;
+  findRecordById(materialToUpdateId: string): Observable<HttpResponse<Material>> {
+    const getUrl = `${this.rootURL + this.endpointUrl}/${materialToUpdateId}`;
     return this.http.get<Material>(getUrl, {observe: 'response'} );
   }
 }

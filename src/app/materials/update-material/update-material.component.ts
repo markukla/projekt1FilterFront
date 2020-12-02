@@ -18,7 +18,7 @@ export class UpdateMaterialComponent implements OnInit {
   materialToUpdate: Material;
   materialToUpdateId: number;
   materialForm = new FormGroup({
-    fulName: new FormControl('', ),
+    materialCode: new FormControl('', ),
     materialName: new FormControl('', )
   });
 
@@ -30,9 +30,9 @@ export class UpdateMaterialComponent implements OnInit {
   ngOnInit(): void {
     this.materialToUpdateId = this.materialTableService.selectedId;
     console.log(`materialToUpdateId= ${this.materialToUpdateId}`);
-    this.materialBackendService.findMaterialById(String(this.materialToUpdateId)).subscribe((material) => {
+    this.materialBackendService.findRecordById(String(this.materialToUpdateId)).subscribe((material) => {
         this.materialToUpdate = material.body;
-        this.materialForm.controls.materrialCode.setValue(this.materialToUpdate.materialCode);
+        this.materialForm.controls.materialCode.setValue(this.materialToUpdate.materialCode);
         this.materialForm.controls.materialName.setValue(this.materialToUpdate.materialName);
       },
       error => {
@@ -45,7 +45,7 @@ export class UpdateMaterialComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     console.log(`materialFOrrmValu= ${this.materialForm.value}`);
     // tslint:disable-next-line:max-line-length
-    this.materialBackendService.updateMaterialById(String(this.materialTableService.selectedId), this.materialForm.value).subscribe((material) => {
+    this.materialBackendService.updateRecordById(String(this.materialTableService.selectedId), this.materialForm.value).subscribe((material) => {
         this.operationStatusMessage = 'dodano nowy materiał';
         this.resetMaterialFormValueAndOperationStatus();
       }, error => {

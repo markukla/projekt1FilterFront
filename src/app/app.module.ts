@@ -36,6 +36,9 @@ import { BusinessPartnerChangePasswordComponent } from './BusinessPartners/busin
 import { CreateBusinesPartnerComponent } from './BusinessPartners/business-partners/CreateBusinessPartner/create-busines-partner/create-busines-partner.component';
 import { UpdateBusinessPartnerComponent } from './BusinessPartners/business-partners/UpdateBusinessPartner/update-business-partner/update-business-partner.component';
 import { PartersSearchDirective } from './helpers/directive/ForPartners/parters-search.directive';
+import { CreateProductTopComponent } from './Products/ProductTop/create-product-top/create-product-top.component';
+import { UpdateProductTopComponent } from './Products/ProductTop/update-product-top/update-product-top.component';
+import { ProductTopSearchDirective } from './helpers/directive/ForProductTop/product-top-search.directive';
 
 
 
@@ -65,6 +68,9 @@ import { PartersSearchDirective } from './helpers/directive/ForPartners/parters-
     CreateBusinesPartnerComponent,
     UpdateBusinessPartnerComponent,
     PartersSearchDirective,
+    CreateProductTopComponent,
+    UpdateProductTopComponent,
+    ProductTopSearchDirective,
     ],
   imports: [
     BrowserModule,
@@ -88,7 +94,9 @@ import { PartersSearchDirective } from './helpers/directive/ForPartners/parters-
       { path: 'businessPartners/changePassword', component: BusinessPartnerChangePasswordComponent},
       { path: 'products', component: ProductComponent},
       { path: 'products/bottom', component: ProductBottomComponent},
-      { path: 'products/top', component: ProductTopComponent},
+      { path: 'products/tops', component: ProductTopComponent},
+      { path: 'products/tops/add', component: ProductTopComponent},
+      { path: 'products/tops/update', component: ProductTopComponent},
       { path: 'products/productsTypes', component: ProductTopComponent},
       {path: 'login', component: LoginComponent }
       ])

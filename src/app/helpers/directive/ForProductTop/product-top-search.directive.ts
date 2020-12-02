@@ -1,23 +1,13 @@
-import {
-  AfterContentChecked,
-  AfterContentInit,
-  AfterViewChecked,
-  AfterViewInit,
-  Directive,
-  ElementRef, EventEmitter,
-  HostListener,
-  Input, OnInit, Output,
-  Renderer2
-} from '@angular/core';
-import {Sort} from '../../../util/sort';
-import {MaterialBackendService} from '../../../materials/MaterialServices/material-backend.service';
+import {Directive, ElementRef, HostListener, Input, Renderer2} from '@angular/core';
+import {BusinesPartnerBackendService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/busines-partner-backend.service';
+import {ProductTopBackendService} from '../../../Products/ProductTop/ProductTopServices/product-top-backend.service';
 
 @Directive({
-  selector: '[appSearch]'
+  selector: '[appProductTopSearch]'
 })
-export class MaterialSearchDirective implements AfterContentChecked {
+export class ProductTopSearchDirective {
 
-  @Input('appSearch') searchedArray: Array<any>;
+  @Input('appProductTopSearch') searchedArray: Array<any>;
 
   orginalArrayCopy: Array<any> = [];
 
@@ -31,18 +21,14 @@ export class MaterialSearchDirective implements AfterContentChecked {
 
   constructor(private renderer: Renderer2,
               private targetElement: ElementRef,
-              private materialBackendService: MaterialBackendService) {
+              private backendService: ProductTopBackendService) {
     this.allowOrginalArrayCopyChange = true;
   }
-
-  ngAfterContentChecked(): void {
-  }
-
   @HostListener('input')
 // tslint:disable-next-line:typedef
   serchTable() {
-    this.materialBackendService.getRecords().subscribe((materials) => {
-      this.orginalArrayCopy = materials.body;
+    this.backendService.getRecords().subscribe((records) => {
+      this.orginalArrayCopy = records.body;
       const elem = this.targetElement.nativeElement;
 
       // tslint:disable-next-line:max-line-length
