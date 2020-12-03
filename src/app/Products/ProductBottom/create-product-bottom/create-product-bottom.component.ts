@@ -1,23 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import {MaterialBackendService} from '../../../materials/MaterialServices/material-backend.service';
-import {ValidateMaterialCodeUniqueService} from '../../../materials/MaterialServices/validate-material-code-unique.service';
+import {ProductTopBackendService} from '../../ProductTop/ProductTopServices/product-top-backend.service';
+import {ValidateProductTopService} from '../../ProductTop/ProductTopServices/validate-product-top.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ProductTopBackendService} from '../ProductTopServices/product-top-backend.service';
-import {ValidateProductTopService} from '../ProductTopServices/validate-product-top.service';
+import {ProductBottomBackendService} from '../ProductBottomServices/product-bottom-backend.service';
+import {ProductBottomValidatorService} from '../ProductBottomServices/product-bottom-validator.service';
 
 @Component({
-  selector: 'app-create-product-top',
-  templateUrl: './create-product-top.component.html',
-  styleUrls: ['./create-product-top.component.css']
+  selector: 'app-create-product-bottom',
+  templateUrl: './create-product-bottom.component.html',
+  styleUrls: ['./create-product-bottom.component.css']
 })
-export class CreateProductTopComponent implements OnInit {
+export class CreateProductBottomComponent implements OnInit {
   operationMessage: string;
   showoperationStatusMessage: string;
 
   constructor(
-    private backendService: ProductTopBackendService,
-    public validationService: ValidateProductTopService,
+    private backendService: ProductBottomBackendService,
+    public validationService: ProductBottomValidatorService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
@@ -58,5 +58,6 @@ export class CreateProductTopComponent implements OnInit {
       this.showoperationStatusMessage = null;
     }, 2000);
   }
+
 
 }

@@ -1,18 +1,17 @@
-import {Injectable} from '@angular/core';
-import {MaterialBackendService} from '../../../materials/MaterialServices/material-backend.service';
+import { Injectable } from '@angular/core';
+import {ProductTopBackendService} from '../../ProductTop/ProductTopServices/product-top-backend.service';
 import {AbstractControl, AsyncValidatorFn, ValidationErrors} from '@angular/forms';
 import {Observable, of} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
-import {ProductTopBackendService} from './product-top-backend.service';
+import {ProductBottomBackendService} from './product-bottom-backend.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ValidateProductTopService {
-  constructor(private backendService: ProductTopBackendService) {
+export class ProductBottomValidatorService {
+  constructor(private backendService: ProductBottomBackendService) {
     console.log(this.backendService);
   }
-
   codeValidator(): AsyncValidatorFn {
     return (
       ctrl: AbstractControl
@@ -53,6 +52,3 @@ export class ValidateProductTopService {
     };
   }
 }
-
-
-

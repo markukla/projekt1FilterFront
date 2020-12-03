@@ -17,7 +17,7 @@ export class ProductTopComponent implements OnInit, AfterContentChecked {
   records: ProductTop[];
   @Input()
   orginalMaterialsCopy: Material[];
-  createNewMaterialDescription = 'Create new Material';
+  createNewMaterialDescription = 'Dodaj Nowy';
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;
   operationStatusMessage: string;

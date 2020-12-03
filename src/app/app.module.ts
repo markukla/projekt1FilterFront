@@ -39,6 +39,9 @@ import { PartersSearchDirective } from './helpers/directive/ForPartners/parters-
 import { CreateProductTopComponent } from './Products/ProductTop/create-product-top/create-product-top.component';
 import { UpdateProductTopComponent } from './Products/ProductTop/update-product-top/update-product-top.component';
 import { ProductTopSearchDirective } from './helpers/directive/ForProductTop/product-top-search.directive';
+import { ProductBottomSearchDirective } from './helpers/directive/ForProductBottom/product-bottom-search.directive';
+import { CreateProductBottomComponent } from './Products/ProductBottom/create-product-bottom/create-product-bottom.component';
+import { UpdateProductBottomComponent } from './Products/ProductBottom/update-product-bottom/update-product-bottom.component';
 
 
 
@@ -71,6 +74,9 @@ import { ProductTopSearchDirective } from './helpers/directive/ForProductTop/pro
     CreateProductTopComponent,
     UpdateProductTopComponent,
     ProductTopSearchDirective,
+    ProductBottomSearchDirective,
+    CreateProductBottomComponent,
+    UpdateProductBottomComponent,
     ],
   imports: [
     BrowserModule,
@@ -93,10 +99,15 @@ import { ProductTopSearchDirective } from './helpers/directive/ForProductTop/pro
       { path: 'businessPartners/update', component: UpdateBusinessPartnerComponent},
       { path: 'businessPartners/changePassword', component: BusinessPartnerChangePasswordComponent},
       { path: 'products', component: ProductComponent},
-      { path: 'products/bottom', component: ProductBottomComponent},
+      { path: 'products/types', component: ProductTypeComponent},
+      { path: 'products/types/add', component: ProductTypeComponent},
+      { path: 'products/types/update', component: ProductTypeComponent},
+      { path: 'products/bottoms', component: ProductBottomComponent},
+      { path: 'products/bottoms/add', component: CreateProductBottomComponent},
+      { path: 'products/bottoms/update', component: UpdateProductBottomComponent},
       { path: 'products/tops', component: ProductTopComponent},
-      { path: 'products/tops/add', component: ProductTopComponent},
-      { path: 'products/tops/update', component: ProductTopComponent},
+      { path: 'products/tops/add', component: CreateProductTopComponent},
+      { path: 'products/tops/update', component: UpdateProductTopComponent},
       { path: 'products/productsTypes', component: ProductTopComponent},
       {path: 'login', component: LoginComponent }
       ])

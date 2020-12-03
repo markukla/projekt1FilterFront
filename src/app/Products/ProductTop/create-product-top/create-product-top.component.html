@@ -1,6 +1,6 @@
 <div class="createMaterial">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
-  <h2>Dodaj nowy materiał</h2>
+  <h2>Dodaj Nowe wykończenie góry</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="form-group col-md-6">
@@ -11,16 +11,11 @@
               class="alert alert-danger">
 
           <div class="validatorInfo" *ngIf="name.errors.required">
-            Podanie kodu materiału jest wymagane
+            To pole jest wymagane.
           </div>
-          <div class="validatorInfo" *ngIf="name.errors.minlength">
-            Kod materiały nie może być krótszy niż 6 znaków
-          </div>
-          <div class="validatorInfo" *ngIf="name.errors.maxlength">
-            Kod materiały nie może być dłuższy niż 6 znaków.
-          </div>
+
           <div class="has-text-danger" *ngIf="name.errors?.taken">  <!--error name is name of error in async validatod:ValidateMaterialCodeUniqueService-->
-            Ten kod materiału jest już zajęty
+            Podana nazwa jest już zajęta
           </div>
 
         </div>
@@ -32,10 +27,16 @@
                class="alert alert-danger">
 
             <div class="validatorInfo" *ngIf="code.errors.required">
-              Podanie nazwy materiału jest wymgane
+              To pole jest wymagane
             </div>
             <div class="validatorInfo" *ngIf="code.errors?.taken">
-              Podana nazwa materiału jest już zajęta.
+              Podana kod jest już zajęty.
+            </div>
+            <div class="validatorInfo" *ngIf="code.errors.minlength">
+              Kod nie może być krótszy niż 1 znak
+            </div>
+            <div class="validatorInfo" *ngIf="code.errors.maxlength">
+              Kod nie może być dłuższy niż 1 znak.
             </div>
           </div>
 
@@ -43,7 +44,7 @@
       </div>
     </div>
     <div class="addButon">
-      <button type="submit" [disabled]="!form.valid" class="btn btn-danger">Zatwierdź</button>
+      <button type="submit" [disabled]="!form.valid" class="btn btn-danger">Zapisz</button>
     </div>
   </form>
 

@@ -1,23 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import {Material} from '../../../materials/MaterialsMainComponent/material';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MaterialTableService} from '../../../materials/MaterialServices/material-table.service';
-import {MaterialBackendService} from '../../../materials/MaterialServices/material-backend.service';
-import {Router} from '@angular/router';
-import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
 import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
-import {ProductTopTableService} from '../ProductTopServices/product-top-table.service';
-import {ProductTopBackendService} from '../ProductTopServices/product-top-backend.service';
-import {ValidateProductTopService} from '../ProductTopServices/validate-product-top.service';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {ProductTopTableService} from '../../ProductTop/ProductTopServices/product-top-table.service';
+import {ProductTopBackendService} from '../../ProductTop/ProductTopServices/product-top-backend.service';
+import {ValidateProductTopService} from '../../ProductTop/ProductTopServices/validate-product-top.service';
+import {Router} from '@angular/router';
+import ProductBottom from '../../ProductTypesAndClasses/productBottom.entity';
 
 @Component({
-  selector: 'app-update-product-top',
-  templateUrl: './update-product-top.component.html',
-  styleUrls: ['./update-product-top.component.css']
+  selector: 'app-update-product-bottom',
+  templateUrl: './update-product-bottom.component.html',
+  styleUrls: ['./update-product-bottom.component.css']
 })
-export class UpdateProductTopComponent implements OnInit {
+export class UpdateProductBottomComponent implements OnInit {
   operationStatusMessage: string;
-  recordToUpdate: ProductTop;
+  recordToUpdate: ProductBottom;
   recordToUpdateId: number = this.tableService.selectedId;
   form = new FormGroup({
     // tslint:disable-next-line:max-line-length
@@ -62,8 +59,8 @@ export class UpdateProductTopComponent implements OnInit {
         this.operationStatusMessage = 'pomyślnie zaktualizowano';
         this.resetMaterialFormValueAndOperationStatus();
       }, error => {
-          this.operationStatusMessage = 'Wystąpił błąd, aktualizacja niepomyślna ';
-          this.resetMaterialFormValueAndOperationStatus();
+        this.operationStatusMessage = 'Wystąpił błąd, aktualizacja niepomyślna ';
+        this.resetMaterialFormValueAndOperationStatus();
       }
     );
 
@@ -78,5 +75,6 @@ export class UpdateProductTopComponent implements OnInit {
   closeAndGoBack(): void {
     this.router.navigateByUrl('/products/tops');
   }
+
 
 }
