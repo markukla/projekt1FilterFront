@@ -5,6 +5,8 @@ import {ProductTopTableService} from '../../ProductTop/ProductTopServices/produc
 import {ProductTopBackendService} from '../../ProductTop/ProductTopServices/product-top-backend.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import ProductBottom from '../../ProductTypesAndClasses/productBottom.entity';
+import {ProductBottomTableService} from '../ProductBottomServices/product-bottom-table.service';
+import {ProductBottomBackendService} from '../ProductBottomServices/product-bottom-backend.service';
 
 @Component({
   selector: 'app-product-bottom',
@@ -24,8 +26,8 @@ export class ProductBottomComponent implements OnInit, AfterContentChecked {
   recordNumbers: number;
 
 
-  constructor(public tableService: ProductTopTableService,
-              public backendService: ProductTopBackendService,
+  constructor(public tableService: ProductBottomTableService,
+              public backendService: ProductBottomBackendService,
               private router: Router,
               private activedIdParam: ActivatedRoute) {
   }

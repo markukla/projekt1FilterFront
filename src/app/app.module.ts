@@ -42,6 +42,10 @@ import { ProductTopSearchDirective } from './helpers/directive/ForProductTop/pro
 import { ProductBottomSearchDirective } from './helpers/directive/ForProductBottom/product-bottom-search.directive';
 import { CreateProductBottomComponent } from './Products/ProductBottom/create-product-bottom/create-product-bottom.component';
 import { UpdateProductBottomComponent } from './Products/ProductBottom/update-product-bottom/update-product-bottom.component';
+import { CreateProductTypeComponent } from './Products/ProductType/create-product-type/create-product-type.component';
+import { UpdateProductTypeComponent } from './Products/ProductType/update-product-type/update-product-type.component';
+import { ProductTypeSearchDirective } from './helpers/directive/ForProductType/product-type-search.directive';
+import { AddProductTypeComponent } from './Products/ProductType/add-product-type/add-product-type.component';
 
 
 
@@ -77,6 +81,10 @@ import { UpdateProductBottomComponent } from './Products/ProductBottom/update-pr
     ProductBottomSearchDirective,
     CreateProductBottomComponent,
     UpdateProductBottomComponent,
+    CreateProductTypeComponent,
+    UpdateProductTypeComponent,
+    ProductTypeSearchDirective,
+    AddProductTypeComponent,
     ],
   imports: [
     BrowserModule,
@@ -108,7 +116,9 @@ import { UpdateProductBottomComponent } from './Products/ProductBottom/update-pr
       { path: 'products/tops', component: ProductTopComponent},
       { path: 'products/tops/add', component: CreateProductTopComponent},
       { path: 'products/tops/update', component: UpdateProductTopComponent},
-      { path: 'products/productsTypes', component: ProductTopComponent},
+      { path: 'products/productTypes', component: ProductTypeComponent},
+      { path: 'products/productTypes/add' , component: CreateProductTypeComponent},
+      { path: 'products/types/update', component: UpdateProductTypeComponent},
       {path: 'login', component: LoginComponent }
       ])
 
