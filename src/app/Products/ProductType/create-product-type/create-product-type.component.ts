@@ -28,19 +28,14 @@ export class CreateProductTypeComponent implements OnInit {
     public validationService: ValidateProductTypeService,
     private topsBackendService: ProductTopBackendService,
     private bottomsBackendService: ProductBottomBackendService,
-    private bottomTableService: ProductBottomTableService,
-    private topTableService: ProductTopTableService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
     console.log('creating component:CreateProductTypeComponent');
     this.getDataToDropdownLists();
-
   }
 
   ngOnInit(): void {
-    this.allBotomsToselect = this.bottomTableService.getRecords();
-    this.allBotomsToselect = this.topTableService.getRecords();
     this.form = new FormGroup({
       // tslint:disable-next-line:max-line-length
       name: new FormControl('', [Validators.nullValidator, Validators.required], [this.validationService.nameValidator()]),
@@ -99,6 +94,4 @@ export class CreateProductTypeComponent implements OnInit {
       this.showoperationStatusMessage = null;
     }, 2000);
   }
-
-
 }

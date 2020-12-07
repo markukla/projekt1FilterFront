@@ -3,7 +3,7 @@
 
 <div>
 
-  <a  [routerLink]="['/products/productTypes/add']" routerLinkActive="active">
+  <a  [routerLink]="['/products/types/add']" routerLinkActive="active">
     {{ createNewMaterialDescription }}
   </a>
 </div>
@@ -13,17 +13,17 @@
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
-      <th [appSort]="records" data-order="desc" data-name="code" scope="col">Kod wykończenia góry <br></th>
-      <th [appSort]="records" data-order="desc" data-name="name" scope="col">Nazwa wykończenia góry</th>
+      <th [appSort]="records" data-order="desc" data-name="code" scope="col">Kod typu produktu <br></th>
+      <th [appSort]="records" data-order="desc" data-name="name" scope="col">Nazwa typu producktu</th>
       <th>ilość</th>
 
     </tr>
     <tr>
       <th>
 
-        <input class="tableSearchInput" [appProductTopSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
+        <input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
       </th>
-      <th><input class="tableSearchInput" [appProductTopSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
       <th>{{this.recordNumbers}}</th>
     </tr>
 

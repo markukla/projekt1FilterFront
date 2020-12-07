@@ -1,21 +1,20 @@
 import {AfterContentChecked, Component, Input, OnInit} from '@angular/core';
-import ProductType from '../../ProductTypesAndClasses/productType.entity';
-import {ProductTypeTableService} from '../../ProductType/ProductTypeServices/product-type-table.service';
-import {ProductTypeBackendService} from '../../ProductType/ProductTypeServices/product-type-backend.service';
+import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
+import {Material} from '../../../materials/MaterialsMainComponent/material';
+import {ProductTopTableService} from '../../ProductTop/ProductTopServices/product-top-table.service';
+import {ProductTopBackendService} from '../../ProductTop/ProductTopServices/product-top-backend.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import Product from '../../ProductTypesAndClasses/product.entity';
-import {ProductTableService} from './ProductServices/product-table.service';
-import {ProductBackendService} from './ProductServices/product-backend.service';
 
 @Component({
-  selector: 'app-product',
-  templateUrl: './product.component.html',
-  styleUrls: ['./product.component.css']
+  selector: 'app-tops-for-product-type',
+  templateUrl: './tops-for-product-type.component.html',
+  styleUrls: ['./tops-for-product-type.component.css']
 })
-export class ProductComponent implements OnInit, AfterContentChecked {
-
+export class TopsForProductTypeComponent implements OnInit, AfterContentChecked {
   @Input()
-  records: Product[];
+  records: ProductTop[];
+  @Input()
+  orginalMaterialsCopy: Material[];
   createNewMaterialDescription = 'Dodaj Nowy';
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;
@@ -27,8 +26,8 @@ export class ProductComponent implements OnInit, AfterContentChecked {
   recordNumbers: number;
 
 
-  constructor(public tableService: ProductTableService,
-              public backendService: ProductBackendService,
+  constructor(public tableService: ProductTopTableService,
+              public backendService: ProductTopBackendService,
               private router: Router,
               private activedIdParam: ActivatedRoute) {
   }
@@ -62,7 +61,7 @@ export class ProductComponent implements OnInit, AfterContentChecked {
 
   updateSelectedRecord(materialId: number): void {
     this.tableService.selectedId = materialId;
-    this.router.navigateByUrl('/products/update');
+    this.router.navigateByUrl('/products/tops/update');
   }
 
 

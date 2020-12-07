@@ -1,22 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
+import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
+import ProductBottom from '../../../ProductTypesAndClasses/productBottom.entity';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ProductTopTableService} from '../../ProductTop/ProductTopServices/product-top-table.service';
-import {ProductTopBackendService} from '../../ProductTop/ProductTopServices/product-top-backend.service';
-import {ValidateProductTopService} from '../../ProductTop/ProductTopServices/validate-product-top.service';
+import {ProductTypeTableService} from '../../../ProductType/ProductTypeServices/product-type-table.service';
+import {ProductTypeBackendService} from '../../../ProductType/ProductTypeServices/product-type-backend.service';
+import {ProductTopBackendService} from '../../../ProductTop/ProductTopServices/product-top-backend.service';
+import {ProductBottomBackendService} from '../../../ProductBottom/ProductBottomServices/product-bottom-backend.service';
+import {ValidateProductTypeService} from '../../../ProductType/ProductTypeServices/validate-product-type.service';
 import {Router} from '@angular/router';
-import ProductBottom from '../../ProductTypesAndClasses/productBottom.entity';
-import {ProductTypeTableService} from '../ProductTypeServices/product-type-table.service';
-import {ProductTypeBackendService} from '../ProductTypeServices/product-type-backend.service';
-import {ValidateProductTypeService} from '../ProductTypeServices/validate-product-type.service';
-import {ProductBottomBackendService} from '../../ProductBottom/ProductBottomServices/product-bottom-backend.service';
 
 @Component({
-  selector: 'app-update-product-type',
-  templateUrl: './update-product-type.component.html',
-  styleUrls: ['./update-product-type.component.css']
+  selector: 'app-update-product',
+  templateUrl: './update-product.component.html',
+  styleUrls: ['./update-product.component.css']
 })
-export class UpdateProductTypeComponent implements OnInit {
+export class UpdateProductComponent implements OnInit {
   operationStatusMessage: string;
   recordToUpdate: ProductTop;
   recordToUpdateId: number = this.tableService.selectedId;
@@ -52,16 +50,16 @@ export class UpdateProductTypeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  this.form = new FormGroup({
-    // tslint:disable-next-line:max-line-length
-    name: new FormControl('', [Validators.nullValidator, Validators.required], [this.validationService.nameValidatorForUpdate(String(this.recordToUpdateId))]),
-    // tslint:disable-next-line:max-line-length
-    code: new FormControl('', [Validators.nullValidator && Validators.required, Validators.minLength(1), Validators.maxLength(1)], [this.validationService.codeValidatorForUpdate(String(this.recordToUpdateId))]),
-    topsForThisProductType: new FormControl(null, [Validators.required] ),
-    bottomsForThisProductType: new FormControl(null, [Validators.required])
-  }, {updateOn: 'change'});
-  console.log(`materialToUpdateId= ${this.recordToUpdateId}`);
-  this.backendService.findRecordById(String(this.recordToUpdateId)).subscribe((record) => {
+    this.form = new FormGroup({
+      // tslint:disable-next-line:max-line-length
+      name: new FormControl('', [Validators.nullValidator, Validators.required], [this.validationService.nameValidatorForUpdate(String(this.recordToUpdateId))]),
+      // tslint:disable-next-line:max-line-length
+      code: new FormControl('', [Validators.nullValidator && Validators.required, Validators.minLength(1), Validators.maxLength(1)], [this.validationService.codeValidatorForUpdate(String(this.recordToUpdateId))]),
+      topsForThisProductType: new FormControl(null, [Validators.required] ),
+      bottomsForThisProductType: new FormControl(null, [Validators.required])
+    }, {updateOn: 'change'});
+    console.log(`materialToUpdateId= ${this.recordToUpdateId}`);
+    this.backendService.findRecordById(String(this.recordToUpdateId)).subscribe((record) => {
         this.recordToUpdate = record.body;
         this.name.setValue(record.body.name);
         this.code.setValue(record.body.code);
@@ -98,17 +96,18 @@ export class UpdateProductTypeComponent implements OnInit {
     this.router.navigateByUrl('/products/tops');
   }
 
-getDataToDropdownLists(): void {
-this.topsBackendService.getRecords().subscribe((records) => {
-this.allTopsToSelect = records.body;
-}, error => {
-console.log('error during requesting productTops');
-});
-this.bottomsBackendService.getRecords().subscribe((records) => {
-this.allBotomsToselect = records.body;
-}, error => {
-console.log('error during requesting productBottoms');
-});
-}
+  getDataToDropdownLists(): void {
+    this.topsBackendService.getRecords().subscribe((records) => {
+      this.allTopsToSelect = records.body;
+    }, error => {
+      console.log('error during requesting productTops');
+    });
+    this.bottomsBackendService.getRecords().subscribe((records) => {
+      this.allBotomsToselect = records.body;
+    }, error => {
+      console.log('error during requesting productBottoms');
+    });
+  }
+
 
 }

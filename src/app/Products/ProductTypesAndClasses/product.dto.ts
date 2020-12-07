@@ -9,7 +9,8 @@ class CreateProductDto{
     productBottom: ProductBottom;
     dimensionsCodes: string;
     dimensionsTextFieldInfo: DimensionTextFIeldInfo[];
-
+    urlOfOrginalDrawing: string;
+    urlOfThumbnailDrawing: string;
 
 
 }

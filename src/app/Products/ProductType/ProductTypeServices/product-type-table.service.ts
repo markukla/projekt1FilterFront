@@ -9,6 +9,7 @@ export class ProductTypeTableService {
 
   records: ProductType[] = [];
   selectedId: number;
+  selectedRecord: ProductType;
   constructor() {
   }
 

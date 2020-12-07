@@ -1,0 +1,74 @@
+<div class="createMaterial">
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
+  <h2>Dodaj nowy typ produktu</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row">
+
+        <div class="form-group col-md-6">
+          <label class="label" for="types" >Wybierz Typ produktu</label>
+          <select  class="form-control" formControlName="types" id="types">
+            <option [ngValue]="null" disabled>Wybierz Typ produktu</option>
+            <option *ngFor="let type of allTypesToSelect" [ngValue]="type">
+              {{ type.code +'-'+type.name }}
+            </option>
+          </select>
+          <div  *ngIf="topsForThisProductType.invalid && (topsForThisProductType.dirty || topsForThisProductType.touched)"
+                class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="topsForThisProductType.errors.required">
+              Wybranie opcji z listy jest wymagane.
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label class="label" for="topsForThisProductType" >Wybierz wykończenia góry</label>
+          <select class="form-control" formControlName="topsForThisProductType" id="topsForThisProductType">
+            <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
+            <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
+              {{ top.code +'-'+top.name }}
+            </option>
+          </select>
+          <div  *ngIf="topsForThisProductType.invalid && (topsForThisProductType.dirty || topsForThisProductType.touched)"
+                class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="topsForThisProductType.errors.required">
+              Wybranie opcji z listy jest wymagane.
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label class="label" for="bottomsForThisProductType" >Wybierz wykończenia dna</label>
+          <select  class="form-control" formControlName="bottomsForThisProductType" id="bottomsForThisProductType">
+            <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
+            <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
+              {{ bottom.code +'-'+bottom.name }}
+            </option>
+          </select>
+          <div  *ngIf="bottomsForThisProductType.invalid && (bottomsForThisProductType.dirty || bottomsForThisProductType.touched)"
+                class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="bottomsForThisProductType.errors.required">
+              Wybranie opcji z listy jest wymagane.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="addButon">
+        <button type="submit" [disabled]="!form.valid" class="btn btn-danger">Zapisz</button>
+      </div>
+
+  </form>
+
+  <div *ngIf="showoperationStatusMessage">
+    <textarea>{{showoperationStatusMessage}}</textarea>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+

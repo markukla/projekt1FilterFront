@@ -1,30 +1,32 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {ProductTopTableService} from '../../ProductTop/ProductTopServices/product-top-table.service';
+import {ProductTypeTableService} from '../../../ProductType/ProductTypeServices/product-type-table.service';
 import {Observable} from 'rxjs';
-import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
+import ProductType from '../../../ProductTypesAndClasses/productType.entity';
 import {tap} from 'rxjs/operators';
-import {ProductTypeTableService} from './product-type-table.service';
-import ProductType from '../../ProductTypesAndClasses/productType.entity';
+import {ProductTableService} from './product-table.service';
+import Product from '../../../ProductTypesAndClasses/product.entity';
+import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
+import {DrawingPaths} from '../../../ProductTypesAndClasses/drawingPaths';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductTypeBackendService {
+export class ProductBackendService {
   rootURL = 'http://localhost:5000';
-  endpointUrl = '/productTypes';
+  endpointUrl = '/products';
   constructor(private http: HttpClient,
-              private tableService: ProductTypeTableService) {
+              private tableService: ProductTableService) {
   }
 
-  getRecords(): Observable<HttpResponse<ProductType[]>> {
-    return this.http.get<ProductType[]>(this.rootURL + this.endpointUrl, {observe: 'response'});
+  getRecords(): Observable<HttpResponse<Product[]>> {
+    return this.http.get<Product[]>(this.rootURL + this.endpointUrl, {observe: 'response'});
   }
 
   // tslint:disable-next-line:typedef
-  addRecords(record: ProductType): Observable<HttpResponse<ProductType>> {
+  addRecords(record: CreateProductDto): Observable<HttpResponse<Product>> {
     // tslint:disable-next-line:max-line-length
-    return this.http.post<ProductType>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
+    return this.http.post<Product>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
         this.tableService.addRecordToTable(record.body);
@@ -40,13 +42,17 @@ export class ProductTypeBackendService {
       }));
   }
 
-  updateRecordById(id: string, updatedRecord: ProductType): Observable<HttpResponse<ProductType>> {
+  updateRecordById(id: string, updatedRecord: CreateProductDto): Observable<HttpResponse<Product>> {
     const updateUrl = `${this.rootURL + this.endpointUrl}/${id}`;
-    return this.http.patch<ProductType>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
+    return this.http.patch<Product>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
         this.tableService.updateTableRecord(Number(id), record.body);
       }));
+  }
+  uploadDrawing(file: File): Observable<any> {
+    const url = `${this.rootURL + this.endpointUrl}/uploadDrawing`;
+    return this.http.post<any>(url, file);
   }
 
   findRecordBycode(code: string): Observable<boolean> {
@@ -66,8 +72,8 @@ export class ProductTypeBackendService {
     const url = `${this.rootURL + this.endpointUrl}/${id}/names/${name}`;
     return this.http.get<boolean>(url);
   }
-  findRecordById(recordToUpdateId: string): Observable<HttpResponse<ProductType>> {
+  findRecordById(recordToUpdateId: string): Observable<HttpResponse<Product>> {
     const getUrl = `${this.rootURL + this.endpointUrl}/${recordToUpdateId}`;
-    return this.http.get<ProductType>(getUrl, {observe: 'response'} );
+    return this.http.get<Product>(getUrl, {observe: 'response'} );
   }
 }

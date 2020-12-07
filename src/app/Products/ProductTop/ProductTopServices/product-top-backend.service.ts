@@ -62,7 +62,7 @@ export class ProductTopBackendService {
     const url = `${this.rootURL + this.endpointUrl}/${id}/codes/${code}`;
     return this.http.get<boolean>(url);
   }
-  findRecordByNameForUpdate(id: string, code: string): Observable<boolean> {
+  findRecordByNameForUpdate(id: string, name: string): Observable<boolean> {
     const url = `${this.rootURL + this.endpointUrl}/${id}/names/${name}`;
     return this.http.get<boolean>(url);
   }

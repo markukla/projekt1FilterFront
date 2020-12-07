@@ -45,7 +45,12 @@ import { UpdateProductBottomComponent } from './Products/ProductBottom/update-pr
 import { CreateProductTypeComponent } from './Products/ProductType/create-product-type/create-product-type.component';
 import { UpdateProductTypeComponent } from './Products/ProductType/update-product-type/update-product-type.component';
 import { ProductTypeSearchDirective } from './helpers/directive/ForProductType/product-type-search.directive';
-import { AddProductTypeComponent } from './Products/ProductType/add-product-type/add-product-type.component';
+import { TopsForProductTypeComponent } from './Products/ProductType/tops-for-product-type/tops-for-product-type.component';
+import { BottomsForProductTypeComponent } from './Products/ProductType/bottoms-for-product-type/bottoms-for-product-type.component';
+import { CreateProductComponent } from './Products/ProductMainComponent/product/create-product/create-product.component';
+import { UpdateProductComponent } from './Products/ProductMainComponent/product/update-product/update-product.component';
+import { ProductSearchDirective } from './helpers/directive/ForProducts/product-search.directive';
+
 
 
 
@@ -84,7 +89,11 @@ import { AddProductTypeComponent } from './Products/ProductType/add-product-type
     CreateProductTypeComponent,
     UpdateProductTypeComponent,
     ProductTypeSearchDirective,
-    AddProductTypeComponent,
+    TopsForProductTypeComponent,
+    BottomsForProductTypeComponent,
+    CreateProductComponent,
+    UpdateProductComponent,
+    ProductSearchDirective,
     ],
   imports: [
     BrowserModule,
@@ -107,18 +116,17 @@ import { AddProductTypeComponent } from './Products/ProductType/add-product-type
       { path: 'businessPartners/update', component: UpdateBusinessPartnerComponent},
       { path: 'businessPartners/changePassword', component: BusinessPartnerChangePasswordComponent},
       { path: 'products', component: ProductComponent},
+      { path: 'products/add', component: CreateProductComponent},
+      { path: 'products/update', component: UpdateProductComponent},
       { path: 'products/types', component: ProductTypeComponent},
-      { path: 'products/types/add', component: ProductTypeComponent},
-      { path: 'products/types/update', component: ProductTypeComponent},
+      { path: 'products/types/add', component: CreateProductTypeComponent},
+      { path: 'products/types/update', component: UpdateProductTypeComponent},
       { path: 'products/bottoms', component: ProductBottomComponent},
       { path: 'products/bottoms/add', component: CreateProductBottomComponent},
       { path: 'products/bottoms/update', component: UpdateProductBottomComponent},
       { path: 'products/tops', component: ProductTopComponent},
       { path: 'products/tops/add', component: CreateProductTopComponent},
       { path: 'products/tops/update', component: UpdateProductTopComponent},
-      { path: 'products/productTypes', component: ProductTypeComponent},
-      { path: 'products/productTypes/add' , component: CreateProductTypeComponent},
-      { path: 'products/types/update', component: UpdateProductTypeComponent},
       {path: 'login', component: LoginComponent }
       ])
 

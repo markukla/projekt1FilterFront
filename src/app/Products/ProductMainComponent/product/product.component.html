@@ -1,3 +1,63 @@
 <a [routerLink]="['/products/tops']" > Wykończenia góry</a>
 <a [routerLink]="['/products/bottoms']" > Wykończenia dna</a>
 <a [routerLink]="['/products/types']" > Typy produktów</a>
+
+<!--sss-->
+
+<div>
+
+  <a  [routerLink]="['/products/add']" routerLinkActive="active">
+    {{ createNewMaterialDescription }}
+  </a>
+</div>
+
+<div class="materialComponent">
+
+  <table class="table table-striped border mt-1">
+    <thead>
+    <tr>
+      <th>Typ produktu <br></th>
+      <th >Wykończenie góry</th>
+      <th >Wykończenie dna</th>
+      <th>ilość</th>
+
+    </tr>
+    <tr>
+      <th>
+
+        <input class="tableSearchInput"  id="serchInType" placeholder="Wyszukaj" />
+      </th>
+      <th><input class="tableSearchInput"  id="serchInTops" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  id="serchInBottoms" placeholder="Wyszukaj" /></th>
+      <th>{{this.recordNumbers}}</th>
+    </tr>
+
+    </thead>
+    <tbody>
+
+    <tr *ngFor="let record of records">
+      <td>{{record.productType.code+'-'+record.productType.name}}</td>
+      <td>{{record.productTop.code+'-'+record.productTop.name}}</td>
+      <td>{{record.productBottom.code+'-'+record.productBottom.name}}</td>
+      <td>
+        <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
+        <br>
+        <button  class="deleteButton" (click)="this.deleteSelectedRecord(record.id)" [title]="deleteButtonInfo" >x</button>
+        <button class="updateButton" (click)="updateSelectedRecord(record.id);" [title]="updateButtonInfo">u</button>
+        <button class="showDrawing"> Zobacz Rysunek</button>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+
+
