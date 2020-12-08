@@ -8,6 +8,8 @@ import {ProductTableService} from './product-table.service';
 import Product from '../../../ProductTypesAndClasses/product.entity';
 import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
 import {DrawingPaths} from '../../../ProductTypesAndClasses/drawingPaths';
+import ProductBottom from '../../../ProductTypesAndClasses/productBottom.entity';
+import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +17,10 @@ import {DrawingPaths} from '../../../ProductTypesAndClasses/drawingPaths';
 export class ProductBackendService {
   rootURL = 'http://localhost:5000';
   endpointUrl = '/products';
+  selectedType: ProductType;
+  selectedBottom: ProductBottom;
+  selectedTop: ProductTop;
+  drawingPaths: DrawingPaths;
   constructor(private http: HttpClient,
               private tableService: ProductTableService) {
   }
@@ -50,9 +56,9 @@ export class ProductBackendService {
         this.tableService.updateTableRecord(Number(id), record.body);
       }));
   }
-  uploadDrawing(file: File): Observable<any> {
-    const url = `${this.rootURL + this.endpointUrl}/uploadDrawing`;
-    return this.http.post<any>(url, file);
+  uploadDrawing(file: any): Observable<DrawingPaths> {
+    const url = `${this.rootURL}/uploadDrawing`;
+    return this.http.post<DrawingPaths>(url, file, /* {headers: {Accept: 'multipart/form-data'}}*/);
   }
 
   findRecordBycode(code: string): Observable<boolean> {

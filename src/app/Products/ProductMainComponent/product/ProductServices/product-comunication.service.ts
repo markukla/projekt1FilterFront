@@ -7,8 +7,6 @@ import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
   providedIn: 'root'
 })
 export class ProductComunicationService {
-  selectedType: ProductType;
-  selectedBottom: ProductBottom;
-  selectedTop: ProductTop;
+
   constructor() { }
 }

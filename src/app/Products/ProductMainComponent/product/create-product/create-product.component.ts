@@ -12,6 +12,7 @@ import {ProductBackendService} from '../ProductServices/product-backend.service'
 import {ProductValidatorService} from '../ProductServices/product-validator.service';
 import {DrawingPaths} from '../../../ProductTypesAndClasses/drawingPaths';
 import {ProductComunicationService} from '../ProductServices/product-comunication.service';
+import {getBackendErrrorMesage} from '../../../../helpers/errorHandlingFucntion/handleBackendError';
 
 @Component({
   selector: 'app-create-product',
@@ -25,49 +26,47 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
   allBotomsToselect: ProductBottom[];
   allTopsToSelect: ProductTop[];
   allTypesToSelect: ProductType[];
-  selectedType: ProductType;
-  selectedBottom: ProductBottom;
-  selectedTop: ProductTop;
   form: FormGroup;
   upladDrawingForm: FormGroup;
   drawingPaths: DrawingPaths;
 
   constructor(
     private backendService: ProductBackendService,
-    private comunicationService: ProductComunicationService,
     public validationService: ProductValidatorService,
     private typesBackendService: ProductTypeBackendService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
     this.getDataToDropdownLists();
-    this.selectedType = this.comunicationService.selectedType;
-    this.selectedTop = this.comunicationService.selectedTop;
-    this.selectedBottom = this.comunicationService.selectedBottom;
   }
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      types: new FormControl(null, [Validators.required] ),
-      topsForThisProductType: new FormControl(null, [Validators.required] ),
-      bottomsForThisProductType: new FormControl(null, [Validators.required])
+      type: new FormControl(null, [Validators.required] ),
+      top: new FormControl(null, [Validators.required] ),
+      bottom: new FormControl(null, [Validators.required])
     }, {updateOn: 'change'});
     this.upladDrawingForm = new FormGroup({
-      file: new FormControl('', Validators.required)
+      file: new FormControl('', Validators.required),
+      fileSource: new FormControl('', [Validators.required])
     });
 
   }
 // tslint:disable-next-line:typedef
-  get  topsForThisProductType() {
-    return this.form.get('topsForThisProductType');
+  get  top() {
+    return this.form.get('top');
   }
   // tslint:disable-next-line:typedef
-  get  types() {
-    return this.form.get('types');
+  get  type() {
+    return this.form.get('type');
   }
   // tslint:disable-next-line:typedef
-  get  bottomsForThisProductType() {
-    return this.form.get('bottomsForThisProductType');
+  get  fileSource() {
+    return this.form.get('fileSource');
+  }
+  // tslint:disable-next-line:typedef
+  get  bottom() {
+    return this.form.get('bottom');
   }
   // tslint:disable-next-line:typedef
   get  file() {
@@ -85,6 +84,9 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
     this.allBotomsToselect = productType.bottomsForThisProductType;
   }
   onSubmit(): void {
+    this.backendService.selectedType = this.type.value;
+    this.backendService.selectedBottom = this.bottom.value;
+    this.backendService.selectedTop = this.top.value;
     this.backendService.addRecords(this.form.value).subscribe((material) => {
       this.showoperationStatusMessage = 'Dodano nowy rekord';
       this.cleanOperationMessage();
@@ -94,13 +96,29 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
     });
   }
   onUpload(): void {
-    this.backendService.uploadDrawing(this.upladDrawingForm.value).subscribe((urls) => {
-      this.drawingPaths = urls;
+    const formData = new FormData();
+    formData.append('file', this.upladDrawingForm.get('fileSource').value);
+    this.backendService.uploadDrawing(formData).subscribe((urls) => {
+      this.backendService.drawingPaths = urls;
       this.uploadOperationMessage = 'dodano rysunek';
     }, error => {
-      this.uploadOperationMessage = 'nie udało sie dodać rysunku';
+      const errorMessage = getBackendErrrorMesage(error);
+      if (errorMessage.includes('.png files are allowed')) {
+        this.uploadOperationMessage = 'nie udało sie dodać rysunku, tylko format .png jest dozwolony';
+      }
+      else {
+        this.uploadOperationMessage = 'wystąpił błąd nie udało się dodać rysunku, spróbuj pownownie';
+      }
     });
 
+  }
+  onFileChange(event): void {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.upladDrawingForm.patchValue({
+        fileSource: file
+      });
+    }
   }
   closeAndGoBack(): void {
     this.router.navigateByUrl('/products');
@@ -113,11 +131,11 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
   }
 
   ngAfterContentChecked(): void {
-    const type = this.types.value;
+    const type = this.type.value;
     console.log(`selected type= ${type}`);
     if (type) {
-      this.selectedType = type;
-      this.setTopsAndBottomsToSelectAfterTypeSelected(this.selectedType);
+      this.backendService.selectedType = type;
+      this.setTopsAndBottomsToSelectAfterTypeSelected(this.backendService.selectedType);
     }
   }
 
