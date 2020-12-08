@@ -50,6 +50,9 @@ import { BottomsForProductTypeComponent } from './Products/ProductType/bottoms-f
 import { CreateProductComponent } from './Products/ProductMainComponent/product/create-product/create-product.component';
 import { UpdateProductComponent } from './Products/ProductMainComponent/product/update-product/update-product.component';
 import { ProductSearchDirective } from './helpers/directive/ForProducts/product-search.directive';
+import { CreateProductDrawingComponent } from './Products/ProductMainComponent/product/create-product-drawing/create-product-drawing.component';
+import { ContainerForDragableComponent } from './Products/ProductMainComponent/product/DragAndDropTest/container-for-dragable/container-for-dragable.component';
+import {ResizableDraggableComponent} from './Products/ProductMainComponent/product/DragAndDropTest/resizable-draggable/resizable-draggable.component';
 
 
 
@@ -94,6 +97,9 @@ import { ProductSearchDirective } from './helpers/directive/ForProducts/product-
     CreateProductComponent,
     UpdateProductComponent,
     ProductSearchDirective,
+    CreateProductDrawingComponent,
+    ContainerForDragableComponent,
+    ResizableDraggableComponent
     ],
   imports: [
     BrowserModule,
@@ -127,7 +133,9 @@ import { ProductSearchDirective } from './helpers/directive/ForProducts/product-
       { path: 'products/tops', component: ProductTopComponent},
       { path: 'products/tops/add', component: CreateProductTopComponent},
       { path: 'products/tops/update', component: UpdateProductTopComponent},
-      {path: 'login', component: LoginComponent }
+      { path: 'products/addDrawing', component: CreateProductDrawingComponent},
+      {path: 'login', component: LoginComponent },
+      {path: 'drag', component: ContainerForDragableComponent }
       ])
 
   ],

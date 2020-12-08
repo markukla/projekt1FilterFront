@@ -1,0 +1,62 @@
+<div id="mainCointener">
+  <div id="drawingContainer" #drawingContainer>
+    <!--[style.background-image]="'url('+bgImageVariable+')'-->
+
+
+  </div>
+  <div id="tableContainer">
+
+
+  </div>
+
+  <div id="createFormContainer">
+    <p> utwórz wymiar</p>
+    <form [formGroup]="createDimensionForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label class="label" for="dimensionId">Nazwa kodu wymiaru</label>
+          <input type="text" class="form-control" formControlName="dimensionId" id="dimensionId"
+                 placeholder="Nazwa kodu wymiaru">
+          <div *ngIf="dimensionId.invalid && (dimensionId.dirty || dimensionId.touched)"
+               class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="dimensionId.errors.required">
+              To pole jest wymagane.
+            </div>
+
+          </div>
+          <div class="form-group col-md-6">
+            <p>Wybierz orientacje wymiaru</p>
+            <label class="label" for="horizonntal">Orientacja Pozioma</label>
+            <input type="radio" class="form-control" name="dimensionOrientation" formControlName="dimensionOrientation"
+                   id="horizonntal"
+                   placeholder="Kod typu produktu" value="horizontal">
+
+            <label class="label" for="vertical">Orientacja pionowa</label>
+            <input type="radio" class="form-control" name="dimensionOrientation" formControlName="dimensionOrientation"
+                   id="vertical"
+                   placeholder="Kod typu produktu" value="vertical">
+
+            <div *ngIf="dimensionOrientation.invalid && (dimensionOrientation.dirty || dimensionOrientation.touched)"
+                 class="alert alert-danger">
+
+              <div class="validatorInfo" *ngIf="dimensionOrientation.errors.required">
+                To pole jest wymagane
+              </div>
+
+            </div>
+
+
+          </div>
+          <div class="addButon">
+            <button type="submit" [disabled]="!createDimensionForm.valid" class="btn btn-danger">Utwórz</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+
+  </div>
+
+
+</div>

@@ -87,19 +87,14 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
     this.backendService.selectedType = this.type.value;
     this.backendService.selectedBottom = this.bottom.value;
     this.backendService.selectedTop = this.top.value;
-    this.backendService.addRecords(this.form.value).subscribe((material) => {
-      this.showoperationStatusMessage = 'Dodano nowy rekord';
-      this.cleanOperationMessage();
-    }, error => {
-      this.showoperationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego rekordu';
-      this.cleanOperationMessage();
-    });
+    this.router.navigateByUrl('/products/addDrawing');
   }
   onUpload(): void {
     const formData = new FormData();
     formData.append('file', this.upladDrawingForm.get('fileSource').value);
     this.backendService.uploadDrawing(formData).subscribe((urls) => {
       this.backendService.drawingPaths = urls;
+      console.log(`this.backendService.drawingPaths.urlOfOrginalDrawing= ${this.backendService.drawingPaths.urlOfOrginalDrawing} `);
       this.uploadOperationMessage = 'dodano rysunek';
     }, error => {
       const errorMessage = getBackendErrrorMesage(error);
