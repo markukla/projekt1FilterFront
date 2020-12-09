@@ -58,5 +58,96 @@
 
   </div>
 
+  <div id="DrawingDetailTableContainer" #DrawingDetailTableContainer>
+    <table id="drawingDetailTable" #drawingDetailTable >
+      <tbody>
+      <tr>
+        <td id="2RowsInOneCell" rowspan="2">
+          <div class="form-group" >
+            <label for="workingTemperature">Temperatura pracy:</label>
+          <input type="text"  formControlName="" id="workingTemperature">
+            <p> [oC]</p>
+          </div>
+          <div class="form-group">
+          <label  for="antiElectrostatic">Antyelektrostatczność</label>
+          <input type="checkbox"  formControlName="" id="antiElectrostatic">
+          </div>
 
+
+
+
+          <div class="form-group">
+            <p>Strona pracująca:</p>
+
+          <input type="radio"  formControlName="" name="workingside" id="workingSideInternal"
+          >
+            <label  for="workingSideInternal">Wewnętrzna</label>
+          </div>
+          <div class="form-group">
+
+
+          <input type="radio"  formControlName="" name="workingside" id="workingSideExternal"
+          >
+            <label  for="workingSideExternal">Zewnętrzna</label>
+          </div>
+
+      </td>
+      <td class="normalCell">
+        <div>
+          <p>Nr zapytania: </p> <br>
+          <p>kkkkk</p>
+        </div>
+      </td>
+
+      <td>
+        <div>
+          <p>Index: </p> <br>
+          <p>kkkkk</p>
+        </div>
+      </td>
+
+      <td>
+        <div>
+          <p>Opracował: </p> <br>
+          <p>kkkkk</p>
+        </div>
+      </td>
+      </tr>
+      <tr>
+        <td>
+          <div>
+            <p>Nazwa </p> <br>
+            <p>kkkkk</p>
+          </div>
+        </td>
+        <td>
+        <div>
+          <p>Data: </p> <br>
+          <p>kkkkk</p>
+        </div>
+        </td>
+
+      </tr>
+      <tr>
+
+        <td>
+          <div>
+            <p>Materiał: </p> <br>
+            <p>kkkk</p>
+          </div>
+        </td>
+
+        <td>
+          <p>logo</p>
+        </td>
+
+      </tr>
+
+
+      </tbody>
+
+
+    </table>
+
+  </div>
 </div>
