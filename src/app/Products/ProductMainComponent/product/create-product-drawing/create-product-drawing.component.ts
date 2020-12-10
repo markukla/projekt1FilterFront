@@ -1,6 +1,8 @@
 import {Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren} from '@angular/core';
 import {ProductBackendService} from '../ProductServices/product-backend.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
+import DimensionTextFIeldInfo from '../../../ProductTypesAndClasses/dimensionTextFIeldInfo';
 
 @Component({
   selector: 'app-create-product-drawing',
@@ -10,17 +12,22 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 export class CreateProductDrawingComponent implements OnInit {
   bgImageVariable: string;
   createDimensionForm: FormGroup;
+  operationStatusMessage: string;
+  previouslyUsedUniqueDimensionCodes: string[] = [];
   // tslint:disable-next-line:max-line-length
   /* view child is a get elementby id equivalent, and Viev childrens is something like get element by class name, but element must be marked with #elementname*/
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
-
+  @ViewChildren('.inputDivHorizontal', {read: HTMLElement}) inputDivs: HTMLElement[];
   constructor(private backendService: ProductBackendService,
               private renderer: Renderer2,
-              private host: ElementRef) { }
+              private host: ElementRef) {
+    this.getPreviouslyUsedCodes();
+  }
 
 
 
   ngOnInit(): void {
+
     this.createDimensionForm = new FormGroup({
       dimensionId: new FormControl('', [Validators.required]),
       dimensionOrientation: new FormControl(null, [Validators.required]),
@@ -38,7 +45,7 @@ export class CreateProductDrawingComponent implements OnInit {
   get  dimensionOrientation() {
     return this.createDimensionForm.get('dimensionOrientation');
   }
-  onSubmit(): void {
+  onSubmitForInputCreating(): void {
 
     const input = this.renderer.createElement('input');
     const inputDiv = this.renderer.createElement('div');
@@ -58,11 +65,6 @@ export class CreateProductDrawingComponent implements OnInit {
     }
     /* const drawing = document.getElementById('drawingContainer'); */
     this.renderer.appendChild(inputDiv, input);
-    const dragableDiv = this.renderer.createElement('app-resizable-draggable');
-    dragableDiv.style.position = 'absolute';
-    dragableDiv.style.zIndex = '1000';
-    console.log(`dragable div= ${dragableDiv}`);
-    this.renderer.appendChild(this.drawing.nativeElement, dragableDiv);
     this.renderer.appendChild(this.drawing.nativeElement, inputDiv);
     this.makeInputDivDragable(inputDiv);
 
@@ -110,6 +112,64 @@ export class CreateProductDrawingComponent implements OnInit {
     };
 
 
+  }
+saveProductInDatabas(): void {
+
+ const dimensionFieldInfoTable: DimensionTextFIeldInfo[] = this.getTextFieldsPositionsAndIdAndPushItToTable();
+    const createProductDto: CreateProductDto = {
+      productBottom: this.backendService.selectedBottom,
+      productTop: this.backendService.selectedTop,
+      productType: this.backendService.selectedType,
+      urlOfOrginalDrawing: this.backendService.drawingPaths.urlOfOrginalDrawing,
+      urlOfThumbnailDrawing: this.backendService.drawingPaths.urlOfThumbnailDrawing,
+      dimensionsCodes: '',
+      dimensionsTextFieldInfo: dimensionFieldInfoTable
+    };
+ this.backendService.addRecords(createProductDto).subscribe((product) => {
+   console.log('dodano nowy Product');
+   this.operationStatusMessage = 'dodano nowy Product';
+ }, error => {
+   console.log('nie udało się dodać produktu');
+   this.operationStatusMessage = 'nie udało się dodać produktu';
+ });
+
+
+}
+  getTextFieldsPositionsAndIdAndPushItToTable(): DimensionTextFIeldInfo[] {
+
+    const dimensionsTextFieldInfoTable: DimensionTextFIeldInfo[] = [];
+    // tslint:disable-next-line:max-line-length
+    const inputDivs: HTMLElement[] =  this.host.nativeElement.querySelectorAll('.inputDivHorizontal', '.inputDivVertical'); /* does not work for 2 class at once selected  */
+    console.log(`inoutDivs lenhth=   ${inputDivs.length}`);
+    for (let i = 0; i < inputDivs.length ; i++) {
+      let dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
+        dimensionId: inputDivs[i].firstElementChild.id,
+        dimensionTexfieldXposition: `${inputDivs[i].style.left}px`,
+        dimensionTexfieldYposition: `${inputDivs[i].style.top}px`
+      };
+      dimensionsTextFieldInfoTable.push(dimensionTextFIeldInfo);
+    }
+    return  dimensionsTextFieldInfoTable;
+  }
+  getPreviouslyUsedCodes(): void {
+    this.backendService.getRecords().subscribe((products) => {
+      const allProducts = products.body;
+      const allpreviouslyUsedCodes: string[] = [];
+      allProducts.forEach((p) => {
+        p.dimensionsTextFieldInfo.forEach((d) => {
+          allpreviouslyUsedCodes.push(d.dimensionId);
+        });
+      });
+      console.log(`allpreviouslyUsedCodes.length= ${allpreviouslyUsedCodes.length} `);
+      const allUniquePreviouslyUsedCodes: string[] = allpreviouslyUsedCodes.filter((x, index, self) => {
+       return  index === self.indexOf(x);
+      });
+      console.log(`allUniquePreviouslyUsedCodes.length= ${allUniquePreviouslyUsedCodes.length} `);
+      this.previouslyUsedUniqueDimensionCodes = allUniquePreviouslyUsedCodes;
+      this.previouslyUsedUniqueDimensionCodes.forEach((x) => {
+        console.log(`dimensionCode= ${x}`);
+      });
+    });
   }
 
 }
