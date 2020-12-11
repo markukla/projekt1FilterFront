@@ -1,4 +1,14 @@
-import {Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren} from '@angular/core';
+import {
+  AfterContentChecked, AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef, Input,
+  OnInit,
+  QueryList,
+  Renderer2,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {ProductBackendService} from '../ProductServices/product-backend.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
@@ -9,57 +19,60 @@ import DimensionTextFIeldInfo from '../../../ProductTypesAndClasses/dimensionTex
   templateUrl: './create-product-drawing.component.html',
   styleUrls: ['./create-product-drawing.component.css']
 })
-export class CreateProductDrawingComponent implements OnInit {
+export class CreateProductDrawingComponent implements OnInit, AfterContentChecked, AfterViewInit, AfterViewChecked {
   bgImageVariable: string;
   createDimensionForm: FormGroup;
   operationStatusMessage: string;
-  previouslyUsedUniqueDimensionCodes: string[] = [];
+  previouslyUsedUniqueDimensionCodes: string[];
+  idValue: string;
   // tslint:disable-next-line:max-line-length
   /* view child is a get elementby id equivalent, and Viev childrens is something like get element by class name, but element must be marked with #elementname*/
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
   @ViewChildren('.inputDivHorizontal', {read: HTMLElement}) inputDivs: HTMLElement[];
+
   constructor(private backendService: ProductBackendService,
               private renderer: Renderer2,
               private host: ElementRef) {
-    this.getPreviouslyUsedCodes();
   }
 
 
-
   ngOnInit(): void {
-
     this.createDimensionForm = new FormGroup({
-      dimensionId: new FormControl('', [Validators.required]),
+      dimensionId: new FormControl(null, [Validators.required]),
       dimensionOrientation: new FormControl(null, [Validators.required]),
+      newDimensionId: new FormControl(null)
     });
     this.bgImageVariable = this.backendService.drawingPaths.urlOfOrginalDrawing;
     console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
   }
 
-
   // tslint:disable-next-line:typedef
-  get  dimensionId() {
+  get dimensionId() {
     return this.createDimensionForm.get('dimensionId');
   }
+
   // tslint:disable-next-line:typedef
-  get  dimensionOrientation() {
+  get newDimensionId() {
+    return this.createDimensionForm.get('newDimensionId');
+  }
+
+  // tslint:disable-next-line:typedef
+  get dimensionOrientation() {
     return this.createDimensionForm.get('dimensionOrientation');
   }
+
   onSubmitForInputCreating(): void {
 
     const input = this.renderer.createElement('input');
     const inputDiv = this.renderer.createElement('div');
-    const idValue: string =  this.dimensionId.value;
-    this.renderer.setProperty(input, 'value', idValue);
-    this.renderer.setProperty(input, 'id', this.dimensionId.value);
+    this.renderer.setProperty(input, 'value', this.idValue);
+    this.renderer.setProperty(input, 'id', this.idValue);
     // this.renderer.setProperty(input, 'type', 'number');
     console.log(`inputId= ${input.id}`);
-    if (this.dimensionOrientation.value === 'horizontal')
-    {
+    if (this.dimensionOrientation.value === 'horizontal') {
       input.className = 'dimensionInputHorizontal';
       inputDiv.className = 'inputDivHorizontal';
-    }
-    else if (this.dimensionOrientation.value === 'vertical' ){
+    } else if (this.dimensionOrientation.value === 'vertical') {
       input.className = 'dimensionInputVertical';
       inputDiv.className = 'inputDivVertical';
     }
@@ -71,15 +84,14 @@ export class CreateProductDrawingComponent implements OnInit {
 
   }
 
-  makeInputDivDragable(inputDiv: HTMLElement): void{
+  makeInputDivDragable(inputDiv: HTMLElement): void {
 
 
+    inputDiv.onmousedown = (event) => {
 
-    inputDiv.onmousedown =  (event) => {
-
-      let shiftX = event.clientX - inputDiv.getBoundingClientRect().left;
-      let shiftY = event.clientY - inputDiv.getBoundingClientRect().top;
-      const  moveAt = (pageX, pageY) => {
+      const shiftX = event.clientX - inputDiv.getBoundingClientRect().left;
+      const shiftY = event.clientY - inputDiv.getBoundingClientRect().top;
+      const moveAt = (pageX, pageY) => {
         inputDiv.style.left = pageX - shiftX + 'px';
         inputDiv.style.top = pageY - shiftY + 'px';
       };
@@ -100,22 +112,23 @@ export class CreateProductDrawingComponent implements OnInit {
       document.addEventListener('mousemove', onMouseMove);
 
       // drop the ball, remove unneeded handlers
-      inputDiv.onmouseup =  () => {
+      inputDiv.onmouseup = () => {
         document.removeEventListener('mousemove', onMouseMove);
         inputDiv.onmouseup = null;
       };
 
     };
 
-    inputDiv.ondragstart =  () => {
+    inputDiv.ondragstart = () => {
       return false;
     };
 
 
   }
-saveProductInDatabas(): void {
 
- const dimensionFieldInfoTable: DimensionTextFIeldInfo[] = this.getTextFieldsPositionsAndIdAndPushItToTable();
+  saveProductInDatabas(): void {
+
+    const dimensionFieldInfoTable: DimensionTextFIeldInfo[] = this.getTextFieldsPositionsAndIdAndPushItToTable();
     const createProductDto: CreateProductDto = {
       productBottom: this.backendService.selectedBottom,
       productTop: this.backendService.selectedTop,
@@ -125,51 +138,81 @@ saveProductInDatabas(): void {
       dimensionsCodes: '',
       dimensionsTextFieldInfo: dimensionFieldInfoTable
     };
- this.backendService.addRecords(createProductDto).subscribe((product) => {
-   console.log('dodano nowy Product');
-   this.operationStatusMessage = 'dodano nowy Product';
- }, error => {
-   console.log('nie udało się dodać produktu');
-   this.operationStatusMessage = 'nie udało się dodać produktu';
- });
+    this.backendService.addRecords(createProductDto).subscribe((product) => {
+      console.log('dodano nowy Product');
+      this.operationStatusMessage = 'dodano nowy Product';
+    }, error => {
+      console.log('nie udało się dodać produktu');
+      this.operationStatusMessage = 'nie udało się dodać produktu';
+    });
 
 
-}
+  }
+
   getTextFieldsPositionsAndIdAndPushItToTable(): DimensionTextFIeldInfo[] {
 
     const dimensionsTextFieldInfoTable: DimensionTextFIeldInfo[] = [];
     // tslint:disable-next-line:max-line-length
-    const inputDivs: HTMLElement[] =  this.host.nativeElement.querySelectorAll('.inputDivHorizontal', '.inputDivVertical'); /* does not work for 2 class at once selected  */
+    const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.inputDivHorizontal, .inputDivVertical'); /* does not work for 2 class at once selected  */
     console.log(`inoutDivs lenhth=   ${inputDivs.length}`);
-    for (let i = 0; i < inputDivs.length ; i++) {
-      let dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
+    for (let i = 0; i < inputDivs.length; i++) {
+      const dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
         dimensionId: inputDivs[i].firstElementChild.id,
         dimensionTexfieldXposition: `${inputDivs[i].style.left}px`,
         dimensionTexfieldYposition: `${inputDivs[i].style.top}px`
       };
       dimensionsTextFieldInfoTable.push(dimensionTextFIeldInfo);
     }
-    return  dimensionsTextFieldInfoTable;
+    return dimensionsTextFieldInfoTable;
   }
+
   getPreviouslyUsedCodes(): void {
-    this.backendService.getRecords().subscribe((products) => {
-      const allProducts = products.body;
-      const allpreviouslyUsedCodes: string[] = [];
-      allProducts.forEach((p) => {
-        p.dimensionsTextFieldInfo.forEach((d) => {
-          allpreviouslyUsedCodes.push(d.dimensionId);
+    console.log('in getPreviouslyUsedCodes ');
+    if (!this.previouslyUsedUniqueDimensionCodes) {
+      this.backendService.getRecords().subscribe((products) => {
+        const allProducts = products.body;
+        const allpreviouslyUsedCodes: string[] = [];
+        allProducts.forEach((p) => {
+          p.dimensionsTextFieldInfo.forEach((d) => {
+            allpreviouslyUsedCodes.push(d.dimensionId);
+          });
+        });
+        console.log(`allpreviouslyUsedCodes.length= ${allpreviouslyUsedCodes.length} `);
+        const allUniquePreviouslyUsedCodes: string[] = allpreviouslyUsedCodes.filter((x, index, self) => {
+          return index === self.indexOf(x);
+        });
+        console.log(`allUniquePreviouslyUsedCodes.length= ${allUniquePreviouslyUsedCodes.length} `);
+        this.previouslyUsedUniqueDimensionCodes = allUniquePreviouslyUsedCodes;
+        this.previouslyUsedUniqueDimensionCodes.forEach((x) => {
+          console.log(`dimensionCode= ${x}`);
         });
       });
-      console.log(`allpreviouslyUsedCodes.length= ${allpreviouslyUsedCodes.length} `);
-      const allUniquePreviouslyUsedCodes: string[] = allpreviouslyUsedCodes.filter((x, index, self) => {
-       return  index === self.indexOf(x);
-      });
-      console.log(`allUniquePreviouslyUsedCodes.length= ${allUniquePreviouslyUsedCodes.length} `);
-      this.previouslyUsedUniqueDimensionCodes = allUniquePreviouslyUsedCodes;
-      this.previouslyUsedUniqueDimensionCodes.forEach((x) => {
-        console.log(`dimensionCode= ${x}`);
-      });
-    });
+
+    }
+  }
+
+  setIdValue(): void {
+    if (this.dimensionId.value) {
+      this.idValue = this.dimensionId.value;
+    }
+    if (this.newDimensionId.value && !this.dimensionId.value) {
+
+        console.log('in (!this.dimensionId.value) && this.newDimensionId) ');
+        this.idValue = this.newDimensionId.value;
+        this.dimensionId.setValue(this.newDimensionId.value);
+    /* const selectElement = this.host.nativeElement.querySelector('select.dimensionIdSelect');
+    this.renderer.setProperty(selectElement, 'value', this.newDimensionId.value ); */
+  }
+}
+  ngAfterContentChecked(): void {
+    this.setIdValue();
+  }
+
+  ngAfterViewInit(): void {
+  }
+
+  ngAfterViewChecked(): void {
+
   }
 
 }

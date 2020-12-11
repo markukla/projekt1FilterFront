@@ -100,22 +100,26 @@
 
   </div>
 </div>
-  <div id="createFormContainer">
+  <div id="createFormContainer" (mouseover)="this.getPreviouslyUsedCodes()">
     <p> utwórz wymiar</p>
     <form [formGroup]="createDimensionForm" (ngSubmit)="onSubmitForInputCreating()">
       <div class="row">
         <div class="form-group col-md-6">
-          <label class="label" for="dimensionId">Nazwa kodu wymiaru</label>
-          <input type="text" class="form-control" formControlName="dimensionId" id="dimensionId"
-                 placeholder="Nazwa kodu wymiaru">
-          <div *ngIf="dimensionId.invalid && (dimensionId.dirty || dimensionId.touched)"
-               class="alert alert-danger">
 
-            <div class="validatorInfo" *ngIf="dimensionId.errors.required">
-              To pole jest wymagane.
-            </div>
+          <label class="label" for="dimensionIdSelect">Wybierz z listy nazwę poprzednio używanego kodu wymiaru</label>
+          <select  class="form-control" formControlName="dimensionId" id="dimensionIdSelect" #dimensionIdSelect>
+            <option [ngValue]="null" disabled> Wybierz Kod Wymiaru</option>
+            <option  [ngValue]="null" (click)="this.newDimensionId.setValue(null);">Nie wybrano kodu wymiaru</option>
+            <option *ngIf="newDimensionId.value !==null" [ngValue]="newDimensionId.value" >{{newDimensionId.value}}</option>
+            <option *ngFor="let code of previouslyUsedUniqueDimensionCodes" [ngValue]="code">
+              {{ code}}
+            </option>
+          </select>
+            <div *ngIf="!this.dimensionId.value">
+              <label class="label" for="dimensionIdCreate">Dodaj Nowy kod wymiaru</label>
+              <input type="text" class="form-control" formControlName="newDimensionId"  id="dimensionIdCreate" placeholder="Nazwa kodu wymiaru">
 
-          </div>
+        </div>
           <div class="form-group col-md-6">
             <p>Wybierz orientacje wymiaru</p>
             <label class="label" for="horizonntal">Orientacja Pozioma</label>
@@ -145,6 +149,7 @@
         </div>
       </div>
     </form>
+
 
 
   </div>
