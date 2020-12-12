@@ -53,6 +53,8 @@ import { ProductSearchDirective } from './helpers/directive/ForProducts/product-
 import { CreateProductDrawingComponent } from './Products/ProductMainComponent/product/create-product-drawing/create-product-drawing.component';
 import { ContainerForDragableComponent } from './Products/ProductMainComponent/product/DragAndDropTest/container-for-dragable/container-for-dragable.component';
 import {ResizableDraggableComponent} from './Products/ProductMainComponent/product/DragAndDropTest/resizable-draggable/resizable-draggable.component';
+import { CreateProductDrawingFormForUserComponent } from './Products/ProductMainComponent/product/create-product-drawing-form-for-user/create-product-drawing-form-for-user.component';
+import { ProductTableFormComponent } from './Products/ProductMainComponent/product/product-table-form/product-table-form.component';
 
 
 
@@ -99,7 +101,9 @@ import {ResizableDraggableComponent} from './Products/ProductMainComponent/produ
     ProductSearchDirective,
     CreateProductDrawingComponent,
     ContainerForDragableComponent,
-    ResizableDraggableComponent
+    ResizableDraggableComponent,
+    CreateProductDrawingFormForUserComponent,
+    ProductTableFormComponent
     ],
   imports: [
     BrowserModule,
@@ -135,9 +139,9 @@ import {ResizableDraggableComponent} from './Products/ProductMainComponent/produ
       { path: 'products/tops/update', component: UpdateProductTopComponent},
       { path: 'products/addDrawing', component: CreateProductDrawingComponent},
       {path: 'login', component: LoginComponent },
-      {path: 'drag', component: ContainerForDragableComponent }
+      {path: 'drag', component: ContainerForDragableComponent },
+      {path: 'products/productDrawingBlueprint', component: CreateProductDrawingFormForUserComponent }
       ])
-
   ],
   providers: [
 

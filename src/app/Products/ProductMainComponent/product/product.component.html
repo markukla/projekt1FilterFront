@@ -44,7 +44,7 @@
         <br>
         <button  class="deleteButton" (click)="this.deleteSelectedRecord(record.id)" [title]="deleteButtonInfo" >x</button>
         <button class="updateButton" (click)="updateSelectedRecord(record.id);" [title]="updateButtonInfo">u</button>
-        <button class="showDrawing"> Zobacz Rysunek</button>
+        <button class="showDrawing" (click)="showDrawing(record.id)"> Zobacz Rysunek</button>
       </td>
 
     </tr>

@@ -66,4 +66,8 @@ export class ProductComponent implements OnInit, AfterContentChecked {
   }
 
 
+  showDrawing(id: number): void {
+    this.tableService.selectedId = id;
+    this.router.navigateByUrl('/products/productDrawingBlueprint');
+  }
 }

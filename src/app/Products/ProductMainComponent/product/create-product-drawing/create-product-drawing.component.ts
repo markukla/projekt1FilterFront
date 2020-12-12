@@ -20,10 +20,12 @@ import DimensionTextFIeldInfo from '../../../ProductTypesAndClasses/dimensionTex
   styleUrls: ['./create-product-drawing.component.css']
 })
 export class CreateProductDrawingComponent implements OnInit, AfterContentChecked, AfterViewInit, AfterViewChecked {
+  @Input()
+  tableForm: FormGroup;
   bgImageVariable: string;
   createDimensionForm: FormGroup;
   operationStatusMessage: string;
-  previouslyUsedUniqueDimensionCodes: string[];
+  previouslyUsedUniqueDimensionCodes: string[] = [];
   idValue: string;
   // tslint:disable-next-line:max-line-length
   /* view child is a get elementby id equivalent, and Viev childrens is something like get element by class name, but element must be marked with #elementname*/
@@ -158,8 +160,10 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
     for (let i = 0; i < inputDivs.length; i++) {
       const dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
         dimensionId: inputDivs[i].firstElementChild.id,
-        dimensionTexfieldXposition: `${inputDivs[i].style.left}px`,
-        dimensionTexfieldYposition: `${inputDivs[i].style.top}px`
+        dimensionTexfieldXposition: `${inputDivs[i].style.left}`,
+        dimensionTexfieldYposition: `${inputDivs[i].style.top}`,
+        dimensionDivClass: inputDivs[i].className,
+        dimensionInputClass: inputDivs[i].firstElementChild.className
       };
       dimensionsTextFieldInfoTable.push(dimensionTextFIeldInfo);
     }
@@ -168,7 +172,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
 
   getPreviouslyUsedCodes(): void {
     console.log('in getPreviouslyUsedCodes ');
-    if (!this.previouslyUsedUniqueDimensionCodes) {
+    if (this.previouslyUsedUniqueDimensionCodes.length === 0) {
       this.backendService.getRecords().subscribe((products) => {
         const allProducts = products.body;
         const allpreviouslyUsedCodes: string[] = [];

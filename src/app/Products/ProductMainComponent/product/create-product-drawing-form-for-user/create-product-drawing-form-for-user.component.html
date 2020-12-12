@@ -1,0 +1,16 @@
+<div id="mainCointener">
+  <div id="drawingAndTableContainer" #drawingAndTableContainer>
+    <div id="drawingContainer" #drawingContainer>
+      <!--[style.background-image]="'url('+bgImageVariable+')'-->
+
+
+    </div>
+    <div >
+      <form [formGroup]="tableForm">
+      <app-product-table-form ></app-product-table-form>
+      </form>
+    </div>
+
+    <button class="saveButton" (click)="onSubmit()">Dodaj produkt</button>
+  </div>
+
