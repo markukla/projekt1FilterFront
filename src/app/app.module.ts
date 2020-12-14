@@ -58,6 +58,7 @@ import { ProductTableFormComponent } from './Products/ProductMainComponent/produ
 import { CreateOrderComponent } from './Orders/orders/create-order/create-order.component';
 import { UpdateOrderComponent } from './Orders/orders/update-order/update-order.component';
 import { OrderVersionRegisterComponent } from './Orders/orders/order-version-register/order-version-register.component';
+import { OrderSearchDirectiveDirective } from './helpers/directive/ForOrders/order-search-directive.directive';
 
 
 
@@ -109,7 +110,8 @@ import { OrderVersionRegisterComponent } from './Orders/orders/order-version-reg
     ProductTableFormComponent,
     CreateOrderComponent,
     UpdateOrderComponent,
-    OrderVersionRegisterComponent
+    OrderVersionRegisterComponent,
+    OrderSearchDirectiveDirective
     ],
   imports: [
     BrowserModule,

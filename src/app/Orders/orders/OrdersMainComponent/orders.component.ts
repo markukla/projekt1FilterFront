@@ -5,6 +5,7 @@ import RoleEnum from '../../../Users/users/userTypes/roleEnum';
 import {OrderBackendService} from '../OrderServices/order-backend.service';
 import {OrderTableService} from '../OrderServices/order-table.service';
 import Order from '../../OrdersTypesAndClasses/orderEntity';
+import OrderforTableCell from '../../OrdersTypesAndClasses/orderforTableCell';
 
 @Component({
   selector: 'app-orders',
@@ -14,7 +15,7 @@ import Order from '../../OrdersTypesAndClasses/orderEntity';
 export class OrdersComponent implements OnInit, AfterContentChecked {
 
   @Input()
-  records: Order[];
+  records: OrderforTableCell[];
   createNewMaterialDescription = 'Dodaj Nowy';
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;
@@ -49,13 +50,19 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
       const partnerCode: string = this.authenticationService.user.code;
       this.backendService.getCurrentOrdersForPartners(partnerCode).subscribe((records) => {
         this.tableService.records.length = 0;
-        this.tableService.records = records.body;
+        records.body.forEach((record) => {
+            this.tableService.records.push(this.tableService.createOrderTableCellFromOrderEntity(record));
+          }
+        );
         this.records = this.tableService.getRecords();
       });
     } else if (this.authenticationService.userRole === RoleEnum.ADMIN || this.authenticationService.userRole === RoleEnum.EDITOR) {
       this.backendService.getCurrentOrdersForPrivilligedUsers().subscribe((records) => {
         this.tableService.records.length = 0;
-        this.tableService.records = records.body;
+        records.body.forEach((record) => {
+          this.tableService.records.push(this.tableService.createOrderTableCellFromOrderEntity(record));
+          }
+        );
         this.records = this.tableService.getRecords();
       });
     }
@@ -79,4 +86,6 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
     this.router.navigateByUrl('/products/productDrawingBlueprint');
   }
 
+  showOrderHistory(id: number): void {
+  }
 }

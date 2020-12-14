@@ -41,7 +41,7 @@ export class OrderBackendService {
     return this.http.post<Order>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.addRecordToTable(record.body);
+        this.tableService.addRecordToTable(this.tableService.createOrderTableCellFromOrderEntity(record.body));
       }));
   }
 
@@ -59,7 +59,7 @@ export class OrderBackendService {
     return this.http.patch<Order>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.updateTableRecord(Number(id), record.body);
+        this.tableService.updateTableRecord(Number(id), this.tableService.createOrderTableCellFromOrderEntity(record.body));
       }));
   }
   findRecordById(id: string): Observable<HttpResponse<Order>>{

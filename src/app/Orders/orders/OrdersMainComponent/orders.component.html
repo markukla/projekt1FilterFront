@@ -16,19 +16,24 @@
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
-      <th>Typ produktu <br></th>
-      <th >Wykończenie góry</th>
-      <th >Wykończenie dna</th>
-      <th>ilość</th>
+      <th [appSort]="records" data-order="desc" data-name="orderTotalNumber" scope="col">>Nr zapy <br></th>
+      <th [appSort]="records" data-order="desc" data-name="businessPartnerCompanyName" scope="col">Partner handlowy</th>
+      <th [appSort]="records" data-order="desc" data-name="businessPartnerFulname">Opracował</th>
+      <th [appSort]="records" data-order="desc" data-name="businessPartnerEmail">Email</th>
+      <th [appSort]="records" data-order="desc" data-name="index">Index</th>
+      <th [appSort]="records" data-order="desc" data-name="orderName">Nazwa</th>
+      <th [appSort]="records" data-order="desc" data-name="data">Data</th>
+      <th>Ilość</th>
 
     </tr>
     <tr>
-      <th>
-
-        <input class="tableSearchInput"  id="serchInType" placeholder="Wyszukaj" />
-      </th>
-      <th><input class="tableSearchInput"  id="serchInTops" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput"  id="serchInBottoms" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appOrderSearchDirective]="records" serchedColumn="orderTotalNumber" id="serchInNumbers" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="businessPartnerCompanyName" id="serchInPartners" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="businessPartnerFulname" id="serchInPartnerNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="businessPartnerEmail" id="serchInEmails" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appOrderSearchDirective]="records" serchedColumn="index" id="serchInIndex" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="orderName" id="serchInOrderNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="data" id="serchInDates" placeholder="Wyszukaj" /></th>
       <th>{{this.recordNumbers}}</th>
     </tr>
 
@@ -36,15 +41,22 @@
     <tbody>
 
     <tr *ngFor="let record of records">
-      <td>{{record.productType.code+'-'+record.productType.name}}</td>
-      <td>{{record.productTop.code+'-'+record.productTop.name}}</td>
-      <td>{{record.productBottom.code+'-'+record.productBottom.name}}</td>
+      <td>{{record.orderTotalNumber}}</td>
+      <td>{{record.businessPartnerCompanyName}}</td>
+      <td>{{record.businessPartnerFulname}}</td>
+      <td>{{record.businessPartnerEmail}}</td>
+      <td>{{record.index}}</td>
+      <td>{{record.orderName}}</td>
+      <td>{{record.data}}</td>
+      <td>{{this.recordNumbers}}</td>
       <td>
         <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
         <br>
-        <button  class="deleteButton" (click)="this.deleteSelectedRecord(record.id)" [title]="deleteButtonInfo" >x</button>
+
         <button class="updateButton" (click)="updateSelectedRecord(record.id);" [title]="updateButtonInfo">u</button>
         <button class="showDrawing" (click)="showDrawing(record.id)"> Zobacz Rysunek</button>
+        <button class="showOrderHistory" (click)="showOrderHistory(record.id)">Zobacz Historię</button>
+        <button  class="deleteButton" (click)="this.deleteSelectedRecord(record.id)" [title]="deleteButtonInfo" >x</button>
       </td>
 
     </tr>
