@@ -19,7 +19,7 @@ import {MaterialTableService} from './materials/MaterialServices/material-table.
 import { LoginComponent } from './LoginandLogOut/login/loginComponent/login.component';
 import { HeaderComponent } from './header/header/header.component';
 import {AddAuthorizationCookieInterceptorService} from './helpers/interceptors/add-authorization-cookie-interceptor.service';
-import { OrdersComponent } from './Orders/orders/orders.component';
+import { OrdersComponent } from './Orders/orders/OrdersMainComponent/orders.component';
 import { ProductComponent } from './Products/ProductMainComponent/product/product.component';
 import { ProductTopComponent } from './Products/ProductTop/product-top/product-top.component';
 import { ProductBottomComponent } from './Products/ProductBottom/product-bottom/product-bottom.component';
@@ -53,8 +53,11 @@ import { ProductSearchDirective } from './helpers/directive/ForProducts/product-
 import { CreateProductDrawingComponent } from './Products/ProductMainComponent/product/create-product-drawing/create-product-drawing.component';
 import { ContainerForDragableComponent } from './Products/ProductMainComponent/product/DragAndDropTest/container-for-dragable/container-for-dragable.component';
 import {ResizableDraggableComponent} from './Products/ProductMainComponent/product/DragAndDropTest/resizable-draggable/resizable-draggable.component';
-import { CreateProductDrawingFormForUserComponent } from './Products/ProductMainComponent/product/create-product-drawing-form-for-user/create-product-drawing-form-for-user.component';
+import { ProductDrawingTemplateComponent } from './Products/ProductMainComponent/product/product-drawing-template/product-drawing-template.component';
 import { ProductTableFormComponent } from './Products/ProductMainComponent/product/product-table-form/product-table-form.component';
+import { CreateOrderComponent } from './Orders/orders/create-order/create-order.component';
+import { UpdateOrderComponent } from './Orders/orders/update-order/update-order.component';
+import { OrderVersionRegisterComponent } from './Orders/orders/order-version-register/order-version-register.component';
 
 
 
@@ -102,8 +105,11 @@ import { ProductTableFormComponent } from './Products/ProductMainComponent/produ
     CreateProductDrawingComponent,
     ContainerForDragableComponent,
     ResizableDraggableComponent,
-    CreateProductDrawingFormForUserComponent,
-    ProductTableFormComponent
+    ProductDrawingTemplateComponent,
+    ProductTableFormComponent,
+    CreateOrderComponent,
+    UpdateOrderComponent,
+    OrderVersionRegisterComponent
     ],
   imports: [
     BrowserModule,
@@ -140,7 +146,7 @@ import { ProductTableFormComponent } from './Products/ProductMainComponent/produ
       { path: 'products/addDrawing', component: CreateProductDrawingComponent},
       {path: 'login', component: LoginComponent },
       {path: 'drag', component: ContainerForDragableComponent },
-      {path: 'products/productDrawingBlueprint', component: CreateProductDrawingFormForUserComponent }
+      {path: 'products/productDrawingBlueprint', component: ProductDrawingTemplateComponent }
       ])
   ],
   providers: [

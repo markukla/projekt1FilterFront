@@ -13,6 +13,7 @@ import {ProductBackendService} from '../ProductServices/product-backend.service'
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
 import DimensionTextFIeldInfo from '../../../ProductTypesAndClasses/dimensionTextFIeldInfo';
+import {getBackendErrrorMesage} from '../../../../helpers/errorHandlingFucntion/handleBackendError';
 
 @Component({
   selector: 'app-create-product-drawing',
@@ -24,7 +25,8 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   tableForm: FormGroup;
   bgImageVariable: string;
   createDimensionForm: FormGroup;
-  operationStatusMessage: string;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
   previouslyUsedUniqueDimensionCodes: string[] = [];
   idValue: string;
   // tslint:disable-next-line:max-line-length
@@ -142,10 +144,15 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
     };
     this.backendService.addRecords(createProductDto).subscribe((product) => {
       console.log('dodano nowy Product');
-      this.operationStatusMessage = 'dodano nowy Product';
-    }, error => {
-      console.log('nie udało się dodać produktu');
-      this.operationStatusMessage = 'nie udało się dodać produktu';
+      this.operationSuccessStatusMessage = 'dodano nowy Product';
+    }, (error) => {
+      const errorMessage = getBackendErrrorMesage(error);
+      if (errorMessage.includes('Already exist in database')) {
+        this.operationFailerStatusMessage = 'nie udało się dodać produktu, produkt o podanych parametrach już istnieje w bazie danych';
+      }
+      else {
+        this.operationFailerStatusMessage = 'wystąpił bład, nie udało sie dodać produktu, spróbuj ponownie';
+      }
     });
 
 
@@ -158,6 +165,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
     const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.inputDivHorizontal, .inputDivVertical'); /* does not work for 2 class at once selected  */
     console.log(`inoutDivs lenhth=   ${inputDivs.length}`);
     for (let i = 0; i < inputDivs.length; i++) {
+     /* const inputDivRelativeToContainerXPosition = inputDivs[i].style.left/this.drawing */
       const dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
         dimensionId: inputDivs[i].firstElementChild.id,
         dimensionTexfieldXposition: `${inputDivs[i].style.left}`,

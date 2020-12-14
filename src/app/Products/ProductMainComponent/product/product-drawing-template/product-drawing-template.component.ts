@@ -7,11 +7,11 @@ import DimensionTextFIeldInfo from '../../../ProductTypesAndClasses/dimensionTex
 import {TableFormServiceService} from '../product-table-form/table-form-service.service';
 
 @Component({
-  selector: 'app-create-product-drawing-form-for-user',
-  templateUrl: './create-product-drawing-form-for-user.component.html',
-  styleUrls: ['./create-product-drawing-form-for-user.component.css']
+  selector: 'app-product-drawing-template',
+  templateUrl: './product-drawing-template.component.html',
+  styleUrls: ['./product-drawing-template.component.css']
 })
-export class CreateProductDrawingFormForUserComponent implements OnInit, AfterViewInit, AfterContentChecked {
+export class ProductDrawingTemplateComponent implements OnInit, AfterViewInit, AfterContentChecked {
   productId: string = String(this.tableService.selectedId);
   selectedProduct: Product;
   dimensionsInfo: DimensionTextFIeldInfo[] = [];

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateProductDrawingFormForUserComponent } from './create-product-drawing-form-for-user.component';
+import { ProductDrawingTemplateComponent } from './product-drawing-template.component';
 
 describe('CreateProductDrawingFormForUserComponent', () => {
-  let component: CreateProductDrawingFormForUserComponent;
-  let fixture: ComponentFixture<CreateProductDrawingFormForUserComponent>;
+  let component: ProductDrawingTemplateComponent;
+  let fixture: ComponentFixture<ProductDrawingTemplateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CreateProductDrawingFormForUserComponent ]
+      declarations: [ ProductDrawingTemplateComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateProductDrawingFormForUserComponent);
+    fixture = TestBed.createComponent(ProductDrawingTemplateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

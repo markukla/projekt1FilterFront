@@ -1,25 +1,22 @@
 import {AfterContentChecked, Component, OnInit} from '@angular/core';
-import ProductBottom from '../../../ProductTypesAndClasses/productBottom.entity';
-import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
+import ProductBottom from '../../../Products/ProductTypesAndClasses/productBottom.entity';
+import ProductTop from '../../../Products/ProductTypesAndClasses/productTop.entity';
+import ProductType from '../../../Products/ProductTypesAndClasses/productType.entity';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {ProductTypeBackendService} from '../../../ProductType/ProductTypeServices/product-type-backend.service';
-import {ValidateProductTypeService} from '../../../ProductType/ProductTypeServices/validate-product-type.service';
-import {ProductTopBackendService} from '../../../ProductTop/ProductTopServices/product-top-backend.service';
-import {ProductBottomBackendService} from '../../../ProductBottom/ProductBottomServices/product-bottom-backend.service';
+import {DrawingPaths} from '../../../Products/ProductTypesAndClasses/drawingPaths';
+import {ProductBackendService} from '../../../Products/ProductMainComponent/product/ProductServices/product-backend.service';
+import {ProductValidatorService} from '../../../Products/ProductMainComponent/product/ProductServices/product-validator.service';
+import {ProductTypeBackendService} from '../../../Products/ProductType/ProductTypeServices/product-type-backend.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import ProductType from '../../../ProductTypesAndClasses/productType.entity';
-import {ProductBackendService} from '../ProductServices/product-backend.service';
-import {ProductValidatorService} from '../ProductServices/product-validator.service';
-import {DrawingPaths} from '../../../ProductTypesAndClasses/drawingPaths';
-import {ProductComunicationService} from '../ProductServices/product-comunication.service';
-import {getBackendErrrorMesage} from '../../../../helpers/errorHandlingFucntion/handleBackendError';
+import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
 
 @Component({
-  selector: 'app-create-product',
-  templateUrl: './create-product.component.html',
-  styleUrls: ['./create-product.component.css']
+  selector: 'app-create-order',
+  templateUrl: './create-order.component.html',
+  styleUrls: ['./create-order.component.css']
 })
-export class CreateProductComponent implements OnInit, AfterContentChecked {
+export class CreateOrderComponent implements OnInit, AfterContentChecked {
+
   operationMessage: string;
   uploadOperationMessage: string;
   showoperationStatusMessage: string;
