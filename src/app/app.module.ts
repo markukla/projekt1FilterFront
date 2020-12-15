@@ -59,6 +59,7 @@ import { CreateOrderComponent } from './Orders/orders/create-order/create-order.
 import { UpdateOrderComponent } from './Orders/orders/update-order/update-order.component';
 import { OrderVersionRegisterComponent } from './Orders/orders/order-version-register/order-version-register.component';
 import { OrderSearchDirectiveDirective } from './helpers/directive/ForOrders/order-search-directive.directive';
+import { OrderDrawingComponent } from './Orders/orders/order-drawing/order-drawing.component';
 
 
 
@@ -111,7 +112,8 @@ import { OrderSearchDirectiveDirective } from './helpers/directive/ForOrders/ord
     CreateOrderComponent,
     UpdateOrderComponent,
     OrderVersionRegisterComponent,
-    OrderSearchDirectiveDirective
+    OrderSearchDirectiveDirective,
+    OrderDrawingComponent
     ],
   imports: [
     BrowserModule,
@@ -122,6 +124,9 @@ import { OrderSearchDirectiveDirective } from './helpers/directive/ForOrders/ord
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
       { path: 'orders', component: OrdersComponent},
+      { path: 'orders/add', component: CreateOrderComponent},
+      { path: 'orders/update', component: UpdateOrderComponent},
+      { path: 'orders/drawing', component: OrderDrawingComponent},
       {path: 'materials', component: MaterialsComponent },
       { path: 'materials/add', component: CreateNewMaterialComponent},
       { path: 'materials/update', component: UpdateMaterialComponent},

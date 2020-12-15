@@ -5,6 +5,8 @@ import Product from '../../../ProductTypesAndClasses/product.entity';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import DimensionTextFIeldInfo from '../../../ProductTypesAndClasses/dimensionTextFIeldInfo';
 import {TableFormServiceService} from '../product-table-form/table-form-service.service';
+import {OrderBackendService} from '../../../../Orders/orders/OrderServices/order-backend.service';
+import {OrderTableService} from '../../../../Orders/orders/OrderServices/order-table.service';
 
 @Component({
   selector: 'app-product-drawing-template',
@@ -12,15 +14,17 @@ import {TableFormServiceService} from '../product-table-form/table-form-service.
   styleUrls: ['./product-drawing-template.component.css']
 })
 export class ProductDrawingTemplateComponent implements OnInit, AfterViewInit, AfterContentChecked {
-  productId: string = String(this.tableService.selectedId);
+  productId: string = String(this.productTableService.selectedId);
   selectedProduct: Product;
   dimensionsInfo: DimensionTextFIeldInfo[] = [];
   tableForm: FormGroup;
   bgImageVariable: string;
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
 
-  constructor(private backendService: ProductBackendService,
-              private tableService: ProductTableService,
+  constructor(private productBackendService: ProductBackendService,
+              private orderBackendService: OrderBackendService,
+              private productTableService: ProductTableService,
+              private orderTableService: OrderTableService,
               private renderer: Renderer2,
               private tableFormService: TableFormServiceService
   ) {
@@ -29,11 +33,11 @@ export class ProductDrawingTemplateComponent implements OnInit, AfterViewInit, A
 
   ngOnInit(): void {
     this.tableForm = this.tableFormService.tableForm;
-    this.bgImageVariable = this.backendService.drawingPaths.urlOfOrginalDrawing;
+    this.bgImageVariable = this.productBackendService.drawingPaths.urlOfOrginalDrawing;
     console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
   }
   getSelectedProductFromDatabase(): void {
-    this.backendService.findRecordById(this.productId).subscribe((product) => {
+    this.productBackendService.findRecordById(this.productId).subscribe((product) => {
       this.selectedProduct = product.body;
       this.dimensionsInfo = product.body.dimensionsTextFieldInfo;
     }, error => {

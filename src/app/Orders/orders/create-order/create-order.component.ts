@@ -8,7 +8,14 @@ import {ProductBackendService} from '../../../Products/ProductMainComponent/prod
 import {ProductValidatorService} from '../../../Products/ProductMainComponent/product/ProductServices/product-validator.service';
 import {ProductTypeBackendService} from '../../../Products/ProductType/ProductTypeServices/product-type-backend.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
+import User from '../../../Users/users/userTypes/user';
+import {Material} from '../../../materials/MaterialsMainComponent/material';
+import {MaterialBackendService} from '../../../materials/MaterialServices/material-backend.service';
+import {BusinesPartnerBackendService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/busines-partner-backend.service';
+import {OrderBackendService} from '../OrderServices/order-backend.service';
+import CreateProductDto from '../../../Products/ProductTypesAndClasses/product.dto';
+import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import RoleEnum from '../../../Users/users/userTypes/roleEnum';
 
 @Component({
   selector: 'app-create-order',
@@ -18,20 +25,28 @@ import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/han
 export class CreateOrderComponent implements OnInit, AfterContentChecked {
 
   operationMessage: string;
-  uploadOperationMessage: string;
   showoperationStatusMessage: string;
   allBotomsToselect: ProductBottom[];
   allTopsToSelect: ProductTop[];
   allTypesToSelect: ProductType[];
+  allParntersToSelect: User[];
+  allMaterialsToSelect: Material[];
+  selectedtType: ProductType;
+  selectedTop: ProductTop;
+  selectedBottom: ProductBottom;
   form: FormGroup;
-  upladDrawingForm: FormGroup;
   uploadSuccessStatus: boolean;
   drawingPaths: DrawingPaths;
+  isPartner: boolean;
 
   constructor(
-    private backendService: ProductBackendService,
+    private backendService: OrderBackendService,
+    private productBackendService: ProductBackendService,
     public validationService: ProductValidatorService,
     private typesBackendService: ProductTypeBackendService,
+    private materialBackendService: MaterialBackendService,
+    private partnersBackendService: BusinesPartnerBackendService,
+    private authenticationService: AuthenticationService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
@@ -39,43 +54,51 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit(): void {
-    this.uploadSuccessStatus = false;
+    this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
     this.form = new FormGroup({
       type: new FormControl(null, [Validators.required] ),
       top: new FormControl(null, [Validators.required] ),
-      bottom: new FormControl(null, [Validators.required])
+      bottom: new FormControl(null, [Validators.required]),
+      businessPartner: new FormControl(null, Validators.required),
+      productMaterial: new FormControl(null, Validators.required)
     }, {updateOn: 'change'});
-    this.upladDrawingForm = new FormGroup({
-      file: new FormControl('', Validators.required),
-      fileSource: new FormControl('', [Validators.required])
-    });
 
+  }
+  // tslint:disable-next-line:typedef
+  get  type() {
+    return this.form.get('type');
   }
 // tslint:disable-next-line:typedef
   get  top() {
     return this.form.get('top');
   }
   // tslint:disable-next-line:typedef
-  get  type() {
-    return this.form.get('type');
-  }
-  // tslint:disable-next-line:typedef
-  get  fileSource() {
-    return this.form.get('fileSource');
-  }
-  // tslint:disable-next-line:typedef
   get  bottom() {
     return this.form.get('bottom');
   }
   // tslint:disable-next-line:typedef
-  get  file() {
-    return this.upladDrawingForm.get('file');
+  get  businessPartner() {
+    return this.form.get('businessPartner');
+  }
+  // tslint:disable-next-line:typedef
+  get  productMaterial() {
+    return this.form.get('productMaterial');
   }
   getDataToDropdownLists(): void {
     this.typesBackendService.getRecords().subscribe((records) => {
       this.allTypesToSelect = records.body;
     }, error => {
-      console.log('error during requesting productTypes');
+      console.log('error during requesting productTypes from db');
+    });
+    this.partnersBackendService.getAllRecords().subscribe((records) => {
+      this.allParntersToSelect = records.body;
+    }, error => {
+      console.log('error during requesting partners from db');
+    });
+    this.materialBackendService.getRecords().subscribe((records) => {
+      this.allMaterialsToSelect = records.body;
+    }, error => {
+      console.log('error during requesting materials from db');
     });
   }
   setTopsAndBottomsToSelectAfterTypeSelected(productType: ProductType): void {
@@ -83,43 +106,31 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
     this.allBotomsToselect = productType.bottomsForThisProductType;
   }
   onSubmit(): void {
-    this.backendService.selectedType = this.type.value;
-    this.backendService.selectedBottom = this.bottom.value;
-    this.backendService.selectedTop = this.top.value;
-    this.router.navigateByUrl('/products/addDrawing');
-  }
-  onUpload(): void {
-    this.uploadSuccessStatus = false;
-    const formData = new FormData();
-    formData.append('file', this.upladDrawingForm.get('fileSource').value);
-    this.backendService.uploadDrawing(formData).subscribe((urls) => {
-      this.backendService.drawingPaths = urls;
-      console.log(`this.backendService.drawingPaths.urlOfOrginalDrawing= ${this.backendService.drawingPaths.urlOfOrginalDrawing} `);
-      this.uploadOperationMessage = 'dodano rysunek';
-      this.uploadSuccessStatus = true;
-    }, error => {
-      this.uploadSuccessStatus = false;
-      const errorMessage = getBackendErrrorMesage(error);
-      if (errorMessage.includes('.png files are allowed')) {
-        this.uploadOperationMessage = 'nie udało sie dodać rysunku, tylko format .png jest dozwolony';
-      }
-      else {
-        this.uploadOperationMessage = 'wystąpił błąd nie udało się dodać rysunku, spróbuj pownownie';
-      }
-    });
-
-  }
-  onFileChange(event): void {
-    if (event.target.files.length > 0) {
-      this.uploadOperationMessage = null;
-      const file = event.target.files[0];
-      this.upladDrawingForm.patchValue({
-        fileSource: file
-      });
+    this.selectedtType = this.type.value;
+    this.selectedBottom = this.bottom.value;
+    this.selectedTop = this.top.value;
+    if (!this.isPartner) {
+      this.backendService.selectedParnter = this.businessPartner.value;
     }
+    else if (this.isPartner) {
+      this.backendService.selectedParnter = this.authenticationService.user;
+    }
+    this.backendService.selectedMaterial = this.productMaterial.value;
+    const createProductDto: CreateProductDto = {
+      productType: this.selectedtType,
+      productBottom: this.selectedBottom,
+      productTop: this.selectedTop
+    };
+    this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
+      this.backendService.selectedProduct = product.body;
+      this.router.navigateByUrl('/orders/drawing');
+    }, error => {
+      console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
+      this.operationMessage = 'nie udało się znaleźć produktu na postawie wybranych parametrów. Spróbuj ponownie';
+    });
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/products');
+    this.router.navigateByUrl('/orders');
   }
 
   cleanOperationMessage(): void {
@@ -129,11 +140,14 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
   }
 
   ngAfterContentChecked(): void {
+    this.onTypeSelectedSetTopsAndBottoms();
+  }
+  onTypeSelectedSetTopsAndBottoms(): void {
     const type = this.type.value;
     console.log(`selected type= ${type}`);
     if (type) {
-      this.backendService.selectedType = type;
-      this.setTopsAndBottomsToSelectAfterTypeSelected(this.backendService.selectedType);
+      this.selectedtType = type;
+      this.setTopsAndBottomsToSelectAfterTypeSelected(this.selectedtType);
     }
   }
 

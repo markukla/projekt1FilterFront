@@ -38,6 +38,11 @@ export class ProductBackendService {
         this.tableService.addRecordToTable(record.body);
       }));
   }
+  getProductByTypeTopBottom(record: CreateProductDto): Observable<HttpResponse<Product>> {
+    // tslint:disable-next-line:max-line-length
+    const url = `${this.rootURL + this.endpointUrl}/productInfo/getByTypeTopBottom`;
+    return this.http.post<Product>(url, record, {observe: 'response'});
+  }
 
   deleteRecordById(id: string): Observable<HttpResponse<any>> {
     const deleteUrl = `${this.rootURL + this.endpointUrl}/${id}`;

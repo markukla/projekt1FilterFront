@@ -62,9 +62,9 @@ export class OrderSearchDirectiveDirective implements OnInit, AfterContentChecke
   }
 
   ngOnInit(): void {
+    this.setOrginalArrayCopy();
   }
-
-  ngAfterContentChecked(): void {
+  setOrginalArrayCopy(): void {
     this.orginalArrayCopy.length = 0;
     if (this.authenticationService.userRole === RoleEnum.PARTNER) {
       this.backendService.getCurrentOrdersForPartners(this.authenticationService.user.businesPartnerCompanyName).subscribe((orders) => {
@@ -81,4 +81,8 @@ export class OrderSearchDirectiveDirective implements OnInit, AfterContentChecke
       });
     }
   }
-}
+
+  ngAfterContentChecked(): void {
+  }
+
+  }

@@ -56,7 +56,7 @@ export class UpdateProductTypeComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     name: new FormControl('', [Validators.nullValidator, Validators.required], [this.validationService.nameValidatorForUpdate(String(this.recordToUpdateId))]),
     // tslint:disable-next-line:max-line-length
-    code: new FormControl('', [Validators.nullValidator && Validators.required, Validators.minLength(1), Validators.maxLength(1)], [this.validationService.codeValidatorForUpdate(String(this.recordToUpdateId))]),
+    code: new FormControl('', [Validators.nullValidator && Validators.required, Validators.minLength(2), Validators.maxLength(2)], [this.validationService.codeValidatorForUpdate(String(this.recordToUpdateId))]),
     topsForThisProductType: new FormControl(null, [Validators.required] ),
     bottomsForThisProductType: new FormControl(null, [Validators.required])
   }, {updateOn: 'change'});

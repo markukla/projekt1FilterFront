@@ -40,7 +40,7 @@ export class CreateProductTypeComponent implements OnInit {
       // tslint:disable-next-line:max-line-length
       name: new FormControl('', [Validators.nullValidator, Validators.required], [this.validationService.nameValidator()]),
       // tslint:disable-next-line:max-line-length
-      code: new FormControl('', [Validators.nullValidator && Validators.required, Validators.minLength(1), Validators.maxLength(1)], [this.validationService.codeValidator()]),
+      code: new FormControl('', [Validators.nullValidator && Validators.required, Validators.minLength(2), Validators.maxLength(2)], [this.validationService.codeValidator()]),
       topsForThisProductType: new FormControl(null, [Validators.required] ),
       bottomsForThisProductType: new FormControl(null, [Validators.required])
     }, {updateOn: 'change'});

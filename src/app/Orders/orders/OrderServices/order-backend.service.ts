@@ -5,12 +5,14 @@ import ProductTop from '../../../Products/ProductTypesAndClasses/productTop.enti
 import {DrawingPaths} from '../../../Products/ProductTypesAndClasses/drawingPaths';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {take, tap} from 'rxjs/operators';
 import User from '../../../Users/users/userTypes/user';
 import Order from '../../OrdersTypesAndClasses/orderEntity';
 import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
 import OrderVersionRegister from '../../OrdersTypesAndClasses/orderVersionRegister';
 import {OrderTableService} from './order-table.service';
+import {Material} from '../../../materials/MaterialsMainComponent/material';
+import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -18,18 +20,16 @@ import {OrderTableService} from './order-table.service';
 export class OrderBackendService {
   rootURL = 'http://localhost:5000';
   endpointUrl = '/orders';
-  selectedType: ProductType;
-  selectedBottom: ProductBottom;
-  selectedTop: ProductTop;
-  drawingPaths: DrawingPaths;
+  selectedProduct: Product;
   selectedParnter: User;
+  selectedMaterial: Material;
   logedUser: User;
   constructor(private http: HttpClient,
               private tableService: OrderTableService) {
   }
 
   getCurrentOrdersForPrivilligedUsers(): Observable<HttpResponse<Order[]>> {
-    return this.http.get<Order[]>(`${this.rootURL + this.endpointUrl}/currents`, {observe: 'response'});
+    return this.http.get<Order[]>(`${this.rootURL + this.endpointUrl}/currents`, {observe: 'response'}).pipe(take(1));
   }
   getCurrentOrdersForPartners(partnerCode: string): Observable<HttpResponse<Order[]>> {
     return this.http.get<Order[]>(`${this.rootURL + this.endpointUrl}/currents/businessPartner/${partnerCode}`, {observe: 'response'});

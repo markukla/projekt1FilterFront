@@ -16,7 +16,7 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
 
   @Input()
   records: OrderforTableCell[];
-  createNewMaterialDescription = 'Dodaj Nowy';
+  createNewRecordDescription = 'Dodaj Nowy';
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;
   operationStatusMessage: string;
@@ -57,6 +57,7 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
         this.records = this.tableService.getRecords();
       });
     } else if (this.authenticationService.userRole === RoleEnum.ADMIN || this.authenticationService.userRole === RoleEnum.EDITOR) {
+      console.log('in get orders for privilligedUsers ')
       this.backendService.getCurrentOrdersForPrivilligedUsers().subscribe((records) => {
         this.tableService.records.length = 0;
         records.body.forEach((record) => {

@@ -1,14 +1,22 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TableFormServiceService {
-tableForm: FormGroup;
+  tableForm: FormGroup;
+  orderNumber: string;
+  index: string;
+  orderCreator: string;
+  orderName: string;
+  date: string;
+  material: string;
+
   constructor() {
     this.initTableForm();
   }
+
   initTableForm(): void {
     this.tableForm = new FormGroup({
       workingTemperature: new FormControl(null, [Validators.required]),
@@ -21,6 +29,7 @@ tableForm: FormGroup;
   get workingTemperature() {
     return this.tableForm.get('workingTemperature');
   }
+
   // tslint:disable-next-line:typedef
   get workingSide() {
     return this.tableForm.get('workingSide');
@@ -31,5 +40,5 @@ tableForm: FormGroup;
     return this.tableForm.get('antiEelectrostatic');
   }
 
-  }
+}
 
