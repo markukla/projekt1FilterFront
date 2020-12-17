@@ -12,6 +12,11 @@ export class TableFormServiceService {
   orderName: string;
   date: string;
   material: string;
+  Lvalue: number;
+  Dvalue: number;
+  productTypeCode: string;
+  productTopCode: string;
+  productBottomCode: string;
 
   constructor() {
     this.initTableForm();
@@ -38,6 +43,10 @@ export class TableFormServiceService {
   // tslint:disable-next-line:typedef
   get antiEelectrostatic() {
     return this.tableForm.get('antiEelectrostatic');
+  }
+
+  public buildIndex(): void {
+    this.index = ``
   }
 
 }

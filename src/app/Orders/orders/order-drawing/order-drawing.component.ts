@@ -1,7 +1,17 @@
-import {AfterContentChecked, AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef, HostListener,
+  OnChanges,
+  OnInit,
+  Renderer2, SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 import DimensionTextFIeldInfo from '../../../Products/ProductTypesAndClasses/dimensionTextFIeldInfo';
-import {FormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {ProductBackendService} from '../../../Products/ProductMainComponent/product/ProductServices/product-backend.service';
 import {OrderBackendService} from '../OrderServices/order-backend.service';
 import {ProductTableService} from '../../../Products/ProductMainComponent/product/ProductServices/product-table.service';
@@ -17,7 +27,7 @@ import Dimension from '../../OrdersTypesAndClasses/dimension';
   templateUrl: './order-drawing.component.html',
   styleUrls: ['./order-drawing.component.css']
 })
-export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterContentChecked {
+export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterContentChecked, AfterViewChecked, OnChanges {
   orderId: string = String(this.orderTableService.selectedId);
   selectedOrder: OrderforTableCell;
   selectedOrderEntityId: string;
@@ -27,6 +37,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   dimensionsInfo: DimensionTextFIeldInfo[] = this.selectedProduct.dimensionsTextFieldInfo;
   tableForm: FormGroup;
   bgImageVariable: string;
+  LValue: number;
+  DVaLe: number;
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
 
   constructor(
@@ -41,7 +53,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   ngOnInit(): void {
     this.tableForm = this.tableFormService.tableForm;
-
     console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
   }
   getSelectedProductFromDatabase(): void {
@@ -52,7 +63,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     this.tableFormService.material = this.selectedMaterial.materialName;
     console.log(`this.tableFormService.material= ${this.tableFormService.material}`);
     this.tableFormService.orderName = this.selectedProduct.productType.name + '  ' + this.tableFormService.material;
-  }
+     }
+
   getInputElementsFromVievAndCreateDimensionTable(): Dimension[] {
     // tslint:disable-next-line:max-line-length
     const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.inputDivHorizontal, .inputDivVertical'); /* does not work for 2 class at once selected  */
@@ -87,7 +99,16 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     const inputDiv = this.renderer.createElement('div');
     const input = this.renderer.createElement(inputTag);
     input.className = inputClass;
-    input.value = inputId;
+    input.type = 'number';
+    input.id = inputId;
+    if (input.id === 'L'){
+      this.renderer.setProperty(input, 'formControlName', 'L');
+      console.log(`input formcontrolName set to ${input.formControlName} `);
+    }
+    if (input.id === 'D'){
+      this.renderer.setProperty(input, 'formControlName', 'D');
+      console.log(`input formcontrolName set to ${input.formControlName} `);
+    }
     inputDiv.className = inputDivClass;
     inputDiv.style.left = inputXposition;
     inputDiv.style.top = inputYPosition;
@@ -107,6 +128,33 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   ngAfterContentChecked(): void {
     console.log(`workingTemperatureValue= ${this.tableForm.controls.workingTemperature.value}`);
     this.buildDataInDrawingTable();
+    console.log(`this L currentValue= ${this.L.value}`);
+    console.log(`this D curentValue= ${this.D.value}`);
+    console.log(`this. this.tableFormService.index= ${ this.tableFormService.index}`);
   }
 
+  ngAfterViewChecked(): void {
+    this.buildDataInDrawingTable();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.buildDataInDrawingTable();
+  }
+  @HostListener('input', ['$event'])
+  bindInputWithIndex(event: any): void {
+    if (event.target.id === 'L') {
+      this.LValue = event.target.value;
+      this.tableFormService.index = `${this.LValue}`;
+      console.log(`this.LValue= ${this.LValue}`);
+      console.log(' in hostlistiner method');
+      console.log(`target input Value=  ${event.target.value}`);
+    }
+    if (event.target.id === 'D') {
+      this.LValue = event.target.value;
+      this.tableFormService.index = `${this.LValue}`;
+      console.log(`this.LValue= ${this.LValue}`);
+      console.log(' in hostlistiner method');
+      console.log(`target input Value=  ${event.target.value}`);
+    }
+  }
 }

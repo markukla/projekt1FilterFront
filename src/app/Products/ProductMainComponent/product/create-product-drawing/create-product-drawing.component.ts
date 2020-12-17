@@ -189,15 +189,15 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
             allpreviouslyUsedCodes.push(d.dimensionId);
           });
         });
+        /* i make sure that L i D codes crucial for Index Binding will be always present, and that is why push it to table*/
+        allpreviouslyUsedCodes.push('L');
+        allpreviouslyUsedCodes.push('D');
         console.log(`allpreviouslyUsedCodes.length= ${allpreviouslyUsedCodes.length} `);
         const allUniquePreviouslyUsedCodes: string[] = allpreviouslyUsedCodes.filter((x, index, self) => {
           return index === self.indexOf(x);
         });
         console.log(`allUniquePreviouslyUsedCodes.length= ${allUniquePreviouslyUsedCodes.length} `);
         this.previouslyUsedUniqueDimensionCodes = allUniquePreviouslyUsedCodes;
-        this.previouslyUsedUniqueDimensionCodes.forEach((x) => {
-          console.log(`dimensionCode= ${x}`);
-        });
       });
 
     }

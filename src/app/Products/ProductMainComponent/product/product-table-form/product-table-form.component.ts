@@ -36,5 +36,11 @@ export class ProductTableFormComponent implements OnInit, AfterContentChecked {
   }
 
   ngAfterContentChecked(): void {
+    this.orderNumber = this.tableFormService.orderNumber;
+    this.index = this.tableFormService.index;
+    this.orderCreator = this.tableFormService.orderCreator;
+    this.orderName = this.tableFormService.orderName;
+    this.tableForm = this.tableFormService.tableForm;
+    this.material = this.tableFormService.material;
   }
 }
