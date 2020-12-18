@@ -94,10 +94,10 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
         }
       });
     }
-     updateTableAfterMaterialUpdated(material: Material): void {
+     updateTableAfterMaterialUpdated(materialName: Material): void {
       for (let i = 0; i < this.materials.length; i++ ){
-        if (this.materials[i].id === material.id){
-          this.materials[i] = material;
+        if (this.materials[i].id === materialName.id){
+          this.materials[i] = materialName;
         }
       }
     */
@@ -105,8 +105,8 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   /*
   does not work because for each use copy of orginal array
   this.materials.map((m: Material) => {
-    if (m.id === material.id){
-      m = material;
+    if (m.id === materialName.id){
+      m = materialName;
       console.log(`m.materialCode= ${m.materialCode}`);
     }
   });*/

@@ -19,28 +19,44 @@ export class ProductTableFormComponent implements OnInit, AfterContentChecked {
   orderCreator: string;
   orderName: string;
   date: string;
-  material: string;
+  materialName: string;
+  materialCode: string;
+  Lvalue: string;  // value for second indexDimension
+  Dvalue: string; // value for first index dimension
+  productTypeName: string;
+  productTypeCode: string;
+  productTopCode: string;
+  productBottomCode: string;
+  materialPartialCodeForIndex: string;
+  firstIndexDimension: string;
+  secondIndexDimension: string;
 
   constructor(
     private backendService: ProductBackendService,
     private tableFormService: TableFormServiceService
   ) { }
   ngOnInit(): void {
-    this.orderNumber = this.tableFormService.orderNumber;
-    this.index = this.tableFormService.index;
-    this.orderCreator = this.tableFormService.orderCreator;
-    this.orderName = this.tableFormService.orderName;
-    this.tableForm = this.tableFormService.tableForm;
-    this.material = this.tableFormService.material;
-    this.bgImageVariable = this.backendService.drawingPaths.urlOfOrginalDrawing;
+    this.setPropertiesTOEqualTableFormServiceProperties();
   }
 
   ngAfterContentChecked(): void {
+   this.setPropertiesTOEqualTableFormServiceProperties();
+  }
+  setPropertiesTOEqualTableFormServiceProperties(): void {
     this.orderNumber = this.tableFormService.orderNumber;
     this.index = this.tableFormService.index;
     this.orderCreator = this.tableFormService.orderCreator;
     this.orderName = this.tableFormService.orderName;
     this.tableForm = this.tableFormService.tableForm;
-    this.material = this.tableFormService.material;
+    this.materialName = this.tableFormService.materialName;
+    this.Lvalue = this.tableFormService.Lvalue;
+    this.Dvalue = this.tableFormService.Dvalue;
+    this.productTypeName = this.tableFormService.productTypeName;
+    this.productTypeCode = this.tableFormService.productTypeCode;
+    this.productTopCode = this.tableFormService.productTopCode;
+    this.productBottomCode = this.tableFormService.productBottomCode;
+    this.materialPartialCodeForIndex = this.tableFormService.materialPartialCodeForIndex;
+    this.firstIndexDimension = this.tableFormService.firstIndexDimension;
+    this.secondIndexDimension = this.tableFormService.secondIndexDimension;
   }
 }

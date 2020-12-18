@@ -21,6 +21,7 @@ import OrderforTableCell from '../../OrdersTypesAndClasses/orderforTableCell';
 import User from '../../../Users/users/userTypes/user';
 import {Material} from '../../../materials/MaterialsMainComponent/material';
 import Dimension from '../../OrdersTypesAndClasses/dimension';
+import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-order-drawing',
@@ -37,8 +38,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   dimensionsInfo: DimensionTextFIeldInfo[] = this.selectedProduct.dimensionsTextFieldInfo;
   tableForm: FormGroup;
   bgImageVariable: string;
-  LValue: number;
-  DVaLe: number;
+  LValue: string;
+  DVaLe: string;
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
 
   constructor(
@@ -46,6 +47,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
               private orderTableService: OrderTableService,
               private renderer: Renderer2,
               private tableFormService: TableFormServiceService,
+              private authenticationService: AuthenticationService,
               private host: ElementRef
   ) {
     this.getSelectedProductFromDatabase();
@@ -54,16 +56,15 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   ngOnInit(): void {
     this.tableForm = this.tableFormService.tableForm;
     console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
+    const orderNumber = 'fakeOrderNumber';
+    const orderCreator = this.authenticationService.user.fulName;
+    const data = 'fakeData';
+    // tslint:disable-next-line:max-line-length
+    this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(orderNumber, orderCreator, data, this.selectedProduct, this.selectedMaterial);
   }
   getSelectedProductFromDatabase(): void {
   }
-  buildDataInDrawingTable(): void {
-    console.log('in build table form data');
-    console.log(`materialName= ${this.selectedMaterial.materialName}`);
-    this.tableFormService.material = this.selectedMaterial.materialName;
-    console.log(`this.tableFormService.material= ${this.tableFormService.material}`);
-    this.tableFormService.orderName = this.selectedProduct.productType.name + '  ' + this.tableFormService.material;
-     }
+
 
   getInputElementsFromVievAndCreateDimensionTable(): Dimension[] {
     // tslint:disable-next-line:max-line-length
@@ -127,31 +128,26 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   ngAfterContentChecked(): void {
     console.log(`workingTemperatureValue= ${this.tableForm.controls.workingTemperature.value}`);
-    this.buildDataInDrawingTable();
-    console.log(`this L currentValue= ${this.L.value}`);
-    console.log(`this D curentValue= ${this.D.value}`);
     console.log(`this. this.tableFormService.index= ${ this.tableFormService.index}`);
+    this.tableFormService.buildIndex(this.DVaLe, this.LValue);
+    this.tableFormService.setOrderName();
   }
 
   ngAfterViewChecked(): void {
-    this.buildDataInDrawingTable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.buildDataInDrawingTable();
   }
   @HostListener('input', ['$event'])
   bindInputWithIndex(event: any): void {
     if (event.target.id === 'L') {
-      this.LValue = event.target.value;
-      this.tableFormService.index = `${this.LValue}`;
+      this.LValue = String(event.target.value);
       console.log(`this.LValue= ${this.LValue}`);
       console.log(' in hostlistiner method');
       console.log(`target input Value=  ${event.target.value}`);
     }
     if (event.target.id === 'D') {
-      this.LValue = event.target.value;
-      this.tableFormService.index = `${this.LValue}`;
+      this.DVaLe = String(event.target.value);
       console.log(`this.LValue= ${this.LValue}`);
       console.log(' in hostlistiner method');
       console.log(`target input Value=  ${event.target.value}`);
