@@ -103,12 +103,15 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     input.type = 'number';
     input.id = inputId;
     if (input.id === 'L'){
-      this.renderer.setProperty(input, 'formControlName', 'L');
-      console.log(`input formcontrolName set to ${input.formControlName} `);
+      console.log(' in set maxlength for L');
+     // this.renderer.setAttribute(input, 'max', '99999');
+      // console.log(`input maxlength set to: ${input.maxLength}`);
     }
     if (input.id === 'D'){
-      this.renderer.setProperty(input, 'formControlName', 'D');
-      console.log(`input formcontrolName set to ${input.formControlName} `);
+     // this.renderer.setAttribute(input, 'max', '9999');
+    }
+    if (input.id !== 'D' && input.id !== 'L') {
+     // this.renderer.setAttribute(input, 'max', '999');
     }
     inputDiv.className = inputDivClass;
     inputDiv.style.left = inputXposition;
@@ -140,17 +143,28 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
   @HostListener('input', ['$event'])
   bindInputWithIndex(event: any): void {
-    if (event.target.id === 'L') {
+    let inputValue = event.target.value;
+    const inputId = event.target.id;
+    if (inputId === 'L') {
+      const maxLength = 5;
+      if (event.target.value.length > maxLength) {
+        event.target.value = event.target.value.slice(0, maxLength);
+      }
       this.LValue = String(event.target.value);
-      console.log(`this.LValue= ${this.LValue}`);
-      console.log(' in hostlistiner method');
-      console.log(`target input Value=  ${event.target.value}`);
     }
-    if (event.target.id === 'D') {
+    if (inputId === 'D') {
+      const maxLength = 4;
+      if (event.target.value.length > maxLength) {
+        event.target.value = event.target.value.slice(0, maxLength);
+      }
       this.DVaLe = String(event.target.value);
-      console.log(`this.LValue= ${this.LValue}`);
-      console.log(' in hostlistiner method');
-      console.log(`target input Value=  ${event.target.value}`);
     }
+    if (inputId !== 'D' && inputId !== 'L') {
+      const maxLength = 3;
+      if (event.target.value.length > maxLength) {
+        event.target.value = event.target.value.slice(0, maxLength);
+      }
+    }
+
   }
 }

@@ -49,8 +49,10 @@ export class ProductTableFormComponent implements OnInit, AfterContentChecked {
     this.orderName = this.tableFormService.orderName;
     this.tableForm = this.tableFormService.tableForm;
     this.materialName = this.tableFormService.materialName;
+    this.materialCode = this.tableFormService.materialCode;
     this.Lvalue = this.tableFormService.Lvalue;
     this.Dvalue = this.tableFormService.Dvalue;
+    this.date = this.tableFormService.date;
     this.productTypeName = this.tableFormService.productTypeName;
     this.productTypeCode = this.tableFormService.productTypeCode;
     this.productTopCode = this.tableFormService.productTopCode;
