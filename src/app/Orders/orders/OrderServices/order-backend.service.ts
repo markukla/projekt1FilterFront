@@ -13,6 +13,7 @@ import OrderVersionRegister from '../../OrdersTypesAndClasses/orderVersionRegist
 import {OrderTableService} from './order-table.service';
 import {Material} from '../../../materials/MaterialsMainComponent/material';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
+import NewestOrderNumber from '../../OrdersTypesAndClasses/newestOrderNumber';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,9 @@ export class OrderBackendService {
   }
   getCurrentOrdersForPartners(partnerCode: string): Observable<HttpResponse<Order[]>> {
     return this.http.get<Order[]>(`${this.rootURL + this.endpointUrl}/currents/businessPartner/${partnerCode}`, {observe: 'response'});
+  }
+  getNewOrderNumber(): Observable<HttpResponse<NewestOrderNumber>> {
+    return this.http.get<NewestOrderNumber>(`${this.rootURL + this.endpointUrl}/orderNumber/newest`, {observe: 'response'});
   }
 
   // tslint:disable-next-line:typedef

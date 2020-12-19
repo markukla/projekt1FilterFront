@@ -22,6 +22,10 @@ import User from '../../../Users/users/userTypes/user';
 import {Material} from '../../../materials/MaterialsMainComponent/material';
 import Dimension from '../../OrdersTypesAndClasses/dimension';
 import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {allUsedDimensionsCodes} from '../../../Products/ProductTypesAndClasses/alreadyExistingDimensionList';
+import {allSecondIndexDimensionCodes} from '../../../Products/ProductTypesAndClasses/alreadyExistingDimensionList';
+import {allFirstIndexDimensionCodes} from '../../../Products/ProductTypesAndClasses/alreadyExistingDimensionList';
+import Order from '../../OrdersTypesAndClasses/orderEntity';
 
 @Component({
   selector: 'app-order-drawing',
@@ -30,16 +34,23 @@ import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServi
 })
 export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterContentChecked, AfterViewChecked, OnChanges {
   orderId: string = String(this.orderTableService.selectedId);
-  selectedOrder: OrderforTableCell;
+  selectedOrderInTableRecord: OrderforTableCell;
+  selectedOrderEntity: Order;
   selectedOrderEntityId: string;
-  selectedProduct: Product = this.orderBackendService.selectedProduct;
-  selectedPartner: User = this.orderBackendService.selectedParnter;
-  selectedMaterial: Material = this.orderBackendService.selectedMaterial;
-  dimensionsInfo: DimensionTextFIeldInfo[] = this.selectedProduct.dimensionsTextFieldInfo;
+  selectedProduct: Product;
+  selectedPartner: User;
+  selectedMaterial: Material;
+  dimensionsInfo: DimensionTextFIeldInfo[];
   tableForm: FormGroup;
   bgImageVariable: string;
-  LValue: string;
-  DVaLe: string;
+  LValue = '';
+  DVaLe = '';
+  orderNumber: number;  // it is not id because it is the same for orders with the same order version register
+  orderVersionNumber: string;
+  orderTotalNumber: string;
+  data: Date|string;
+  orderCreator: string;
+
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
 
   constructor(
@@ -50,19 +61,67 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
               private authenticationService: AuthenticationService,
               private host: ElementRef
   ) {
-    this.getSelectedProductFromDatabase();
+   this.getOrderEnityFromBackendForSelectedTableOrder();
+   this.setOrderNumbersinOrderTable();
   }
-
   ngOnInit(): void {
-    this.tableForm = this.tableFormService.tableForm;
-    console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
-    const orderNumber = 'fakeOrderNumber';
-    const orderCreator = this.authenticationService.user.fulName;
-    const data = 'fakeData';
+    this.initPropertiValuesToServicesValues();
+    this.setDateInOrderTable();
+    this.setOrderNumbersinOrderTable();
     // tslint:disable-next-line:max-line-length
-    this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(orderNumber, orderCreator, data, this.selectedProduct, this.selectedMaterial);
+    this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.orderTotalNumber, this.orderCreator, this.data, this.selectedProduct, this.selectedMaterial);
   }
-  getSelectedProductFromDatabase(): void {
+  initPropertiValuesToServicesValues(): void {
+    this.selectedOrderInTableRecord = this.orderTableService.selectedRecord;
+    this.selectedProduct = this.orderBackendService.selectedProduct;
+    this.selectedPartner = this.orderBackendService.selectedParnter;
+    this.selectedMaterial = this.orderBackendService.selectedMaterial;
+    this.dimensionsInfo = this.selectedProduct.dimensionsTextFieldInfo;
+    this.tableForm = this.tableFormService.tableForm;
+    this.orderCreator = this.authenticationService.user.fulName;
+  }
+  getOrderEnityFromBackendForSelectedTableOrder(): void {
+    if (this.selectedOrderInTableRecord) {
+      this.orderBackendService.findRecordById(String(this.selectedOrderInTableRecord.id)).subscribe((order) => {
+        this.selectedOrderEntity = order.body;
+      }, error => {
+        console.log('nie udało się pobrać danych zapytania na podstawie wybranego rekordu w tabeli');
+      });
+    }
+  }
+  setOrderNumbersinOrderTable(): void {
+    if (this.selectedOrderEntity) {  // update mode
+      this.orderNumber = this.selectedOrderEntity.orderNumber;
+      this.orderVersionNumber = this.selectedOrderEntity.orderVersionNumber;
+      this.tableFormService.orderTotalNumber = this.orderNumber + '.' + this.orderVersionNumber;
+      this.orderTotalNumber = this.tableFormService.orderTotalNumber;
+    }
+    else { // create new order mode
+      this.orderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
+      this.orderBackendService.getNewOrderNumber().subscribe((newNumber) => {
+        this.orderNumber = newNumber.body.newestNumber;
+        this.tableFormService.orderTotalNumber = this.orderNumber + '.' + this.orderVersionNumber;
+        this.orderTotalNumber = this.tableFormService.orderTotalNumber;
+      }, error => {
+        console.log('could not obtain orderNumber For new Order from backend');
+      });
+    }
+  }
+   private getCurrentDateAndTimeToBecomeOrderVersionNumber(): string {
+    const now = new Date();
+    const date = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+    const time = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+    const dateAndTimeNow = date + '.' + time;
+    return dateAndTimeNow;
+
+  }
+  private setDateInOrderTable(): void {
+    if (this.selectedOrderEntity){
+      this.data = this.selectedOrderEntity.data;
+    }
+    else {
+      this.data = new Date();
+    }
   }
 
 
@@ -143,23 +202,22 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
   @HostListener('input', ['$event'])
   bindInputWithIndex(event: any): void {
-    let inputValue = event.target.value;
     const inputId = event.target.id;
-    if (inputId === 'L') {
+    if (allSecondIndexDimensionCodes.includes(event.target.id)) {
       const maxLength = 5;
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);
       }
       this.LValue = String(event.target.value);
     }
-    if (inputId === 'D') {
+    if (allFirstIndexDimensionCodes.includes(event.target.id)) {
       const maxLength = 4;
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);
       }
       this.DVaLe = String(event.target.value);
     }
-    if (inputId !== 'D' && inputId !== 'L') {
+    if (!allSecondIndexDimensionCodes.includes(event.target.id) && !allFirstIndexDimensionCodes.includes(event.target.id) ) {
       const maxLength = 3;
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);

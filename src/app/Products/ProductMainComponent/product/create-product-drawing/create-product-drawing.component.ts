@@ -14,6 +14,9 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
 import DimensionTextFIeldInfo from '../../../ProductTypesAndClasses/dimensionTextFIeldInfo';
 import {getBackendErrrorMesage} from '../../../../helpers/errorHandlingFucntion/handleBackendError';
+import {allUsedDimensionsCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
+import {allSecondIndexDimensionCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
+import {allFirstIndexDimensionCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
 
 @Component({
   selector: 'app-create-product-drawing',
@@ -190,8 +193,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
           });
         });
         /* i make sure that L i D codes crucial for Index Binding will be always present, and that is why push it to table*/
-        allpreviouslyUsedCodes.push('L');
-        allpreviouslyUsedCodes.push('D');
+        allpreviouslyUsedCodes.push(...allUsedDimensionsCodes);
         console.log(`allpreviouslyUsedCodes.length= ${allpreviouslyUsedCodes.length} `);
         const allUniquePreviouslyUsedCodes: string[] = allpreviouslyUsedCodes.filter((x, index, self) => {
           return index === self.indexOf(x);

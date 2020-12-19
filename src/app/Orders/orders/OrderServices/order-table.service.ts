@@ -9,7 +9,7 @@ import OrderforTableCell from '../../OrdersTypesAndClasses/orderforTableCell';
 export class OrderTableService {
   records: OrderforTableCell[] = [];
   selectedId: number;
-  selectedRecord: Order;
+  selectedRecord: OrderforTableCell;
   constructor() {
   }
 

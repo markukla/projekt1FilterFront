@@ -8,11 +8,11 @@ import {Material} from '../../../../materials/MaterialsMainComponent/material';
 })
 export class TableFormServiceService {
   tableForm: FormGroup;
-  orderNumber: string;
+  orderTotalNumber: string;
   index: string;
   orderCreator: string;
   orderName: string;
-  date: string;
+  date: Date|string;
   materialName: string;
   materialCode: string;
   Lvalue: string;  // value for second indexDimension
@@ -116,11 +116,11 @@ export class TableFormServiceService {
   }
 
   // tslint:disable-next-line:max-line-length
-  setNonDimensionOrIndexRelateDataForDrawingTable(orderNumber: string, orderCreator: string, date: string, selectedProduct: Product, selectedMaterial: Material): void {
-    if (orderNumber) {
-      this.orderNumber = orderNumber;
+  setNonDimensionOrIndexRelateDataForDrawingTable(orderTotalNumber: string,  orderCreator: string, date: Date|string, selectedProduct: Product, selectedMaterial: Material): void {
+    if (orderTotalNumber) {
+      this.orderTotalNumber = orderTotalNumber;
     } else {
-      this.orderNumber = '';
+      this.orderTotalNumber = '';
     }
 
     if (orderCreator) {
@@ -153,22 +153,21 @@ export class TableFormServiceService {
     }
   }
   resetTableFormServiceProperties(): void{
-    this.orderNumber = undefined;
-    this.index = undefined;
-    this.orderCreator = undefined;
-    this.orderName = undefined;
-    this.date = undefined;
-    this.materialName = undefined;
-    this.materialCode = undefined;
-    this. Lvalue = undefined;
-    this.Dvalue = undefined;
-    this.productTypeName = undefined;
-    this.productTypeCode = undefined;
-    this.productTopCode = undefined;
-    this.productBottomCode = undefined;
-    this.materialPartialCodeForIndex = undefined;
-    this.firstIndexDimension = undefined;
-    this.secondIndexDimension = undefined;
+    this.index = '';
+    this.orderCreator = '';
+    this.orderName = '';
+    this.date = '';
+    this.materialName = '';
+    this.materialCode = '';
+    this. Lvalue = '';
+    this.Dvalue = '';
+    this.productTypeName = '';
+    this.productTypeCode = '';
+    this.productTopCode = '';
+    this.productBottomCode = '';
+    this.materialPartialCodeForIndex = '';
+    this.firstIndexDimension = '';
+    this.secondIndexDimension = '';
   }
 }
 
