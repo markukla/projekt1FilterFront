@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 import Order from '../../OrdersTypesAndClasses/orderEntity';
 import OrderforTableCell from '../../OrdersTypesAndClasses/orderforTableCell';
+import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class OrderTableService {
   records: OrderforTableCell[] = [];
   selectedId: number;
   selectedRecord: OrderforTableCell;
+  orderOperationMode: OrderOperationMode;
   constructor() {
   }
 

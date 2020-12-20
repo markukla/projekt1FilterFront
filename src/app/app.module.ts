@@ -124,8 +124,7 @@ import { OrderDrawingComponent } from './Orders/orders/order-drawing/order-drawi
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
       { path: 'orders', component: OrdersComponent},
-      { path: 'orders/add', component: CreateOrderComponent},
-      { path: 'orders/update', component: UpdateOrderComponent},
+      { path: 'orders/addOrUpdateOrConfirmOrder', component: CreateOrderComponent},
       { path: 'orders/drawing', component: OrderDrawingComponent},
       {path: 'materials', component: MaterialsComponent },
       { path: 'materials/add', component: CreateNewMaterialComponent},

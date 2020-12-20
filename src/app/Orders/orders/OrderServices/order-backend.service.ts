@@ -25,7 +25,7 @@ export class OrderBackendService {
   selectedParnter: User;
   selectedMaterial: Material;
   logedUser: User;
-  createOrderDtoForConfirmationOrUpdate: CreateOrderDto;
+  createOrderDtoForConfirmUpdateShowDrawing: CreateOrderDto;
   constructor(private http: HttpClient,
               private tableService: OrderTableService) {
   }
@@ -74,6 +74,23 @@ export class OrderBackendService {
   findOrderVersionRegisterById(id: string): Observable<HttpResponse<OrderVersionRegister>> {
     const getUrl = `${this.rootURL + this.endpointUrl}/orderVersionRegister/${id}`;
     return this.http.get<OrderVersionRegister>(getUrl, {observe: 'response'} );
+  }
+  getCreateOrderDtoFromOrder(order: Order): CreateOrderDto {
+    const createOrderDto: CreateOrderDto = {
+      product: order.product,
+      orderTotalNumber: order.orderTotalNumber,
+      orderNumber: order.orderNumber,
+      orderDetails: order.orderDetails,
+      orderName: order.orderName,
+      orderVersionNumber: order.orderVersionNumber,
+      commentToOrder: order.commentToOrder,
+      data: order.data,
+      businessPartner: order.businessPartner,
+      creator: order.creator,
+      index: order.index,
+      productMaterial: order.productMaterial
+    };
+    return createOrderDto;
   }
 
 }

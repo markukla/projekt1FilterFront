@@ -6,7 +6,7 @@
 
 <div>
 
-  <a  [routerLink]="['/orders/add']" routerLinkActive="active">
+  <a  [routerLink]="['/orders/addOrUpdateOrConfirmOrder']" routerLinkActive="active" (click)="setOrderOperationModeToCreateNew();">
     {{ createNewRecordDescription }}
   </a>
 </div>
