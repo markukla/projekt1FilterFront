@@ -25,6 +25,7 @@ export class OrderBackendService {
   selectedParnter: User;
   selectedMaterial: Material;
   logedUser: User;
+  createOrderDtoForConfirmationOrUpdate: CreateOrderDto;
   constructor(private http: HttpClient,
               private tableService: OrderTableService) {
   }

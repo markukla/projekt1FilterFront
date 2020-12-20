@@ -3,18 +3,18 @@ import {
   AfterViewChecked,
   AfterViewInit,
   Component,
-  ElementRef, HostListener,
+  ElementRef,
+  HostListener,
   OnChanges,
   OnInit,
-  Renderer2, SimpleChanges,
+  Renderer2,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 import DimensionTextFIeldInfo from '../../../Products/ProductTypesAndClasses/dimensionTextFIeldInfo';
-import {FormControl, FormGroup} from '@angular/forms';
-import {ProductBackendService} from '../../../Products/ProductMainComponent/product/ProductServices/product-backend.service';
+import {FormGroup} from '@angular/forms';
 import {OrderBackendService} from '../OrderServices/order-backend.service';
-import {ProductTableService} from '../../../Products/ProductMainComponent/product/ProductServices/product-table.service';
 import {OrderTableService} from '../OrderServices/order-table.service';
 import {TableFormServiceService} from '../../../Products/ProductMainComponent/product/product-table-form/table-form-service.service';
 import OrderforTableCell from '../../OrdersTypesAndClasses/orderforTableCell';
@@ -22,10 +22,15 @@ import User from '../../../Users/users/userTypes/user';
 import {Material} from '../../../materials/MaterialsMainComponent/material';
 import Dimension from '../../OrdersTypesAndClasses/dimension';
 import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
-import {allUsedDimensionsCodes} from '../../../Products/ProductTypesAndClasses/alreadyExistingDimensionList';
-import {allSecondIndexDimensionCodes} from '../../../Products/ProductTypesAndClasses/alreadyExistingDimensionList';
-import {allFirstIndexDimensionCodes} from '../../../Products/ProductTypesAndClasses/alreadyExistingDimensionList';
+import {
+  allFirstIndexDimensionCodes,
+  allSecondIndexDimensionCodes
+} from '../../../Products/ProductTypesAndClasses/alreadyExistingDimensionList';
 import Order from '../../OrdersTypesAndClasses/orderEntity';
+import OrderDetails from '../../OrdersTypesAndClasses/orderDetail';
+import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
+import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-order-drawing',
@@ -49,8 +54,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   orderVersionNumber: string;
   orderTotalNumber: string;
   data: Date|string;
-  orderCreator: string;
-
+  orderCreator: User;
+  commentToOrder = '';
+  orderOperationMode: OrderOperationMode;
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
 
   constructor(
@@ -59,6 +65,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
               private renderer: Renderer2,
               private tableFormService: TableFormServiceService,
               private authenticationService: AuthenticationService,
+              private router: Router,
               private host: ElementRef
   ) {
    this.getOrderEnityFromBackendForSelectedTableOrder();
@@ -69,7 +76,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     this.setDateInOrderTable();
     this.setOrderNumbersinOrderTable();
     // tslint:disable-next-line:max-line-length
-    this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.orderTotalNumber, this.orderCreator, this.data, this.selectedProduct, this.selectedMaterial);
+    this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.orderTotalNumber, this.orderCreator.fulName, this.data, this.selectedProduct, this.selectedMaterial);
   }
   initPropertiValuesToServicesValues(): void {
     this.selectedOrderInTableRecord = this.orderTableService.selectedRecord;
@@ -78,7 +85,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     this.selectedMaterial = this.orderBackendService.selectedMaterial;
     this.dimensionsInfo = this.selectedProduct.dimensionsTextFieldInfo;
     this.tableForm = this.tableFormService.tableForm;
-    this.orderCreator = this.authenticationService.user.fulName;
+    this.orderCreator = this.authenticationService.user;
   }
   getOrderEnityFromBackendForSelectedTableOrder(): void {
     if (this.selectedOrderInTableRecord) {
@@ -120,7 +127,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.data = this.selectedOrderEntity.data;
     }
     else {
-      this.data = new Date();
+      this.data = new Date().toLocaleDateString();
     }
   }
 
@@ -143,6 +150,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
 
+
   createDimensionInputsBasingOnProductData(): void {
     this.dimensionsInfo.forEach((di) => {
       this.createDimensionInputOnDrawingBasingOnDimensionInfo(di, 'input');
@@ -158,6 +166,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     const inputClass: string = dimensionInfo.dimensionInputClass;
     const inputDiv = this.renderer.createElement('div');
     const input = this.renderer.createElement(inputTag);
+    if
     input.className = inputClass;
     input.type = 'number';
     input.id = inputId;
@@ -182,6 +191,11 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   onSubmit(): void {
+    if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
+      this.orderBackendService.createOrderDtoForConfirmationOrUpdate = this.createOrderDtoToSaveInDatabase();
+      this.router.navigateByUrl('/orders/add');
+    }
+
   }
 
   ngAfterViewInit(): void {
@@ -225,4 +239,30 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     }
 
   }
+  createOrderDtoToSaveInDatabase(): CreateOrderDto {
+    const dimensions: Dimension[] = this.getInputElementsFromVievAndCreateDimensionTable();
+    const orderDetails: OrderDetails = {
+      antiEelectrostatic: this.tableFormService.antiEelectrostatic.value,
+      workingSide: this.tableFormService.workingSide.value,
+      workingTemperature: this.tableFormService.workingTemperature.value,
+      dimensions
+    };
+    const orderDtoToSaveInDatabae: CreateOrderDto = {
+      data: this.data,
+      orderVersionNumber: this.orderVersionNumber,
+      orderNumber: this.orderNumber,
+      orderTotalNumber: this.orderTotalNumber,
+      businessPartner: this.selectedPartner,
+      orderName: this.tableFormService.orderName,
+      index: this.tableFormService.index,
+      creator: this.orderCreator,
+      commentToOrder: this.commentToOrder,
+      product: this.selectedProduct,
+      productMaterial: this.selectedMaterial,
+      orderDetails
+    };
+
+    return  orderDtoToSaveInDatabae;
+  }
+
 }
