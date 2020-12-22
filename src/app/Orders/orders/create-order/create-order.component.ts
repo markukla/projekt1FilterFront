@@ -1,4 +1,4 @@
-import {AfterContentChecked, Component, OnInit} from '@angular/core';
+import {AfterContentChecked, Component, ElementRef, OnInit, Renderer2} from '@angular/core';
 import ProductBottom from '../../../Products/ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../Products/ProductTypesAndClasses/productTop.entity';
 import ProductType from '../../../Products/ProductTypesAndClasses/productType.entity';
@@ -39,14 +39,22 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
   selectedTop: ProductTop;
   selectedBottom: ProductBottom;
   form: FormGroup;
-  uploadSuccessStatus: boolean;
   drawingPaths: DrawingPaths;
   isPartner: boolean;
   orderOperationMode: OrderOperationMode;
   orderToUpdate: Order;
+  confirmOrCHangePartnerButtonInfo: string;
+  changePartner: boolean;
+  confirmOrCHangeProductParmatersButtonInfo: string;
+  changeProduct: boolean;
+  confirmOrCHangeMaterialButtonInfo: string;
+  changeMaterial: boolean;
+  onSubmitButtonInfo: string;
 
   constructor(
     private backendService: OrderBackendService,
+    private host: ElementRef,
+    private renderer: Renderer2,
     private orderTableService: OrderTableService,
     private productBackendService: ProductBackendService,
     public validationService: ProductValidatorService,
@@ -71,6 +79,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
     }, {updateOn: 'change'});
 
     this.orderOperationMode = this.orderTableService.orderOperationMode;
+    this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
     if (this.orderOperationMode === OrderOperationMode.UPDATE) {
       this.getOrderTOupdateFromBackend();
       this.setFormControlValuesForUpdateMode();
@@ -86,6 +95,28 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
       this.type.setValue(this.orderToUpdate.product.productType);
       this.top.setValue(this.orderToUpdate.product.productTop);
       this.bottom.setValue(this.orderToUpdate.product.productBottom);
+    }
+  }
+
+  setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
+      this.changeMaterial = false;
+      this.changeProduct = false;
+      this.changePartner = false;
+      this.confirmOrCHangeProductParmatersButtonInfo = 'zatwierdź parametry produktu';
+      this.confirmOrCHangeMaterialButtonInfo = 'zatwierdź materiał worka';
+      this.confirmOrCHangePartnerButtonInfo = 'zatwierdż partnera handlowego';
+      this.onSubmitButtonInfo = 'dalej';
+    }
+    // tslint:disable-next-line:max-line-length
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+      this.changeMaterial = true;
+      this.changeProduct = true;
+      this.changePartner = true;
+      this.onSubmitButtonInfo = 'złóż zapytanie';
+      this.confirmOrCHangeProductParmatersButtonInfo = 'zmień parametry produktu';
+      this.confirmOrCHangeMaterialButtonInfo = 'zmień materiał worka';
+      this.confirmOrCHangePartnerButtonInfo = 'zmień partnera handlowego';
     }
   }
 
@@ -159,27 +190,43 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
   }
 
   onSubmit(): void {
-    this.selectedtType = this.type.value;
-    this.selectedBottom = this.bottom.value;
-    this.selectedTop = this.top.value;
-    if (!this.isPartner) {
-      this.backendService.selectedParnter = this.businessPartner.value;
-    } else if (this.isPartner) {
-      this.backendService.selectedParnter = this.authenticationService.user;
+    console.error('in on Submit method');
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
+      this.selectedtType = this.type.value;
+      this.selectedBottom = this.bottom.value;
+      this.selectedTop = this.top.value;
+      if (!this.isPartner) {
+        this.backendService.selectedParnter = this.businessPartner.value;
+      } else if (this.isPartner) {
+        this.backendService.selectedParnter = this.authenticationService.user;
+      }
+      this.backendService.selectedMaterial = this.productMaterial.value;
+      const createProductDto: CreateProductDto = {
+        productType: this.selectedtType,
+        productBottom: this.selectedBottom,
+        productTop: this.selectedTop
+      };
+      this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
+        this.backendService.selectedProduct = product.body;
+        this.router.navigateByUrl('/orders/drawing');
+      }, error => {
+        console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
+        this.operationMessage = 'nie udało się znaleźć produktu na postawie wybranych parametrów. Spróbuj ponownie';
+      });
+      // tslint:disable-next-line:max-line-length
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+      // tslint:disable-next-line:max-line-length
+      let productMaterialOrPartnerHasNotBeenCHanged: boolean = this.changeMaterial === true && this.changeProduct === true && this.changePartner === true;
+      if (productMaterialOrPartnerHasNotBeenCHanged) {
+        this.backendService.addRecords(this.backendService.createOrderDtoForConfirmUpdateShowDrawing).subscribe((order) => {
+            this.operationMessage = 'dodano nowe zamówienie';
+          },
+          error => {
+            this.operationMessage = 'nie udało się dodać nowego zamówienia';
+
+          });
+      }
     }
-    this.backendService.selectedMaterial = this.productMaterial.value;
-    const createProductDto: CreateProductDto = {
-      productType: this.selectedtType,
-      productBottom: this.selectedBottom,
-      productTop: this.selectedTop
-    };
-    this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
-      this.backendService.selectedProduct = product.body;
-      this.router.navigateByUrl('/orders/drawing');
-    }, error => {
-      console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
-      this.operationMessage = 'nie udało się znaleźć produktu na postawie wybranych parametrów. Spróbuj ponownie';
-    });
   }
 
   closeAndGoBack(): void {
@@ -192,8 +239,20 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
     }, 2000);
   }
 
+  changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode(): void {
+    // tslint:disable-next-line:max-line-length
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+      // tslint:disable-next-line:max-line-length
+      let productMaterialOrPartnerHastBeenCHanged: boolean = this.changeMaterial === false || this.changeProduct === false || this.changePartner === false;
+      if (productMaterialOrPartnerHastBeenCHanged) {
+        this.orderTableService.orderOperationMode = OrderOperationMode.CREATENEW;
+      }
+    }
+  }
+
   ngAfterContentChecked(): void {
     this.onTypeSelectedSetTopsAndBottoms();
+    this.changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode();
   }
 
   onTypeSelectedSetTopsAndBottoms(): void {
@@ -205,4 +264,50 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
     }
   }
 
+  changeOrConfirmPartnerButtonAction(): void {
+    if (this.changePartner === false && this.businessPartner.value) {
+      this.businessPartner.disable({onlySelf: true});
+      this.confirmOrCHangePartnerButtonInfo = 'Zmień Partnera Handlowego';
+      this.changePartner = true;
+    } else if (this.changePartner === true && this.businessPartner) {
+      this.businessPartner.enable({onlySelf: true});
+      const selectPartnerElement: HTMLElement = this.host.nativeElement.querySelector('businessPartner');
+      this.confirmOrCHangePartnerButtonInfo = 'Zatwierdż Partnera Handlowego';
+      this.changePartner = false;
+    }
+
+
+  }
+
+  confirmOrchangeProductButtonAction(): void {
+    if (this.changeProduct === false && this.businessPartner.value && this.type.value && this.top.value && this.bottom.value) {
+      console.log('in confirmOrCHangeProductButtonMethod');
+      this.type.disable({onlySelf: true});
+      this.top.disable({onlySelf: true});
+      this.bottom.disable({onlySelf: true});
+      this.confirmOrCHangeProductParmatersButtonInfo = 'Zmień parametry produktu';
+      this.changeProduct = true;
+    } else if (this.changeProduct === true) {
+      this.type.enable({onlySelf: true});
+      this.top.enable({onlySelf: true});
+      this.bottom.enable({onlySelf: true});
+      this.confirmOrCHangeProductParmatersButtonInfo = 'Zatwierdź parametry produktu';
+      this.businessPartner.enable({onlySelf: true});
+      this.changeProduct = false;
+    }
+
+  }
+
+  confirmOrChangeMaterialButtonAction(): void {
+    if (this.changeMaterial === false) {
+      this.productMaterial.disable({onlySelf: true});
+      this.confirmOrCHangeMaterialButtonInfo = 'Zmień materiał';
+      this.changeMaterial = true;
+    } else if (this.changePartner === true) {
+      this.productMaterial.enable({onlySelf: true});
+      this.confirmOrCHangeMaterialButtonInfo = 'Zatwierdż materiał';
+      this.changeMaterial = false;
+    }
+
+  }
 }

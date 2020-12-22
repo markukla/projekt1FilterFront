@@ -5,8 +5,8 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="row">
       <div *ngIf="isPartner === false" class="form-group col-md-6">
-        <label class="label" for="businessPartner">Wybierz Partnera Handlowego</label>
-        <select class="form-control" formControlName="businessPartner" id="businessPartner">
+        <label class="label" for="businessPartner"> Partner Handlowy</label>
+        <select class="form-control" formControlName="businessPartner" id="businessPartner" #businessPartner>
           <option [ngValue]="null" disabled>-</option>
           <option *ngFor="let partner of allParntersToSelect" [ngValue]="partner">
             {{ partner.code + ' - ' + partner.businesPartnerCompanyName + ' : ' + partner.fulName}}
@@ -19,10 +19,11 @@
             Wybranie opcji z listy jest wymagane.
           </div>
         </div>
+        <button class="confirmOrChangeButton" (click)="changeOrConfirmPartnerButtonAction();"> {{confirmOrCHangePartnerButtonInfo}}  </button>
       </div>
 
       <div class="form-group col-md-6">
-        <label class="label" for="type">Wybierz Typ produktu</label>
+        <label class="label" for="type"> Typ Produktu</label>
         <select class="form-control" formControlName="type" id="type">
           <option  [ngValue]="null" disabled > - </option>
           <option *ngFor="let type of allTypesToSelect" [ngValue]="type">
@@ -38,7 +39,7 @@
         </div>
       </div>
       <div class="form-group col-md-6" *ngIf="type.value">
-        <label class="label" for="top">Wybierz wykończenia góry</label>
+        <label class="label" for="top"> Wykończenie góry</label>
         <select class="form-control" formControlName="top" id="top">
           <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
           <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
@@ -54,7 +55,7 @@
         </div>
       </div>
       <div class="form-group col-md-6" *ngIf="type.value">
-        <label class="label" for="bottom">Wybierz wykończenia dna</label>
+        <label class="label" for="bottom"> Wykończenie Dna</label>
         <select class="form-control" formControlName="bottom" id="bottom">
           <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
           <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
@@ -68,6 +69,7 @@
             Wybranie opcji z listy jest wymagane.
           </div>
         </div>
+        <button class="confirmOrChangeButton" (click)="confirmOrchangeProductButtonAction();"> {{confirmOrCHangeProductParmatersButtonInfo}}  </button>
       </div>
       <div class="form-group col-md-6" *ngIf="type.value">
         <label class="label" for="productMaterial">Wybierz Materiał Produktu</label>
@@ -84,6 +86,7 @@
             Wybranie opcji z listy jest wymagane.
           </div>
         </div>
+        <button class="confirmOrChangeButton" (click)="confirmOrChangeMaterialButtonAction();"> {{confirmOrCHangeMaterialButtonInfo}}  </button>
       </div>
     </div>
     <div class="addButon">
