@@ -1,4 +1,4 @@
-import {AfterContentChecked, Component, ElementRef, OnInit, Renderer2} from '@angular/core';
+import {AfterContentChecked, AfterViewInit, Component, ElementRef, OnInit, Renderer2} from '@angular/core';
 import ProductBottom from '../../../Products/ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../Products/ProductTypesAndClasses/productTop.entity';
 import ProductType from '../../../Products/ProductTypesAndClasses/productType.entity';
@@ -26,7 +26,7 @@ import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
   templateUrl: './create-order.component.html',
   styleUrls: ['./create-order.component.css']
 })
-export class CreateOrderComponent implements OnInit, AfterContentChecked {
+export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterViewInit {
 
   operationMessage: string;
   showoperationStatusMessage: string;
@@ -80,12 +80,13 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
 
     this.orderOperationMode = this.orderTableService.orderOperationMode;
     this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
-    if (this.orderOperationMode === OrderOperationMode.UPDATE) {
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
       this.getOrderTOupdateFromBackend();
       this.setFormControlValuesForUpdateMode();
     }
-    if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
       this.setFormControlValueForConfirmMode();
+      console.error('formcontrols set like should be in confirm new mode');
     }
     this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
   }
@@ -134,8 +135,20 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
 
   setFormControlValueForConfirmMode(): void {
     if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
+      console.error(`create order dto for confirm mode selectedTYpe= ${ this.backendService.createOrderDtoForConfirmUpdateShowDrawing.product.productType.name}`);
       const createOrderDto: CreateOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.type.setValue(createOrderDto.product.productType);
+      console.error(`this.type.name ${ this.type.value.name}`);
+      const valueForSeletedTypeDisplay = `${this.type.value.code}' - '${this.type.value.name}`;
+      let valueInCollectionIndex: number;
+      this.allTypesToSelect.forEach((type, index) => {
+        if (type.name === this.type.value.name) {
+          valueInCollectionIndex = index;
+        }
+      });
+      let selectTypeElement = this.host.nativeElement.querySelector('#type');
+      console.error(`selectedTypeElement = ${selectTypeElement}`);
+      this.renderer.setValue(selectTypeElement, this.allTypesToSelect[valueInCollectionIndex].name);
       this.top.setValue(createOrderDto.product.productTop);
       this.bottom.setValue(createOrderDto.product.productBottom);
     }
@@ -251,8 +264,9 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
   }
 
   ngAfterContentChecked(): void {
+    this.orderOperationMode = this.orderTableService.orderOperationMode;
     this.onTypeSelectedSetTopsAndBottoms();
-    this.changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode();
+   // this.changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode();
   }
 
   onTypeSelectedSetTopsAndBottoms(): void {
@@ -309,5 +323,8 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked {
       this.changeMaterial = false;
     }
 
+  }
+
+  ngAfterViewInit(): void {
   }
 }

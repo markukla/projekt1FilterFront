@@ -19,7 +19,7 @@
             Wybranie opcji z listy jest wymagane.
           </div>
         </div>
-        <button class="confirmOrChangeButton" (click)="changeOrConfirmPartnerButtonAction();"> {{confirmOrCHangePartnerButtonInfo}}  </button>
+        <button type="button" class="confirmOrChangeButton" (click)="changeOrConfirmPartnerButtonAction();"> {{confirmOrCHangePartnerButtonInfo}}  </button>
       </div>
 
       <div class="form-group col-md-6">
@@ -69,7 +69,7 @@
             Wybranie opcji z listy jest wymagane.
           </div>
         </div>
-        <button class="confirmOrChangeButton" (click)="confirmOrchangeProductButtonAction();"> {{confirmOrCHangeProductParmatersButtonInfo}}  </button>
+        <button type="button" class="confirmOrChangeButton" (click)="confirmOrchangeProductButtonAction();"> {{confirmOrCHangeProductParmatersButtonInfo}}  </button>
       </div>
       <div class="form-group col-md-6" *ngIf="type.value">
         <label class="label" for="productMaterial">Wybierz Materiał Produktu</label>
@@ -86,7 +86,7 @@
             Wybranie opcji z listy jest wymagane.
           </div>
         </div>
-        <button class="confirmOrChangeButton" (click)="confirmOrChangeMaterialButtonAction();"> {{confirmOrCHangeMaterialButtonInfo}}  </button>
+        <button type="button" class="confirmOrChangeButton" (click)="confirmOrChangeMaterialButtonAction();"> {{confirmOrCHangeMaterialButtonInfo}}  </button>
       </div>
     </div>
     <div class="addButon">

@@ -32,6 +32,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   operationSuccessStatusMessage: string;
   previouslyUsedUniqueDimensionCodes: string[] = [];
   idValue: string;
+  rootUrl = 'http://localhost:5000';
   // tslint:disable-next-line:max-line-length
   /* view child is a get elementby id equivalent, and Viev childrens is something like get element by class name, but element must be marked with #elementname*/
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
@@ -40,6 +41,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   constructor(private backendService: ProductBackendService,
               private renderer: Renderer2,
               private host: ElementRef) {
+    this.bgImageVariable = this.rootUrl + this.backendService.drawingPaths.urlOfOrginalDrawing;
   }
 
 
@@ -49,7 +51,6 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
       dimensionOrientation: new FormControl(null, [Validators.required]),
       newDimensionId: new FormControl(null)
     });
-    this.bgImageVariable = this.backendService.drawingPaths.urlOfOrginalDrawing;
     console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
   }
 

@@ -87,4 +87,8 @@ export class ProductBackendService {
     const getUrl = `${this.rootURL + this.endpointUrl}/${recordToUpdateId}`;
     return this.http.get<Product>(getUrl, {observe: 'response'} );
   }
+  getDrawingFromBakendEnpoint(urltoDrawingFromPublic: string): Observable<any> {
+    const getUrl = this.rootURL + urltoDrawingFromPublic;
+    return this.http.get<any>(getUrl);
+  }
 }

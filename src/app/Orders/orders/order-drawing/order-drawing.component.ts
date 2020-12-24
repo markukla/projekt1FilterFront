@@ -52,7 +52,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   data: string;
   orderCreator: User;
   commentToOrder = '';
-  orderOperationMode: OrderOperationMode;
+  rootUrl = 'http://localhost:5000';
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
 
   constructor(
@@ -79,6 +79,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
       this.selectedOrderInTableRecord = this.orderTableService.selectedRecord;
       this.selectedProduct = this.orderBackendService.selectedProduct;
+      this.bgImageVariable = this.rootUrl + this.selectedProduct.urlOfOrginalDrawing;
       this.selectedPartner = this.orderBackendService.selectedParnter;
       this.selectedMaterial = this.orderBackendService.selectedMaterial;
       this.dimensionsInfo = this.selectedProduct.dimensionsTextFieldInfo;
@@ -94,6 +95,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.dimensionsInfo = createOrderDtoForUpdateOrConfirm.product.dimensionsTextFieldInfo;
       this.tableForm = this.tableFormService.tableForm;
       this.orderCreator = createOrderDtoForUpdateOrConfirm.creator;
+      this.bgImageVariable = this.rootUrl + createOrderDtoForUpdateOrConfirm.product.urlOfOrginalDrawing;
     }
   }
   setOrderNumbersinOrderTable(): void {
@@ -222,10 +224,11 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   onSubmit(): void {
-    if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATE) {
+    // tslint:disable-next-line:max-line-length
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
-      this.router.navigateByUrl('/orders/add');
+      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
     }
 
   }

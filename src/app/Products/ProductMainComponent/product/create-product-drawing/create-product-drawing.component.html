@@ -1,7 +1,8 @@
 <div id="mainCointener">
   <div id="drawingAndTableContainer" #drawingAndTableContainer>
-  <div id="drawingContainer" #drawingContainer>
-    <!--[style.background-image]="'url('+bgImageVariable+')'-->
+  <div id="drawingContainer" #drawingContainer [ngStyle]="{'background-image':' url(' + bgImageVariable + ')'}">
+    <!--[style.background-image]="'url('+bgImageVariable+')'"-->
+    <img [src]="bgImageVariable" alt="">
   </div>
     <div >
       <app-product-table-form ></app-product-table-form>
