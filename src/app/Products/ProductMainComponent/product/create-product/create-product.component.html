@@ -4,7 +4,7 @@
 
   <form enctype="multipart/form-data" [formGroup]="upladDrawingForm" (ngSubmit)="onUpload()">
 
-    <div class="row">
+    <div class="col">
       <div class="form-group col-md-6">
         <label class="label" for="uploadDrawing">Wybierz rysunek do udostpnienia</label>
         <input type="file" name="file" id="uploadDrawing" formControlName="file" (change)="onFileChange($event)">

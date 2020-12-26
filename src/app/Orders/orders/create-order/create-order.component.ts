@@ -1,4 +1,4 @@
-import {AfterContentChecked, AfterViewInit, Component, ElementRef, OnInit, Renderer2} from '@angular/core';
+import {AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit, Renderer2} from '@angular/core';
 import ProductBottom from '../../../Products/ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../Products/ProductTypesAndClasses/productTop.entity';
 import ProductType from '../../../Products/ProductTypesAndClasses/productType.entity';
@@ -20,13 +20,14 @@ import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
 import {OrderTableService} from '../OrderServices/order-table.service';
 import Order from '../../OrdersTypesAndClasses/orderEntity';
 import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
+import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 
 @Component({
   selector: 'app-create-order',
   templateUrl: './create-order.component.html',
   styleUrls: ['./create-order.component.css']
 })
-export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterViewInit {
+export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterViewInit, AfterViewChecked {
 
   operationMessage: string;
   showoperationStatusMessage: string;
@@ -38,17 +39,20 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   selectedtType: ProductType;
   selectedTop: ProductTop;
   selectedBottom: ProductBottom;
+  selectedProduct: Product;
+  selectedMaterial: Material;
+  selectedPartner: User;
   form: FormGroup;
   drawingPaths: DrawingPaths;
   isPartner: boolean;
   orderOperationMode: OrderOperationMode;
   orderToUpdate: Order;
   confirmOrCHangePartnerButtonInfo: string;
-  changePartner: boolean;
+  partnerConfirmed: boolean;
   confirmOrCHangeProductParmatersButtonInfo: string;
-  changeProduct: boolean;
+  productConfirmed: boolean;
   confirmOrCHangeMaterialButtonInfo: string;
-  changeMaterial: boolean;
+  materialConfirmed: boolean;
   onSubmitButtonInfo: string;
 
   constructor(
@@ -94,16 +98,19 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   setFormControlValuesForUpdateMode(): void {
     if (this.orderToUpdate) {
       this.type.setValue(this.orderToUpdate.product.productType);
+      this.selectedtType = this.type.value;
       this.top.setValue(this.orderToUpdate.product.productTop);
+      this.selectedTop = this.top.value;
       this.bottom.setValue(this.orderToUpdate.product.productBottom);
+      this.selectedBottom = this.bottom.value;
     }
   }
 
   setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
     if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
-      this.changeMaterial = false;
-      this.changeProduct = false;
-      this.changePartner = false;
+      this.materialConfirmed = false;
+      this.productConfirmed = false;
+      this.partnerConfirmed = false;
       this.confirmOrCHangeProductParmatersButtonInfo = 'zatwierdź parametry produktu';
       this.confirmOrCHangeMaterialButtonInfo = 'zatwierdź materiał worka';
       this.confirmOrCHangePartnerButtonInfo = 'zatwierdż partnera handlowego';
@@ -111,9 +118,9 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     }
     // tslint:disable-next-line:max-line-length
     if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
-      this.changeMaterial = true;
-      this.changeProduct = true;
-      this.changePartner = true;
+      this.materialConfirmed = true;
+      this.productConfirmed = true;
+      this.partnerConfirmed = true;
       this.onSubmitButtonInfo = 'złóż zapytanie';
       this.confirmOrCHangeProductParmatersButtonInfo = 'zmień parametry produktu';
       this.confirmOrCHangeMaterialButtonInfo = 'zmień materiał worka';
@@ -138,19 +145,16 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       console.error(`create order dto for confirm mode selectedTYpe= ${ this.backendService.createOrderDtoForConfirmUpdateShowDrawing.product.productType.name}`);
       const createOrderDto: CreateOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.type.setValue(createOrderDto.product.productType);
+      this.selectedtType = this.type.value;
       console.error(`this.type.name ${ this.type.value.name}`);
-      const valueForSeletedTypeDisplay = `${this.type.value.code}' - '${this.type.value.name}`;
-      let valueInCollectionIndex: number;
-      this.allTypesToSelect.forEach((type, index) => {
-        if (type.name === this.type.value.name) {
-          valueInCollectionIndex = index;
-        }
-      });
-      let selectTypeElement = this.host.nativeElement.querySelector('#type');
-      console.error(`selectedTypeElement = ${selectTypeElement}`);
-      this.renderer.setValue(selectTypeElement, this.allTypesToSelect[valueInCollectionIndex].name);
       this.top.setValue(createOrderDto.product.productTop);
+      this.selectedTop = this.top.value;
       this.bottom.setValue(createOrderDto.product.productBottom);
+      this.selectedBottom = this.bottom.value;
+      this.businessPartner.setValue(createOrderDto.businessPartner);
+      this.selectedPartner = createOrderDto.businessPartner;
+      this.productMaterial.setValue(createOrderDto.productMaterial);
+      this.selectedMaterial = createOrderDto.productMaterial;
     }
   }
 
@@ -205,11 +209,8 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   onSubmit(): void {
     console.error('in on Submit method');
     if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
-      this.selectedtType = this.type.value;
-      this.selectedBottom = this.bottom.value;
-      this.selectedTop = this.top.value;
       if (!this.isPartner) {
-        this.backendService.selectedParnter = this.businessPartner.value;
+        this.backendService.selectedParnter = this.selectedPartner;
       } else if (this.isPartner) {
         this.backendService.selectedParnter = this.authenticationService.user;
       }
@@ -229,7 +230,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       // tslint:disable-next-line:max-line-length
     } else if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
       // tslint:disable-next-line:max-line-length
-      let productMaterialOrPartnerHasNotBeenCHanged: boolean = this.changeMaterial === true && this.changeProduct === true && this.changePartner === true;
+      let productMaterialOrPartnerHasNotBeenCHanged: boolean = this.materialConfirmed === true && this.productConfirmed === true && this.partnerConfirmed === true;
       if (productMaterialOrPartnerHasNotBeenCHanged) {
         this.backendService.addRecords(this.backendService.createOrderDtoForConfirmUpdateShowDrawing).subscribe((order) => {
             this.operationMessage = 'dodano nowe zamówienie';
@@ -256,7 +257,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     // tslint:disable-next-line:max-line-length
     if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
       // tslint:disable-next-line:max-line-length
-      let productMaterialOrPartnerHastBeenCHanged: boolean = this.changeMaterial === false || this.changeProduct === false || this.changePartner === false;
+      let productMaterialOrPartnerHastBeenCHanged: boolean = this.materialConfirmed === false || this.productConfirmed === false || this.partnerConfirmed === false;
       if (productMaterialOrPartnerHastBeenCHanged) {
         this.orderTableService.orderOperationMode = OrderOperationMode.CREATENEW;
       }
@@ -270,61 +271,69 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   }
 
   onTypeSelectedSetTopsAndBottoms(): void {
-    const type = this.type.value;
+    const type =  this.type.value;
     console.log(`selected type= ${type}`);
     if (type) {
-      this.selectedtType = type;
-      this.setTopsAndBottomsToSelectAfterTypeSelected(this.selectedtType);
+      this.setTopsAndBottomsToSelectAfterTypeSelected(type);
     }
   }
 
   changeOrConfirmPartnerButtonAction(): void {
-    if (this.changePartner === false && this.businessPartner.value) {
+    if (this.partnerConfirmed === false && this.businessPartner.value) {
+      this.selectedPartner = this.businessPartner.value;
       this.businessPartner.disable({onlySelf: true});
       this.confirmOrCHangePartnerButtonInfo = 'Zmień Partnera Handlowego';
-      this.changePartner = true;
-    } else if (this.changePartner === true && this.businessPartner) {
+      this.partnerConfirmed = true;
+    } else if (this.partnerConfirmed === true && this.businessPartner) {
       this.businessPartner.enable({onlySelf: true});
-      const selectPartnerElement: HTMLElement = this.host.nativeElement.querySelector('businessPartner');
       this.confirmOrCHangePartnerButtonInfo = 'Zatwierdż Partnera Handlowego';
-      this.changePartner = false;
+      this.partnerConfirmed = false;
     }
 
 
   }
 
   confirmOrchangeProductButtonAction(): void {
-    if (this.changeProduct === false && this.businessPartner.value && this.type.value && this.top.value && this.bottom.value) {
+    if (this.productConfirmed === false && this.businessPartner.value && this.type.value && this.top.value && this.bottom.value) {
       console.log('in confirmOrCHangeProductButtonMethod');
+      this.selectedtType = this.type.value;
       this.type.disable({onlySelf: true});
+      this.selectedTop = this.top.value;
       this.top.disable({onlySelf: true});
+      this.selectedBottom = this.bottom.value;
       this.bottom.disable({onlySelf: true});
       this.confirmOrCHangeProductParmatersButtonInfo = 'Zmień parametry produktu';
-      this.changeProduct = true;
-    } else if (this.changeProduct === true) {
+      this.productConfirmed = true;
+    } else if (this.productConfirmed === true) {
       this.type.enable({onlySelf: true});
       this.top.enable({onlySelf: true});
       this.bottom.enable({onlySelf: true});
       this.confirmOrCHangeProductParmatersButtonInfo = 'Zatwierdź parametry produktu';
       this.businessPartner.enable({onlySelf: true});
-      this.changeProduct = false;
+      this.productConfirmed = false;
     }
 
   }
 
   confirmOrChangeMaterialButtonAction(): void {
-    if (this.changeMaterial === false) {
+    if (this.materialConfirmed === false) {
       this.productMaterial.disable({onlySelf: true});
       this.confirmOrCHangeMaterialButtonInfo = 'Zmień materiał';
-      this.changeMaterial = true;
-    } else if (this.changePartner === true) {
+      this.selectedMaterial = this.productMaterial.value;
+      this.materialConfirmed = true;
+    } else if (this.materialConfirmed === true) {
       this.productMaterial.enable({onlySelf: true});
       this.confirmOrCHangeMaterialButtonInfo = 'Zatwierdż materiał';
-      this.changeMaterial = false;
+      this.materialConfirmed = false;
     }
 
   }
 
   ngAfterViewInit(): void {
   }
+
+  ngAfterViewChecked(): void {
+    this.onTypeSelectedSetTopsAndBottoms();
+  }
+
 }
