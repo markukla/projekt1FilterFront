@@ -1,4 +1,4 @@
-import {AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit, Renderer2} from '@angular/core';
+import {AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2} from '@angular/core';
 import ProductBottom from '../../../Products/ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../Products/ProductTypesAndClasses/productTop.entity';
 import ProductType from '../../../Products/ProductTypesAndClasses/productType.entity';
@@ -18,7 +18,6 @@ import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServi
 import RoleEnum from '../../../Users/users/userTypes/roleEnum';
 import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
 import {OrderTableService} from '../OrderServices/order-table.service';
-import Order from '../../OrdersTypesAndClasses/orderEntity';
 import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 
@@ -46,7 +45,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   drawingPaths: DrawingPaths;
   isPartner: boolean;
   orderOperationMode: OrderOperationMode;
-  orderToUpdate: Order;
+  createOrderDtoToUpdate: CreateOrderDto;
   confirmOrCHangePartnerButtonInfo: string;
   partnerConfirmed: boolean;
   confirmOrCHangeProductParmatersButtonInfo: string;
@@ -54,7 +53,10 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   confirmOrCHangeMaterialButtonInfo: string;
   materialConfirmed: boolean;
   onSubmitButtonInfo: string;
-
+  operationModeEqualConfirmNewOrUpdate: boolean;
+  updateModeOrPartnerLogged: boolean;
+  submitButtonDescription: string;
+  productHasBeenChanged: boolean;
   constructor(
     private backendService: OrderBackendService,
     private host: ElementRef,
@@ -70,10 +72,10 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     private route: ActivatedRoute,
     private router: Router) {
     this.getDataToDropdownLists();
-    this.getOrderTOupdateFromBackend();
   }
 
   ngOnInit(): void {
+    this.productHasBeenChanged = false;
     this.form = new FormGroup({
       type: new FormControl(null, [Validators.required]),
       top: new FormControl(null, [Validators.required]),
@@ -81,33 +83,36 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       businessPartner: new FormControl(null, Validators.required),
       productMaterial: new FormControl(null, Validators.required)
     }, {updateOn: 'change'});
-
     this.orderOperationMode = this.orderTableService.orderOperationMode;
+    this.createOrderDtoToUpdate = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
     this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
     if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
-      this.getOrderTOupdateFromBackend();
       this.setFormControlValuesForUpdateMode();
     }
     if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
       this.setFormControlValueForConfirmMode();
-      console.error('formcontrols set like should be in confirm new mode');
     }
     this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
   }
 
   setFormControlValuesForUpdateMode(): void {
-    if (this.orderToUpdate) {
-      this.type.setValue(this.orderToUpdate.product.productType);
+    if (this.createOrderDtoToUpdate) {
+      this.businessPartner.setValue(this.createOrderDtoToUpdate.businessPartner);
+      this.productMaterial.setValue(this.createOrderDtoToUpdate.productMaterial);
+      this.selectedMaterial = this.productMaterial.value;
+      this.selectedPartner = this.businessPartner.value;
+      this.type.setValue(this.createOrderDtoToUpdate.product.productType);
       this.selectedtType = this.type.value;
-      this.top.setValue(this.orderToUpdate.product.productTop);
+      this.top.setValue(this.createOrderDtoToUpdate.product.productTop);
       this.selectedTop = this.top.value;
-      this.bottom.setValue(this.orderToUpdate.product.productBottom);
+      this.bottom.setValue(this.createOrderDtoToUpdate.product.productBottom);
       this.selectedBottom = this.bottom.value;
     }
   }
 
   setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
     if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
+      this.submitButtonDescription = 'dalej';
       this.materialConfirmed = false;
       this.productConfirmed = false;
       this.partnerConfirmed = false;
@@ -117,7 +122,18 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       this.onSubmitButtonInfo = 'dalej';
     }
     // tslint:disable-next-line:max-line-length
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+    else if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+      this.submitButtonDescription = 'złóż zapytanie';
+      this.materialConfirmed = true;
+      this.productConfirmed = true;
+      this.partnerConfirmed = true;
+      this.onSubmitButtonInfo = 'złóż zapytanie';
+      this.confirmOrCHangeProductParmatersButtonInfo = 'zmień parametry produktu';
+      this.confirmOrCHangeMaterialButtonInfo = 'zmień materiał worka';
+      this.confirmOrCHangePartnerButtonInfo = 'zmień partnera handlowego';
+    }
+    else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+      this.submitButtonDescription = 'aktualizuj zapytanie';
       this.materialConfirmed = true;
       this.productConfirmed = true;
       this.partnerConfirmed = true;
@@ -128,25 +144,11 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     }
   }
 
-  getOrderTOupdateFromBackend(): void {
-    if (this.orderTableService.selectedId) {
-      this.backendService.findRecordById(String(this.orderTableService.selectedId)).subscribe((order) => {
-        this.orderToUpdate = order.body;
-        /* if enything is changed by the user this.backendService.createOrderDtoForConfirmUpdateShowDrawing has to be set to null */
-        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.backendService.getCreateOrderDtoFromOrder(this.orderToUpdate);
-      }, error => {
-        console.log('could not obtain orderToUpdate from backend');
-      });
-    }
-  }
-
   setFormControlValueForConfirmMode(): void {
     if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
-      console.error(`create order dto for confirm mode selectedTYpe= ${ this.backendService.createOrderDtoForConfirmUpdateShowDrawing.product.productType.name}`);
       const createOrderDto: CreateOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.type.setValue(createOrderDto.product.productType);
       this.selectedtType = this.type.value;
-      console.error(`this.type.name ${ this.type.value.name}`);
       this.top.setValue(createOrderDto.product.productTop);
       this.selectedTop = this.top.value;
       this.bottom.setValue(createOrderDto.product.productBottom);
@@ -208,13 +210,14 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 
   onSubmit(): void {
     console.error('in on Submit method');
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
+    // tslint:disable-next-line:max-line-length
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW  ) {
       if (!this.isPartner) {
         this.backendService.selectedParnter = this.selectedPartner;
       } else if (this.isPartner) {
         this.backendService.selectedParnter = this.authenticationService.user;
       }
-      this.backendService.selectedMaterial = this.productMaterial.value;
+      this.backendService.selectedMaterial = this.selectedMaterial;
       const createProductDto: CreateProductDto = {
         productType: this.selectedtType,
         productBottom: this.selectedBottom,
@@ -228,7 +231,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
         this.operationMessage = 'nie udało się znaleźć produktu na postawie wybranych parametrów. Spróbuj ponownie';
       });
       // tslint:disable-next-line:max-line-length
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
       // tslint:disable-next-line:max-line-length
       let productMaterialOrPartnerHasNotBeenCHanged: boolean = this.materialConfirmed === true && this.productConfirmed === true && this.partnerConfirmed === true;
       if (productMaterialOrPartnerHasNotBeenCHanged) {
@@ -240,6 +243,45 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 
           });
       }
+    }
+    else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE && this.productHasBeenChanged === false) {
+      // tslint:disable-next-line:max-line-length
+      this.backendService.updateRecordById(String(this.orderTableService.selectedId), this.backendService.createOrderDtoForConfirmUpdateShowDrawing).subscribe((order) => {
+        this.operationMessage = 'zaktualizowano zamówinie';
+      },
+        error => {
+          this.operationMessage = 'nie udało się zaktualizować zamówienia';
+        });
+    }
+    else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT){
+      if (!this.isPartner) {
+        this.backendService.selectedParnter = this.selectedPartner;
+      } else if (this.isPartner) {
+        this.backendService.selectedParnter = this.authenticationService.user;
+      }
+      this.backendService.selectedMaterial = this.selectedMaterial;
+      const createProductDto: CreateProductDto = {
+        productType: this.selectedtType,
+        productBottom: this.selectedBottom,
+        productTop: this.selectedTop
+      };
+      this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
+        this.backendService.selectedProduct = product.body;
+        const createOrderDtoWithCHangedProduct: CreateOrderDto = {
+          ... this.backendService.createOrderDtoForConfirmUpdateShowDrawing,
+          product: this.backendService.selectedProduct,
+          businessPartner: this.backendService.selectedParnter,
+          productMaterial: this.backendService.selectedMaterial,
+          orderDetails: null,
+        };
+        this.backendService.createOrderDtoForConfirmUpdateShowDrawing =  {
+          ... createOrderDtoWithCHangedProduct
+        };
+        this.router.navigateByUrl('/orders/drawing');
+      }, error => {
+        console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
+        this.operationMessage = 'nie udało się znaleźć produktu na postawie wybranych parametrów. Spróbuj ponownie';
+      });
     }
   }
 
@@ -253,11 +295,11 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     }, 2000);
   }
 
-  changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode(): void {
+  changeModeTOCreateNewIfrProductChangedInUpdateOrCOnfirmMode(): void {
     // tslint:disable-next-line:max-line-length
     if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
       // tslint:disable-next-line:max-line-length
-      let productMaterialOrPartnerHastBeenCHanged: boolean = this.materialConfirmed === false || this.productConfirmed === false || this.partnerConfirmed === false;
+      let productMaterialOrPartnerHastBeenCHanged: boolean =  this.productConfirmed === false;
       if (productMaterialOrPartnerHastBeenCHanged) {
         this.orderTableService.orderOperationMode = OrderOperationMode.CREATENEW;
       }
@@ -266,8 +308,18 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 
   ngAfterContentChecked(): void {
     this.orderOperationMode = this.orderTableService.orderOperationMode;
+    this.checkOperationMode();
+    this.setUpdateModeOrPartnerLoggedValue();
     this.onTypeSelectedSetTopsAndBottoms();
    // this.changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode();
+  }
+  setUpdateModeOrPartnerLoggedValue(): void {
+    if (this.isPartner || this.orderOperationMode === OrderOperationMode.UPDATE) {
+      this.updateModeOrPartnerLogged = true;
+    }
+    else {
+      this.updateModeOrPartnerLogged = false;
+    }
   }
 
   onTypeSelectedSetTopsAndBottoms(): void {
@@ -283,6 +335,9 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       this.selectedPartner = this.businessPartner.value;
       this.businessPartner.disable({onlySelf: true});
       this.confirmOrCHangePartnerButtonInfo = 'Zmień Partnera Handlowego';
+      if(this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
+        this.backendService.createOrderDtoForConfirmUpdateShowDrawing.businessPartner = this.selectedPartner;
+      }
       this.partnerConfirmed = true;
     } else if (this.partnerConfirmed === true && this.businessPartner) {
       this.businessPartner.enable({onlySelf: true});
@@ -320,6 +375,9 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       this.productMaterial.disable({onlySelf: true});
       this.confirmOrCHangeMaterialButtonInfo = 'Zmień materiał';
       this.selectedMaterial = this.productMaterial.value;
+      if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
+        this.backendService.createOrderDtoForConfirmUpdateShowDrawing.productMaterial = this.selectedMaterial;
+      }
       this.materialConfirmed = true;
     } else if (this.materialConfirmed === true) {
       this.productMaterial.enable({onlySelf: true});
@@ -333,7 +391,39 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   }
 
   ngAfterViewChecked(): void {
-    this.onTypeSelectedSetTopsAndBottoms();
+  }
+  checkOperationMode(): void {
+    if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW || this.orderOperationMode === OrderOperationMode.UPDATE ) {
+      this.operationModeEqualConfirmNewOrUpdate = true;
+    }
+    else {
+      this.operationModeEqualConfirmNewOrUpdate = false;
+    }
   }
 
+  seeDrawing(): void {
+    this.orderTableService.orderOperationMode = OrderOperationMode.SHOWDRAWING;
+    this.router.navigateByUrl('orders/drawing');
+  }
+  updateDrawing(): void {
+    this.orderTableService.orderOperationMode = OrderOperationMode.UPDATEDRAWING;
+    this.router.navigateByUrl('orders/drawing');
+  }
+  @HostListener('click', ['$event'])
+  listenToChangeProductEvent(event: any): void {
+    const inputId = event.target.id;
+    // tslint:disable-next-line:max-line-length
+    const updateOrConfirmMode = this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW;
+    if (event.target.id === 'confirmOrchangeProduct' && updateOrConfirmMode) {
+      this.productHasBeenChanged = true;
+      console.error(`this.productHasBeenChanged = ${this.productHasBeenChanged}`);
+      this.submitButtonDescription = 'dalej';
+      if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+        this.orderTableService.orderOperationMode = OrderOperationMode.CREATENEW;
+      }
+      if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+        this.orderTableService.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
+      }
+      }
+    }
 }

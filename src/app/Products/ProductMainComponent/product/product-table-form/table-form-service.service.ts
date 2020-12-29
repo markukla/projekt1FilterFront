@@ -33,7 +33,7 @@ export class TableFormServiceService {
     this.tableForm = new FormGroup({
       workingTemperature: new FormControl(null, [Validators.required]),
       workingSide: new FormControl(null, [Validators.required]),
-      antiEelectrostatic: new FormControl(null)
+      antiEelectrostatic: new FormControl(false)
     });
   }
 

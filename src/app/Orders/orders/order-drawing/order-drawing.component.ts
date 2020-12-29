@@ -87,15 +87,45 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.orderCreator = this.authenticationService.user;
     }
     // tslint:disable-next-line:max-line-length
-    else {
+    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
       const createOrderDtoForUpdateOrConfirm = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.selectedProduct = createOrderDtoForUpdateOrConfirm.product;
       this.selectedPartner = createOrderDtoForUpdateOrConfirm.businessPartner;
       this.selectedMaterial = createOrderDtoForUpdateOrConfirm.productMaterial;
       this.dimensionsInfo = createOrderDtoForUpdateOrConfirm.product.dimensionsTextFieldInfo;
       this.tableForm = this.tableFormService.tableForm;
+      this.tableFormService.antiEelectrostatic.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.antiEelectrostatic);
+      this.tableFormService.antiEelectrostatic.disable();
+      this.tableFormService.workingSide.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.workingSide);
+      this.tableFormService.workingSide.disable();
+      this.tableFormService.workingTemperature.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.workingTemperature);
+      this.tableFormService.workingTemperature.disable();
       this.orderCreator = createOrderDtoForUpdateOrConfirm.creator;
       this.bgImageVariable = this.rootUrl + createOrderDtoForUpdateOrConfirm.product.urlOfOrginalDrawing;
+      this.tableFormService.orderName = createOrderDtoForUpdateOrConfirm.orderName;
+      this.tableFormService.index = createOrderDtoForUpdateOrConfirm.index;
+    }
+    else {
+      const createOrderDtoForUpdateOrConfirm = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
+      this.tableForm = this.tableFormService.tableForm;
+      this.selectedProduct = createOrderDtoForUpdateOrConfirm.product;
+      this.selectedPartner = createOrderDtoForUpdateOrConfirm.businessPartner;
+      this.selectedMaterial = createOrderDtoForUpdateOrConfirm.productMaterial;
+      this.dimensionsInfo = createOrderDtoForUpdateOrConfirm.product.dimensionsTextFieldInfo;
+      if (createOrderDtoForUpdateOrConfirm.orderDetails) {
+        this.tableFormService.antiEelectrostatic.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.antiEelectrostatic);
+        this.tableFormService.antiEelectrostatic.enable();
+        this.tableFormService.workingSide.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.workingSide);
+        this.tableFormService.workingSide.enable();
+        this.tableFormService.workingTemperature.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.workingTemperature);
+        this.tableFormService.workingTemperature.enable();
+      }
+      this.orderCreator = this.authenticationService.user;
+      this.bgImageVariable = this.rootUrl + createOrderDtoForUpdateOrConfirm.product.urlOfOrginalDrawing;
+      if (this.orderTableService.orderOperationMode !== OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+        this.tableFormService.orderName = createOrderDtoForUpdateOrConfirm.orderName;
+        this.tableFormService.index = createOrderDtoForUpdateOrConfirm.index;
+      }
     }
   }
   setOrderNumbersinOrderTable(): void {
@@ -109,10 +139,18 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       }, error => {
         console.log('could not obtain orderNumber For new Order from backend');
       });
-    } else { // update, confirm, or show disabledDrawing Mode
+      // tslint:disable-next-line:max-line-length
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING) { // update, confirm, or show disabledDrawing Mode
       const createOrderDtoForUpdateOrConfirm = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.orderNumber = createOrderDtoForUpdateOrConfirm.orderNumber;
       this.orderVersionNumber = createOrderDtoForUpdateOrConfirm.orderVersionNumber;
+      this.tableFormService.orderTotalNumber = this.orderNumber + '.' + this.orderVersionNumber;
+      this.orderTotalNumber = this.tableFormService.orderTotalNumber;
+    }
+    else {
+      const createOrderDtoForUpdateOrConfirm = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
+      this.orderNumber = createOrderDtoForUpdateOrConfirm.orderNumber;
+      this.orderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
       this.tableFormService.orderTotalNumber = this.orderNumber + '.' + this.orderVersionNumber;
       this.orderTotalNumber = this.tableFormService.orderTotalNumber;
     }
@@ -129,9 +167,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   private setDateInOrderTable(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
       this.data = new Date().toLocaleDateString();
-    } else { // update, confirm or show disabled drawing mode
+    } else { //  show disabled drawing mode
       this.data = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing.data;
     }
   }
@@ -185,6 +223,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     input.value = dimension.dimensionvalue;
     if (allSecondIndexDimensionCodes.includes(input.id)) {
       this.LValue = input.value;
+      console.log(`setting Lvalue to = ${this.LValue}`);
     }
     if (allFirstIndexDimensionCodes.includes(input.id)) {
      this.DVaLe = input.value;
@@ -225,7 +264,37 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   onSubmit(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
+      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
+      this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
+      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+    }
+    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
+      this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
+      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+    }
+    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
+      this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
+      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+    }
+    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING && this.orderTableService.selectedId) {
+      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
+      this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
+      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+    }
+    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING && !this.orderTableService.selectedId) {
+      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
+      this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
+      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+    }
+    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && this.orderTableService.selectedId) {
+      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
+      this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
+      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+    }
+    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && !this.orderTableService.selectedId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
       this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
@@ -234,19 +303,21 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   ngAfterViewInit(): void {
-    this.createDimensionInputsBasingOnProductData();
     // tslint:disable-next-line:max-line-length
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+      this.createDimensionInputsBasingOnProductData();
+    }
+    else { /* update or show drawing modes*/
       // tslint:disable-next-line:max-line-length
       this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData(this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing);
     }
   }
 
   ngAfterContentChecked(): void {
-    console.log(`workingTemperatureValue= ${this.tableForm.controls.workingTemperature.value}`);
-    console.log(`this. this.tableFormService.index= ${this.tableFormService.index}`);
-    this.tableFormService.buildIndex(this.DVaLe, this.LValue);
-    this.tableFormService.setOrderName();
+      if (this.DVaLe.length > 0 && this.LValue.length > 0 ) {  /* to allow proper initiation for update or update drawing*/
+        this.tableFormService.buildIndex(this.DVaLe, this.LValue);
+      }
+      this.tableFormService.setOrderName();
   }
 
   ngAfterViewChecked(): void {

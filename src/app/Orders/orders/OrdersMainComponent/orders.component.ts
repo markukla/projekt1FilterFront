@@ -83,7 +83,13 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   updateSelectedRecord(materialId: number): void {
     this.tableService.orderOperationMode = OrderOperationMode.UPDATE;
     this.tableService.selectedId = materialId;
-    this.router.navigateByUrl('/addOrUpdateOrConfirmOrder');
+    this.backendService.findRecordById(String(this.tableService.selectedId)).subscribe((order) => {
+        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.backendService.getCreateOrderDtoFromOrder(order.body);
+        this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+      }, (error) => {
+        console.log('can not find order to update');
+      }
+    );
   }
 
 
@@ -92,7 +98,7 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
     this.tableService.selectedId = id;
     this.backendService.findRecordById(String(this.tableService.selectedId)).subscribe((order) => {
       this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.backendService.getCreateOrderDtoFromOrder(order.body);
-      this.router.navigateByUrl('orders/drawing');
+      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
     }, (error) => {
       console.log('can not find order to show drawing');
       }
@@ -105,5 +111,6 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
 
   setOrderOperationModeToCreateNew(): void {
     this.tableService.orderOperationMode = OrderOperationMode.CREATENEW;
+    this.tableService.selectedId = null;
   }
 }
