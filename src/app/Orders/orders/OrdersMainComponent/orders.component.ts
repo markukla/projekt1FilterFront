@@ -107,6 +107,8 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   }
 
   showOrderHistory(id: number): void {
+    this.tableService.selectedId = id;
+    this.router.navigateByUrl('orders/orderVersionRegister');
   }
 
   setOrderOperationModeToCreateNew(): void {

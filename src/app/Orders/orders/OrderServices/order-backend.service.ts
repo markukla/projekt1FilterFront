@@ -61,7 +61,7 @@ export class OrderBackendService {
 
   updateRecordById(id: string, updatedRecord: CreateOrderDto): Observable<HttpResponse<Order>> {
     const updateUrl = `${this.rootURL + this.endpointUrl}/currents/${id}/newVersion`;
-    return this.http.patch<Order>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
+    return this.http.post<Order>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
         this.tableService.updateTableRecord(Number(id), this.tableService.createOrderTableCellFromOrderEntity(record.body));

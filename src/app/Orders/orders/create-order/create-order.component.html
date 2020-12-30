@@ -134,7 +134,7 @@
         <textarea id="commentToOrder">  </textarea>
 
       </div>
-      <button type="submit" [disabled]="!form.valid" class="btn btn-danger">{{submitButtonDescription}}
+      <button type="submit" [disabled]="this.allowSubmit === false" class="btn btn-danger">{{submitButtonDescription}}
       </button>
     </div>
 

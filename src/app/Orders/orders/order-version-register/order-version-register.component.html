@@ -1,1 +1,52 @@
-<p>order-version-register works!</p>
+<a [routerLink]="['/products/tops']" > Wykończenia góry</a>
+<a [routerLink]="['/products/bottoms']" > Wykończenia dna</a>
+<a [routerLink]="['/products/types']" > Typy produktów</a>
+
+<!--sss-->
+
+
+<div class="materialComponent">
+
+  <table class="table table-striped border mt-1">
+    <thead>
+    <tr>
+      <th>>Nr zapy <br></th>
+      <th>Index</th>
+      <th>Nazwa</th>
+      <th>Uwagi</th>
+      <th>Data</th>
+      <th>Ilość</th>
+
+    </tr>
+
+    </thead>
+    <tbody>
+
+    <tr *ngFor="let order of ordersInRegister">
+      <td>{{order.orderTotalNumber}}</td>
+      <td>{{order.index}}</td>
+      <td>{{order.orderName}}</td>
+      <td>{{order.commentToOrder}}</td>
+
+      <td>{{order.data}}</td>
+      <td>
+        <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
+        <br>
+        <button class="showDrawing" (click)="showDrawing(order.id)"> Zobacz Rysunek</button>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+

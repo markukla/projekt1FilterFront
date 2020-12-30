@@ -57,6 +57,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   updateModeOrPartnerLogged: boolean;
   submitButtonDescription: string;
   productHasBeenChanged: boolean;
+  allowSubmit = false;
   constructor(
     private backendService: OrderBackendService,
     private host: ElementRef,
@@ -71,11 +72,12 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
-    this.getDataToDropdownLists();
   }
 
   ngOnInit(): void {
     this.productHasBeenChanged = false;
+    this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
+    this.getDataToDropdownLists();
     this.form = new FormGroup({
       type: new FormControl(null, [Validators.required]),
       top: new FormControl(null, [Validators.required]),
@@ -92,7 +94,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
       this.setFormControlValueForConfirmMode();
     }
-    this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
+
   }
 
   setFormControlValuesForUpdateMode(): void {
@@ -191,11 +193,13 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     }, error => {
       console.log('error during requesting productTypes from db');
     });
-    this.partnersBackendService.getAllRecords().subscribe((records) => {
-      this.allParntersToSelect = records.body;
-    }, error => {
-      console.log('error during requesting partners from db');
-    });
+    if (this.isPartner === false) {
+      this.partnersBackendService.getAllRecords().subscribe((records) => {
+        this.allParntersToSelect = records.body;
+      }, error => {
+        console.log('error during requesting partners from db');
+      });
+    }
     this.materialBackendService.getRecords().subscribe((records) => {
       this.allMaterialsToSelect = records.body;
     }, error => {
@@ -233,9 +237,9 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       // tslint:disable-next-line:max-line-length
     } else if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
       // tslint:disable-next-line:max-line-length
-      let productMaterialOrPartnerHasNotBeenCHanged: boolean = this.materialConfirmed === true && this.productConfirmed === true && this.partnerConfirmed === true;
-      if (productMaterialOrPartnerHasNotBeenCHanged) {
-        this.backendService.addRecords(this.backendService.createOrderDtoForConfirmUpdateShowDrawing).subscribe((order) => {
+      this.backendService.createOrderDtoForConfirmUpdateShowDrawing.businessPartner = this.selectedPartner;
+      this.backendService.createOrderDtoForConfirmUpdateShowDrawing.productMaterial = this.selectedMaterial;
+      this.backendService.addRecords(this.backendService.createOrderDtoForConfirmUpdateShowDrawing).subscribe((order) => {
             this.operationMessage = 'dodano nowe zamówienie';
           },
           error => {
@@ -243,10 +247,15 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 
           });
       }
-    }
     else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE && this.productHasBeenChanged === false) {
+
       // tslint:disable-next-line:max-line-length
-      this.backendService.updateRecordById(String(this.orderTableService.selectedId), this.backendService.createOrderDtoForConfirmUpdateShowDrawing).subscribe((order) => {
+      const updateOrderDto: CreateOrderDto = {
+        ...this.backendService.createOrderDtoForConfirmUpdateShowDrawing,
+        productMaterial: this.selectedMaterial,
+      };
+      // tslint:disable-next-line:max-line-length
+      this.backendService.updateRecordById(String(this.orderTableService.selectedId), updateOrderDto).subscribe((order) => {
         this.operationMessage = 'zaktualizowano zamówinie';
       },
         error => {
@@ -311,6 +320,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     this.checkOperationMode();
     this.setUpdateModeOrPartnerLoggedValue();
     this.onTypeSelectedSetTopsAndBottoms();
+    this.setAllowSubmit();
    // this.changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode();
   }
   setUpdateModeOrPartnerLoggedValue(): void {
@@ -335,7 +345,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       this.selectedPartner = this.businessPartner.value;
       this.businessPartner.disable({onlySelf: true});
       this.confirmOrCHangePartnerButtonInfo = 'Zmień Partnera Handlowego';
-      if(this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
+      if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing.businessPartner = this.selectedPartner;
       }
       this.partnerConfirmed = true;
@@ -349,7 +359,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   }
 
   confirmOrchangeProductButtonAction(): void {
-    if (this.productConfirmed === false && this.businessPartner.value && this.type.value && this.top.value && this.bottom.value) {
+    if (this.productConfirmed === false && this.type.value && this.top.value && this.bottom.value) {
       console.log('in confirmOrCHangeProductButtonMethod');
       this.selectedtType = this.type.value;
       this.type.disable({onlySelf: true});
@@ -409,6 +419,25 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     this.orderTableService.orderOperationMode = OrderOperationMode.UPDATEDRAWING;
     this.router.navigateByUrl('orders/drawing');
   }
+  setAllowSubmit(): void {
+    if (this.isPartner === true) {
+      if (this.productConfirmed === true && this.materialConfirmed === true) {
+        this.allowSubmit = true;
+      }
+      else {
+        this.allowSubmit = false;
+      }
+      }
+    else {
+      if (this.productConfirmed === true && this.materialConfirmed === true && this.partnerConfirmed === true) {
+        this.allowSubmit = true;
+      }
+      else {
+        this.allowSubmit = false;
+      }
+    }
+  }
+
   @HostListener('click', ['$event'])
   listenToChangeProductEvent(event: any): void {
     const inputId = event.target.id;

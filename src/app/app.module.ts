@@ -126,6 +126,7 @@ import { OrderDrawingComponent } from './Orders/orders/order-drawing/order-drawi
       { path: 'orders', component: OrdersComponent},
       { path: 'orders/addOrUpdateOrConfirmOrder', component: CreateOrderComponent},
       { path: 'orders/drawing', component: OrderDrawingComponent},
+      {path: 'orders/orderVersionRegister', component: OrderVersionRegisterComponent},
       {path: 'materials', component: MaterialsComponent },
       { path: 'materials/add', component: CreateNewMaterialComponent},
       { path: 'materials/update', component: UpdateMaterialComponent},

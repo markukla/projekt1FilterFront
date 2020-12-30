@@ -314,10 +314,16 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   ngAfterContentChecked(): void {
-      if (this.DVaLe.length > 0 && this.LValue.length > 0 ) {  /* to allow proper initiation for update or update drawing*/
+    // tslint:disable-next-line:max-line-length
+    const modeDifrentThanCreateNewOrUpdateWithNewProduct = this.orderTableService.orderOperationMode !== OrderOperationMode.CREATENEW && this.orderTableService.orderOperationMode !== OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
+    // tslint:disable-next-line:max-line-length
+    if (this.DVaLe.length > 0 && this.LValue.length > 0 && modeDifrentThanCreateNewOrUpdateWithNewProduct) {  /* to allow proper initiation for update or update drawing*/
         this.tableFormService.buildIndex(this.DVaLe, this.LValue);
       }
-      this.tableFormService.setOrderName();
+    else if (!modeDifrentThanCreateNewOrUpdateWithNewProduct) {
+      this.tableFormService.buildIndex(this.DVaLe, this.LValue);
+    }
+    this.tableFormService.setOrderName();
   }
 
   ngAfterViewChecked(): void {
