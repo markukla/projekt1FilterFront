@@ -1,4 +1,5 @@
 import Role from './role';
+import Order from '../../../Orders/OrdersTypesAndClasses/orderEntity';
 
 class User {
 
@@ -19,6 +20,7 @@ class User {
   businesPartnerCompanyName?: string;
 
   roles: Role[];
+  ordersOfPartner?: Order[];
 }
 
 export default User;

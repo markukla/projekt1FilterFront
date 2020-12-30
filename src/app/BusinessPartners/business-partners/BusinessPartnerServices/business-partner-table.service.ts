@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import User from '../../../Users/users/userTypes/user';
+import Order from '../../../Orders/OrdersTypesAndClasses/orderEntity';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,7 @@ import User from '../../../Users/users/userTypes/user';
 export class BusinessPartnerTableService {
   tableRecords: User[] = [];
   selectedId: number;
+  ordersOfBusinessPartner: Order[];
   constructor() {
   }
 

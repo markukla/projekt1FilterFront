@@ -6,6 +6,9 @@ import {OrderBackendService} from '../OrderServices/order-backend.service';
 import {OrderTableService} from '../OrderServices/order-table.service';
 import OrderforTableCell from '../../OrdersTypesAndClasses/orderforTableCell';
 import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
+import {BusinessPartnerTableService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/business-partner-table.service';
+import Order from '../../OrdersTypesAndClasses/orderEntity';
+import {BusinesPartnerBackendService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/busines-partner-backend.service';
 
 @Component({
   selector: 'app-orders',
@@ -25,17 +28,24 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   updateButtonInfo;
   materialId: number;
   recordNumbers: number;
+  partnerIdForOrdersShow: string;
+  ordersOfBusinessPartner: Order[];
 
 
   constructor(public tableService: OrderTableService,
+              public businessPartnerbackendService: BusinesPartnerBackendService,
               public backendService: OrderBackendService,
               private router: Router,
+              private route: ActivatedRoute,
               private activedIdParam: ActivatedRoute,
               private authenticationService: AuthenticationService
   ) {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe(queryParams => {
+      this.partnerIdForOrdersShow = queryParams.get('patnerId');
+    });
     this.getRecords();
     this.materialId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
@@ -49,7 +59,18 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   }
 
   getRecords(): void {
-    if (this.authenticationService.userRole === RoleEnum.PARTNER) {
+    if (this.partnerIdForOrdersShow){
+      this.tableService.records.length = 0;
+      this.businessPartnerbackendService.findRecordById(this.partnerIdForOrdersShow).subscribe((partner) => {
+        this.ordersOfBusinessPartner = partner.body.ordersOfPartner;
+        this.ordersOfBusinessPartner.forEach((record) => {
+            this.tableService.records.push(this.tableService.createOrderTableCellFromOrderEntity(record));
+          }
+        );
+        this.records = this.tableService.getRecords();
+      });
+    }
+    else if (this.authenticationService.userRole === RoleEnum.PARTNER) {
       const partnerCode: string = this.authenticationService.user.code;
       this.backendService.getCurrentOrdersForPartners(partnerCode).subscribe((records) => {
         this.tableService.records.length = 0;

@@ -116,5 +116,12 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
 
 
   showOrders(id: number): void {
+    this.tableService.selectedId = id;
+    const partnerId = String(id);
+    // this.backendService.findRecordById(String(id)).subscribe((partner) => {
+     //  this.tableService.ordersOfBusinessPartner = partner.body.ordersOfPartner;
+
+    // });
+    this.router.navigateByUrl(`orders?patnerId=${partnerId}`);
   }
 }
