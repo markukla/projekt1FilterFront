@@ -26,22 +26,26 @@ export class OrderVersionRegisterComponent implements OnInit, AfterContentChecke
   updateButtonInfo;
   materialId: number;
   recordNumbers: number;
+  selectedOrderId: string;
   orderVersionRegister: OrderVersionRegister;
   ordersInRegister: Order[];
 
 
   constructor(
-              public orderTableService: OrderTableService,
-              public orderRegisterTableService: VersionRegisterTableService,
-              public backendService: OrderBackendService,
-              private router: Router,
-              private activedIdParam: ActivatedRoute,
+    public orderTableService: OrderTableService,
+    public orderRegisterTableService: VersionRegisterTableService,
+    public backendService: OrderBackendService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private activedIdParam: ActivatedRoute,
   ) {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe(queryParams => {
+      this.selectedOrderId = queryParams.get('orderId');
+    });
     this.getRecords();
-    this.materialId = this.orderTableService.selectedId;
     this.deleteButtonInfo = 'usuń';
     this.updateButtonInfo = 'modyfikuj dane';
   }
@@ -53,7 +57,7 @@ export class OrderVersionRegisterComponent implements OnInit, AfterContentChecke
   }
 
   getRecords(): void {
-    this.backendService.findRecordById(String(this.orderTableService.selectedId)).subscribe((order) => {
+    this.backendService.findRecordById(this.selectedOrderId).subscribe((order) => {
       this.backendService.findOrderVersionRegisterById(String(order.body.orderVersionRegister.id)).subscribe((register) => {
           this.orderVersionRegister = register.body;
           this.ordersInRegister = this.orderVersionRegister.ordersInthisRegister;
@@ -63,17 +67,8 @@ export class OrderVersionRegisterComponent implements OnInit, AfterContentChecke
       );
     });
   }
-  showDrawing(id: number): void {
-    this.orderTableService.orderOperationMode = OrderOperationMode.SHOWDRAWING;
-    this.orderTableService.selectedId = id;
-    this.backendService.findRecordById(String(this.orderTableService.selectedId)).subscribe((order) => {
-      this.orderTableService.orderOperationMode = OrderOperationMode.SHOWDRAWING;
-      this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.backendService.getCreateOrderDtoFromOrder(order.body);
-      this.router.navigateByUrl('orders/drawing');
-      }, (error) => {
-        console.log('can not find order to show drawing');
-      }
-    );
 
+  showDrawing(id: number): void {
+    this.router.navigateByUrl(`orders/drawing?orderId=${id}&mode=${OrderOperationMode.SHOWDRAWING}`);
   }
 }

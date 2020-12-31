@@ -102,36 +102,19 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   }
 
   updateSelectedRecord(selectedId: number): void {
-    this.tableService.orderOperationMode = OrderOperationMode.UPDATE;
-    this.tableService.selectedId = selectedId;
-    this.backendService.findRecordById(String(this.tableService.selectedId)).subscribe((order) => {
-        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.backendService.getCreateOrderDtoFromOrder(order.body);
-        this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?action=${this.tableService.orderOperationMode}`);
-      }, (error) => {
-        console.log('can not find order to update');
-      }
-    );
+        this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${selectedId}&mode${OrderOperationMode.UPDATE}`);
   }
 
 
   showDrawing(id: number): void {
-    this.backendService.findRecordById(String(this.tableService.selectedId)).subscribe((order) => {
-      this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.backendService.getCreateOrderDtoFromOrder(order.body);
       this.router.navigateByUrl(`orders/drawing?orderId=${id}&mode=${OrderOperationMode.SHOWDRAWING}`);
-    }, (error) => {
-      console.log('can not find order to show drawing');
-      }
-      );
-
   }
 
   showOrderHistory(id: number): void {
-    this.tableService.selectedId = id;
-    this.router.navigateByUrl('orders/orderVersionRegister');
+    this.router.navigateByUrl(`orders/orderVersionRegister?orderId=${id}`);
   }
 
-  setOrderOperationModeToCreateNew(): void {
-    this.tableService.orderOperationMode = OrderOperationMode.CREATENEW;
-    this.tableService.selectedId = null;
+  createNewOrder(): void {
+    this.router.navigateByUrl(`orders/mode=${OrderOperationMode.CREATENEW}`);
   }
 }
