@@ -101,12 +101,12 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  updateSelectedRecord(materialId: number): void {
+  updateSelectedRecord(selectedId: number): void {
     this.tableService.orderOperationMode = OrderOperationMode.UPDATE;
-    this.tableService.selectedId = materialId;
+    this.tableService.selectedId = selectedId;
     this.backendService.findRecordById(String(this.tableService.selectedId)).subscribe((order) => {
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.backendService.getCreateOrderDtoFromOrder(order.body);
-        this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+        this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?action=${this.tableService.orderOperationMode}`);
       }, (error) => {
         console.log('can not find order to update');
       }
@@ -115,11 +115,9 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
 
 
   showDrawing(id: number): void {
-    this.tableService.orderOperationMode = OrderOperationMode.SHOWDRAWING;
-    this.tableService.selectedId = id;
     this.backendService.findRecordById(String(this.tableService.selectedId)).subscribe((order) => {
       this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.backendService.getCreateOrderDtoFromOrder(order.body);
-      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+      this.router.navigateByUrl(`orders/drawing?orderId=${id}&mode=${OrderOperationMode.SHOWDRAWING}`);
     }, (error) => {
       console.log('can not find order to show drawing');
       }
