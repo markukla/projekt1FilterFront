@@ -8,7 +8,7 @@ class Order {
   public id?: number;
   orderNumber: number;  // it is not id because it is the same for orders with the same order version register
   orderVersionNumber: string;
-  orderTotalNumber: string; // orderNumber and version number with some separator
+  orderTotalNumber: string; // newOrderNumber and version number with some separator
   index: string;
   data: string;
   orderName: string;

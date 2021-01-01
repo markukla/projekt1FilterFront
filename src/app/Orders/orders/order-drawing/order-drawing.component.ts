@@ -37,25 +37,18 @@ import {ActivatedRoute, Router} from '@angular/router';
   styleUrls: ['./order-drawing.component.css']
 })
 export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterContentChecked, AfterViewChecked, OnChanges {
-  selectedOrderInTableRecord: OrderforTableCell;
-  selectedProduct: Product;
-  selectedPartner: User;
-  selectedMaterial: Material;
-  dimensionsInfo: DimensionTextFIeldInfo[];
   tableForm: FormGroup;
   bgImageVariable: string;
   LValue = '';
   DVaLe = '';
-  orderNumber: number;  // it is not id because it is the same for orders with the same order version register
-  orderVersionNumber: string;
-  orderTotalNumber: string;
-  data: string;
-  orderCreator: User;
-  commentToOrder = '';
+  newOrderNumber: number;  // it is not id because it is the same for orders with the same order version register
+  newOrderVersionNumber: string;
+  newOrderTotalNumber: string;
+  newData: string;
   rootUrl = 'http://localhost:5000';
   orderOperationMode: OrderOperationMode;
-  selectedOrderId: string;
   createOrderDto: CreateOrderDto;
+  selectedOrderId: string;
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
 
   constructor(
@@ -76,6 +69,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
     // tslint:disable-next-line:max-line-length
   }
+
   setOrderOperatiomModeAndSelectedOrderBasingOnQueryParamters(): void {
     this.route.queryParamMap.subscribe(queryParams => {
       const mode = queryParams.get('mode');
@@ -100,30 +94,19 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
           this.setDateInOrderTable();
           this.setOrderNumbersinOrderTable();
           // tslint:disable-next-line:max-line-length
-          this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.orderTotalNumber, this.orderCreator.fulName, this.data, this.selectedProduct, this.selectedMaterial);
+          this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.newOrderTotalNumber, this.orderCreator.fulName, this.newData, this.selectedProduct, this.selectedMaterial);
         });
       }
+      else if
     });
   }
+
   initPropertiValuesToServicesValues(): void {
-    if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
-      this.selectedOrderInTableRecord = this.orderTableService.selectedRecord;
-      this.selectedProduct = this.orderBackendService.selectedProduct;
-      this.bgImageVariable = this.rootUrl + this.selectedProduct.urlOfOrginalDrawing;
-      this.selectedPartner = this.orderBackendService.selectedParnter;
-      this.selectedMaterial = this.orderBackendService.selectedMaterial;
-      this.dimensionsInfo = this.selectedProduct.dimensionsTextFieldInfo;
-      this.tableForm = this.tableFormService.tableForm;
-      this.orderCreator = this.authenticationService.user;
-    }
+    this.tableForm = this.tableFormService.tableForm;
     // tslint:disable-next-line:max-line-length
-    else if ( this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
+     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
       this.orderBackendService.findRecordById(this.selectedOrderId).subscribe((order) => {
         this.createOrderDto = this.orderBackendService.getCreateOrderDtoFromOrder(order.body);
-        this.selectedProduct = this.createOrderDto.product;
-        this.selectedPartner = this.createOrderDto.businessPartner;
-        this.selectedMaterial = this.createOrderDto.productMaterial;
-        this.dimensionsInfo = this.createOrderDto.product.dimensionsTextFieldInfo;
         this.tableForm = this.tableFormService.tableForm;
         this.tableFormService.antiEelectrostatic.setValue(this.createOrderDto.orderDetails.antiEelectrostatic);
         this.tableFormService.antiEelectrostatic.disable();
@@ -131,63 +114,40 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         this.tableFormService.workingSide.disable();
         this.tableFormService.workingTemperature.setValue(this.createOrderDto.orderDetails.workingTemperature);
         this.tableFormService.workingTemperature.disable();
-        this.orderCreator = this.createOrderDto.creator;
+        this.tableFormService.orderCreator = this.createOrderDto.creator.fulName;
         this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
         this.tableFormService.orderName = this.createOrderDto.orderName;
         this.tableFormService.index = this.createOrderDto.index;
+        this.tableFormService.orderTotalNumber = this.createOrderDto.orderTotalNumber;
       });
-    }
-    else {
-      const createOrderDtoForUpdateOrConfirm = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
+    } else {
+      this.createOrderDto = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.tableForm = this.tableFormService.tableForm;
-      this.selectedProduct = createOrderDtoForUpdateOrConfirm.product;
-      this.selectedPartner = createOrderDtoForUpdateOrConfirm.businessPartner;
-      this.selectedMaterial = createOrderDtoForUpdateOrConfirm.productMaterial;
-      this.dimensionsInfo = createOrderDtoForUpdateOrConfirm.product.dimensionsTextFieldInfo;
-      if (createOrderDtoForUpdateOrConfirm.orderDetails) {
-        this.tableFormService.antiEelectrostatic.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.antiEelectrostatic);
+      if (this.createOrderDto.orderDetails) {
         this.tableFormService.antiEelectrostatic.enable();
-        this.tableFormService.workingSide.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.workingSide);
         this.tableFormService.workingSide.enable();
-        this.tableFormService.workingTemperature.setValue(createOrderDtoForUpdateOrConfirm.orderDetails.workingTemperature);
         this.tableFormService.workingTemperature.enable();
       }
-      this.orderCreator = this.authenticationService.user;
-      this.bgImageVariable = this.rootUrl + createOrderDtoForUpdateOrConfirm.product.urlOfOrginalDrawing;
-      if (this.orderTableService.orderOperationMode !== OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
-        this.tableFormService.orderName = createOrderDtoForUpdateOrConfirm.orderName;
-        this.tableFormService.index = createOrderDtoForUpdateOrConfirm.index;
-      }
+      this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
     }
   }
+
   setOrderNumbersinOrderTable(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {  // create new mode
-      this.orderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
+    if (this.orderOperationMode === OrderOperationMode.CREATENEW) {  // create new mode
+      this.newOrderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
       this.orderBackendService.getNewOrderNumber().subscribe((newNumber) => {
-        this.orderNumber = newNumber.body.newestNumber;
-        this.tableFormService.orderTotalNumber = this.orderNumber + '.' + this.orderVersionNumber;
-        this.orderTotalNumber = this.tableFormService.orderTotalNumber;
+        this.newOrderNumber = newNumber.body.newestNumber;
+        this.tableFormService.orderTotalNumber = this.newOrderNumber + '.' + this.newOrderVersionNumber;
+        this.newOrderTotalNumber = this.tableFormService.orderTotalNumber;
       }, error => {
-        console.log('could not obtain orderNumber For new Order from backend');
+        console.log('could not obtain newOrderNumber For new Order from backend');
       });
       // tslint:disable-next-line:max-line-length
-    } else if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) { // update, confirm, or show disabledDrawing Mode
-     /*
-     in this version do not build enything just show static drawing
-     const createOrderDtoForUpdateOrConfirm = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
-      this.orderNumber = createOrderDtoForUpdateOrConfirm.orderNumber;
-      this.orderVersionNumber = createOrderDtoForUpdateOrConfirm.orderVersionNumber;
-      this.tableFormService.orderTotalNumber = this.orderNumber + '.' + this.orderVersionNumber;
-      this.orderTotalNumber = this.tableFormService.orderTotalNumber;
-     *  */
-    }
-    else {
-      const createOrderDtoForUpdateOrConfirm = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
-      this.orderNumber = createOrderDtoForUpdateOrConfirm.orderNumber;
-      this.orderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
-      this.tableFormService.orderTotalNumber = this.orderNumber + '.' + this.orderVersionNumber;
-      this.orderTotalNumber = this.tableFormService.orderTotalNumber;
+    } else if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING) {
+      this.newOrderNumber = this.createOrderDto.orderNumber;
+      this.newOrderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
+      this.newOrderTotalNumber = this.newOrderNumber + '.' + this.newOrderVersionNumber;
     }
   }
 
@@ -203,9 +163,10 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   private setDateInOrderTable(): void {
     // tslint:disable-next-line:max-line-length
     if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
-      this.data = new Date().toLocaleDateString();
+      this.newData = new Date().toLocaleDateString();
     }
   }
+
   getInputElementsFromVievAndCreateDimensionTable(): Dimension[] {
     // tslint:disable-next-line:max-line-length
     const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.inputDivHorizontal, .inputDivVertical'); /* does not work for 2 class at once selected  */
@@ -225,15 +186,16 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
 
   createDimensionInputsBasingOnProductData(): void {
-    this.dimensionsInfo.forEach((di) => {
+    this.createOrderDto.product.dimensionsTextFieldInfo.forEach((di) => {
       this.createDimensionInputOnDrawingBasingOnDimensionInfo(di, 'input');
     });
   }
 
-  createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData(createOrderDto: CreateOrderDto): void {
-    if (this.dimensionsInfo) {
-      const dimensions: Dimension [] = createOrderDto.orderDetails.dimensions;
-      this.dimensionsInfo.forEach((dimensionInfo) => {
+  createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData(): void {
+    if (this.createOrderDto.product.dimensionsTextFieldInfo) {
+      const dimensionsInfo = this.createOrderDto.product.dimensionsTextFieldInfo;
+      const dimensions: Dimension [] = this.createOrderDto.orderDetails.dimensions;
+      dimensionsInfo.forEach((dimensionInfo) => {
         dimensions.forEach((dimension) => {
           if (dimensionInfo.dimensionId === dimension.dimensionId) {
             this.createDimensionInputOnDrawingWithSetValueBasingOnDimensionInfoAndOrderData(dimensionInfo, dimension, 'input');
@@ -261,7 +223,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       console.log(`setting Lvalue to = ${this.LValue}`);
     }
     if (allFirstIndexDimensionCodes.includes(input.id)) {
-     this.DVaLe = input.value;
+      this.DVaLe = input.value;
     }
     if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
       this.renderer.setAttribute(input, 'readonly', 'true');
@@ -303,33 +265,27 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
       this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    }
-    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
       this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    }
-    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
       this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    }
-    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING && this.orderTableService.selectedId) {
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING && this.orderTableService.selectedId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
       this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    }
-    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING && !this.orderTableService.selectedId) {
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING && !this.orderTableService.selectedId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
       this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    }
-    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && this.orderTableService.selectedId) {
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && this.orderTableService.selectedId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
       this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    }
-    else if ( this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && !this.orderTableService.selectedId) {
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && !this.orderTableService.selectedId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
       this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
@@ -346,9 +302,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     const modeDifrentThanCreateNewOrUpdateWithNewProduct = this.orderOperationMode !== OrderOperationMode.CREATENEW && this.orderOperationMode !== OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
     // tslint:disable-next-line:max-line-length
     if (this.DVaLe.length > 0 && this.LValue.length > 0 && modeDifrentThanCreateNewOrUpdateWithNewProduct) {  /* to allow proper initiation for update or update drawing*/
-        this.tableFormService.buildIndex(this.DVaLe, this.LValue);
-      }
-    else if (!modeDifrentThanCreateNewOrUpdateWithNewProduct && this.orderOperationMode) {
+      this.tableFormService.buildIndex(this.DVaLe, this.LValue);
+    } else if (!modeDifrentThanCreateNewOrUpdateWithNewProduct && this.orderOperationMode) {
       this.tableFormService.buildIndex(this.DVaLe, this.LValue);
     }
 
@@ -359,11 +314,10 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     // tslint:disable-next-line:max-line-length
     if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
       this.createDimensionInputsBasingOnProductData();
-    }
-    else { /* update or show drawing modes*/
+    } else { /* update or show drawing modes*/
       // tslint:disable-next-line:max-line-length
       if (this.createOrderDto !== undefined) {
-        this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData(this.createOrderDto) ;
+        this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();
       }
     }
   }
@@ -406,10 +360,10 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       dimensions
     };
     const orderDtoToSaveInDatabae: CreateOrderDto = {
-      data: this.data,
-      orderVersionNumber: this.orderVersionNumber,
-      orderNumber: this.orderNumber,
-      orderTotalNumber: this.orderTotalNumber,
+      data: this.newData,
+      orderVersionNumber: this.newOrderVersionNumber,
+      orderNumber: this.newOrderNumber,
+      orderTotalNumber: this.newOrderTotalNumber,
       businessPartner: this.selectedPartner,
       orderName: this.tableFormService.orderName,
       index: this.tableFormService.index,

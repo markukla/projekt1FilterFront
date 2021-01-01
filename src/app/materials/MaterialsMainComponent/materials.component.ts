@@ -48,9 +48,9 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   /*
   * getMaterials(): void {
       this.materialService.getMaterials()
-        // clone the data object, using its known Config shape
-        .subscribe((data) => {
-            this.materials = data;
+        // clone the newData object, using its known Config shape
+        .subscribe((newData) => {
+            this.materials = newData;
 
           }
         );
@@ -58,8 +58,8 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
 
     deleteMaterialById(id: number): any {
       this.materialService.deleteMaterialById(String(id))
-        .subscribe((data) => {
-          this.deleTedMaterialMessage = data;
+        .subscribe((newData) => {
+          this.deleTedMaterialMessage = newData;
           this.getMaterials();
 
         });

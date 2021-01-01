@@ -63,7 +63,7 @@ export class ProductBackendService {
   }
   uploadDrawing(file: any): Observable<DrawingPaths> {
     const url = `${this.rootURL}/uploadDrawing`;
-    return this.http.post<DrawingPaths>(url, file, /* {headers: {Accept: 'multipart/form-data'}}*/);
+    return this.http.post<DrawingPaths>(url, file, /* {headers: {Accept: 'multipart/form-newData'}}*/);
   }
 
   findRecordBycode(code: string): Observable<boolean> {

@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import Product from '../../../ProductTypesAndClasses/product.entity';
-import {Material} from '../../../../materials/MaterialsMainComponent/material';
+import {CreateOrderDto} from '../../../../Orders/OrdersTypesAndClasses/orderDto';
+import WorkingSideEnum from '../../../../Orders/OrdersTypesAndClasses/workingSideEnum';
+import OrderOperationMode from '../../../../Orders/OrdersTypesAndClasses/orderOperationMode';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class TableFormServiceService {
   index: string;
   orderCreator: string;
   orderName: string;
-  date: Date|string;
+  date: string;
   materialName: string;
   materialCode: string;
   Lvalue: string;  // value for second indexDimension
@@ -32,7 +33,7 @@ export class TableFormServiceService {
   initTableForm(): void {
     this.tableForm = new FormGroup({
       workingTemperature: new FormControl(null, [Validators.required]),
-      workingSide: new FormControl(null, [Validators.required]),
+      workingSide: new FormControl(WorkingSideEnum.INTERNAL, [Validators.required]),
       antiEelectrostatic: new FormControl(false)
     });
   }
@@ -115,41 +116,50 @@ export class TableFormServiceService {
     this.orderName = `${this.productTypeName}  ${this.Dvalue}  x  ${this.Lvalue} mm ${this.materialCode}`;
   }
 
-  // tslint:disable-next-line:max-line-length
-  setNonDimensionOrIndexRelateDataForDrawingTable(orderTotalNumber: string,  orderCreator: string, date: Date|string, selectedProduct: Product, selectedMaterial: Material): void {
-    if (orderTotalNumber) {
-      this.orderTotalNumber = orderTotalNumber;
-    } else {
+  /*  remember that createOrderDto is obtained in diffrentWay for diffrent modes*/
+  setNonDimensionOrIndexRelateDataForDrawingTable(createOrderDto: CreateOrderDto): void{
+      if (createOrderDto.orderTotalNumber) {
+        this.orderTotalNumber = createOrderDto.orderTotalNumber;
+      }
+    else {
       this.orderTotalNumber = '';
     }
-
-    if (orderCreator) {
-      this.orderCreator = orderCreator;
+      if (createOrderDto.creator) {
+      this.orderCreator = createOrderDto.creator.fulName;
     } else {
       this.orderCreator = '';
     }
-    if (date) {
-      this.date = date;
+      if (createOrderDto.data) {
+      this.date = createOrderDto.data;
     } else {
       this.date = '';
     }
-    if (selectedMaterial) {
-      this.materialCode = selectedMaterial.materialCode;
-      this.materialName = selectedMaterial.materialName;
+      if (createOrderDto.productMaterial) {
+      this.materialCode = createOrderDto.productMaterial.materialCode;
+      this.materialName = createOrderDto.productMaterial.materialName;
     } else {
       this.materialCode = '';
       this.materialName = '';
     }
-    if (selectedMaterial) {
-      this.productTypeName = selectedProduct.productType.name;
-      this.productTypeCode = selectedProduct.productType.code;
-      this.productBottomCode = selectedProduct.productBottom.code;
-      this.productTopCode = selectedProduct.productTop.code;
+      if (createOrderDto.product) {
+      this.productTypeName = createOrderDto.product.productType.name;
+      this.productTypeCode = createOrderDto.product.productType.code;
+      this.productBottomCode = createOrderDto.product.productBottom.code;
+      this.productTopCode = createOrderDto.product.productTop.code;
     } else {
       this.productTypeName = '';
       this.productTypeCode = '00';
       this.productBottomCode = '0';
       this.productTopCode = '0';
+    }
+      if (createOrderDto.orderDetails.workingTemperature) {
+      this.workingTemperature.setValue(createOrderDto.orderDetails.workingTemperature);
+    }
+      if (createOrderDto.orderDetails.workingSide) {
+      this.workingSide.setValue(createOrderDto.orderDetails.workingSide);
+    }
+      if (createOrderDto.orderDetails.antiEelectrostatic) {
+      this.antiEelectrostatic.setValue(createOrderDto.orderDetails.antiEelectrostatic);
     }
   }
   resetTableFormServiceProperties(): void{

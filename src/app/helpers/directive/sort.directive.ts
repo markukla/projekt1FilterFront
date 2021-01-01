@@ -21,18 +21,18 @@ export class SortDirective {
 
     const elem = this.targetElement.nativeElement;
 
-    const order = elem.getAttribute('data-order');
+    const order = elem.getAttribute('newData-order');
 
-    const type = elem.getAttribute('data-type');
+    const type = elem.getAttribute('newData-type');
 
-    const property = elem.getAttribute('data-name');
+    const property = elem.getAttribute('newData-name');
 
     if (order === 'desc') {
       this.appSort.sort(sort.startSort(property, order, type));
-      elem.setAttribute('data-order', 'asc');
+      elem.setAttribute('newData-order', 'asc');
     } else {
       this.appSort.sort(sort.startSort(property, order, type));
-      elem.setAttribute('data-order', 'desc');
+      elem.setAttribute('newData-order', 'desc');
     }
 
   }
