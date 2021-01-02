@@ -41,10 +41,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   bgImageVariable: string;
   LValue = '';
   DVaLe = '';
-  newOrderNumber: number;  // it is not id because it is the same for orders with the same order version register
-  newOrderVersionNumber: string;
-  newOrderTotalNumber: string;
-  newData: string;
   rootUrl = 'http://localhost:5000';
   orderOperationMode: OrderOperationMode;
   createOrderDto: CreateOrderDto;
@@ -91,20 +87,17 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
           this.createOrderDto = this.orderBackendService.getCreateOrderDtoFromOrder(order.body);
           console.error(`this.createOrderDto = ${this.createOrderDto}`);
           this.initPropertiValuesToServicesValues();
-          this.setDateInOrderTable();
-          this.setOrderNumbersinOrderTable();
           // tslint:disable-next-line:max-line-length
-          this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.newOrderTotalNumber, this.orderCreator.fulName, this.newData, this.selectedProduct, this.selectedMaterial);
+          this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.createOrderDto);
         });
       }
-      else if
     });
   }
 
   initPropertiValuesToServicesValues(): void {
     this.tableForm = this.tableFormService.tableForm;
     // tslint:disable-next-line:max-line-length
-     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
+    if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
       this.orderBackendService.findRecordById(this.selectedOrderId).subscribe((order) => {
         this.createOrderDto = this.orderBackendService.getCreateOrderDtoFromOrder(order.body);
         this.tableForm = this.tableFormService.tableForm;
@@ -129,41 +122,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         this.tableFormService.workingTemperature.enable();
       }
       this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
-    }
-  }
-
-  setOrderNumbersinOrderTable(): void {
-    // tslint:disable-next-line:max-line-length
-    if (this.orderOperationMode === OrderOperationMode.CREATENEW) {  // create new mode
-      this.newOrderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
-      this.orderBackendService.getNewOrderNumber().subscribe((newNumber) => {
-        this.newOrderNumber = newNumber.body.newestNumber;
-        this.tableFormService.orderTotalNumber = this.newOrderNumber + '.' + this.newOrderVersionNumber;
-        this.newOrderTotalNumber = this.tableFormService.orderTotalNumber;
-      }, error => {
-        console.log('could not obtain newOrderNumber For new Order from backend');
-      });
-      // tslint:disable-next-line:max-line-length
-    } else if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING) {
-      this.newOrderNumber = this.createOrderDto.orderNumber;
-      this.newOrderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
-      this.newOrderTotalNumber = this.newOrderNumber + '.' + this.newOrderVersionNumber;
-    }
-  }
-
-  private getCurrentDateAndTimeToBecomeOrderVersionNumber(): string {
-    const now = new Date();
-    const date = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
-    const time = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
-    const dateAndTimeNow = date + '.' + time;
-    return dateAndTimeNow;
-
-  }
-
-  private setDateInOrderTable(): void {
-    // tslint:disable-next-line:max-line-length
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING || this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
-      this.newData = new Date().toLocaleDateString();
     }
   }
 
@@ -360,17 +318,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       dimensions
     };
     const orderDtoToSaveInDatabae: CreateOrderDto = {
-      data: this.newData,
-      orderVersionNumber: this.newOrderVersionNumber,
-      orderNumber: this.newOrderNumber,
-      orderTotalNumber: this.newOrderTotalNumber,
-      businessPartner: this.selectedPartner,
+      ... this.createOrderDto,
       orderName: this.tableFormService.orderName,
       index: this.tableFormService.index,
-      creator: this.orderCreator,
-      commentToOrder: this.commentToOrder,
-      product: this.selectedProduct,
-      productMaterial: this.selectedMaterial,
       orderDetails
     };
 

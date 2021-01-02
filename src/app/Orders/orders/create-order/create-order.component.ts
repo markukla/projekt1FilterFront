@@ -20,6 +20,7 @@ import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
 import {OrderTableService} from '../OrderServices/order-table.service';
 import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
+import {TableFormServiceService} from '../../../Products/ProductMainComponent/product/product-table-form/table-form-service.service';
 
 @Component({
   selector: 'app-create-order',
@@ -45,7 +46,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   drawingPaths: DrawingPaths;
   isPartner: boolean;
   orderOperationMode: OrderOperationMode;
-  createOrderDtoToUpdate: CreateOrderDto;
+  createOrderDto: CreateOrderDto;
   confirmOrCHangePartnerButtonInfo: string;
   partnerConfirmed: boolean;
   confirmOrCHangeProductParmatersButtonInfo: string;
@@ -58,9 +59,15 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   submitButtonDescription: string;
   productHasBeenChanged: boolean;
   allowSubmit = false;
+  newOrderNumber: number;  // it is not id because it is the same for orders with the same order version register
+  newOrderVersionNumber: string;
+  newOrderTotalNumber: string;
+  newData: string;
+  selctedIdForUpdateOrShowDrawing: string;
 
   constructor(
     private backendService: OrderBackendService,
+    private tableFormService: TableFormServiceService,
     private host: ElementRef,
     private renderer: Renderer2,
     private orderTableService: OrderTableService,
@@ -75,8 +82,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     private router: Router) {
   }
 
-  ngOnInit(): void {
-    this.setOrderOperatiomModeBasingOnQueryParamters();
+  async ngOnInit(): Promise<void> {
     this.productHasBeenChanged = false;
     this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
     this.getDataToDropdownLists();
@@ -87,51 +93,66 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       businessPartner: new FormControl(null, Validators.required),
       productMaterial: new FormControl(null, Validators.required)
     }, {updateOn: 'change'});
-    this.orderOperationMode = this.orderTableService.orderOperationMode;
-    this.createOrderDtoToUpdate = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
-    this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
-      this.setFormControlValuesForUpdateMode();
-    }
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
-      this.setFormControlValueForConfirmMode();
-    }
-
+    await this.setOrderOperatiomModeBasingOnQueryParamtersAndInitPropertyValues();
   }
 
-  setOrderOperatiomModeBasingOnQueryParamters(): void {
-    this.route.queryParamMap.subscribe(queryParams => {
+   async setOrderOperatiomModeBasingOnQueryParamtersAndInitPropertyValues(): Promise<void> {
+    this.route.queryParamMap.subscribe(async queryParams => {
       const mode = queryParams.get('mode');
-      if (mode === OrderOperationMode.CREATENEW) {
+      const orderId = queryParams.get('orderId');
+      this.selctedIdForUpdateOrShowDrawing = orderId;
+      if (mode === OrderOperationMode.CREATENEW ) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
-      } else if (mode === OrderOperationMode.UPDATE) {
-        this.orderOperationMode = OrderOperationMode.UPDATE;
-      } else if (mode === OrderOperationMode.SHOWDRAWING) {
-        this.orderOperationMode = OrderOperationMode.SHOWDRAWING;
-      } else if (mode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
-        this.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
-      } else if (mode === OrderOperationMode.UPDATEDRAWING) {
-        this.orderOperationMode = OrderOperationMode.UPDATEDRAWING;
+        this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
+        this.setOrderNumbersinOrderTableForNewOrder();
+      } else if (mode === OrderOperationMode.UPDATE || mode === OrderOperationMode.SHOWDRAWING) {
+        if (mode === OrderOperationMode.UPDATE) {
+          this.orderOperationMode = OrderOperationMode.UPDATE;
+        }
+        else if (mode === OrderOperationMode.SHOWDRAWING) {
+          this.orderOperationMode = OrderOperationMode.SHOWDRAWING;
+        }
+        const selectedOrder = await this.backendService.findRecordById(orderId).toPromise();
+        this.createOrderDto = this.backendService.getCreateOrderDtoFromOrder(selectedOrder.body);
+        this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
+        this.setFormControlValuesForUpdateOrShowDrawingMode(this.createOrderDto);
+        // tslint:disable-next-line:max-line-length
+      } else if (mode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || mode === OrderOperationMode.CONFIRMUPDATE || OrderOperationMode.UPDATEDRAWING || mode === OrderOperationMode.CONFIRMNEW || OrderOperationMode.SHOWDRAWINGCONFIRM) {
+        if (mode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+          this.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
+        } else if (mode === OrderOperationMode.UPDATEDRAWING) {
+          this.orderOperationMode = OrderOperationMode.UPDATEDRAWING;
+        } else if (mode === OrderOperationMode.CONFIRMUPDATE) {
+          this.orderOperationMode = OrderOperationMode.CONFIRMUPDATE;
+        } else if (mode === OrderOperationMode.CONFIRMNEW) {
+          this.orderOperationMode = OrderOperationMode.CONFIRMNEW;
+        } else if (mode === OrderOperationMode.SHOWDRAWINGCONFIRM) {
+          this.orderOperationMode = OrderOperationMode.SHOWDRAWINGCONFIRM;
+        }
+        this.createOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
+        this.setFormControlValuesForUpdateOrShowDrawingMode(this.createOrderDto);
+        this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
       }
     });
   }
 
-  setFormControlValuesForUpdateMode(): void {
-    if (this.createOrderDtoToUpdate) {
-      this.businessPartner.setValue(this.createOrderDtoToUpdate.businessPartner);
-      this.productMaterial.setValue(this.createOrderDtoToUpdate.productMaterial);
+setFormControlValuesForUpdateOrShowDrawingMode(createOrderDto: CreateOrderDto): void {
+    if (createOrderDto) {
+      console.error('in setFormControlValuesForUpdateOrShowDrawingMode');
+      this.businessPartner.setValue(this.createOrderDto.businessPartner);
+      this.productMaterial.setValue(this.createOrderDto.productMaterial);
       this.selectedMaterial = this.productMaterial.value;
       this.selectedPartner = this.businessPartner.value;
-      this.type.setValue(this.createOrderDtoToUpdate.product.productType);
+      this.type.setValue(this.createOrderDto.product.productType);
       this.selectedtType = this.type.value;
-      this.top.setValue(this.createOrderDtoToUpdate.product.productTop);
+      this.top.setValue(this.createOrderDto.product.productTop);
       this.selectedTop = this.top.value;
-      this.bottom.setValue(this.createOrderDtoToUpdate.product.productBottom);
+      this.bottom.setValue(this.createOrderDto.product.productBottom);
       this.selectedBottom = this.bottom.value;
     }
   }
 
-  setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
+setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
     if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
       this.submitButtonDescription = 'dalej';
       this.materialConfirmed = false;
@@ -164,7 +185,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     }
   }
 
-  setFormControlValueForConfirmMode(): void {
+setFormControlValueForConfirmMode(): void {
     if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
       const createOrderDto: CreateOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.type.setValue(createOrderDto.product.productType);
@@ -181,37 +202,37 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   }
 
   // tslint:disable-next-line:typedef
-  get type() {
+get type() {
     return this.form.get('type');
   }
 
 // tslint:disable-next-line:typedef
-  get top() {
+get top() {
     return this.form.get('top');
   }
 
   // tslint:disable-next-line:typedef
-  get bottom() {
+get bottom() {
     return this.form.get('bottom');
   }
 
   // tslint:disable-next-line:typedef
-  get businessPartner() {
+get businessPartner() {
     return this.form.get('businessPartner');
   }
 
   // tslint:disable-next-line:typedef
-  get productMaterial() {
+get productMaterial() {
     return this.form.get('productMaterial');
   }
 
-  getDataToDropdownLists(): void {
+getDataToDropdownLists(): void {
     this.typesBackendService.getRecords().subscribe((records) => {
       this.allTypesToSelect = records.body;
     }, error => {
       console.log('error during requesting productTypes from db');
     });
-    if (this.isPartner === false) {
+    if (this.isPartner === false) { } {
       this.partnersBackendService.getAllRecords().subscribe((records) => {
         this.allParntersToSelect = records.body;
       }, error => {
@@ -225,19 +246,20 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     });
   }
 
-  setTopsAndBottomsToSelectAfterTypeSelected(productType: ProductType): void {
+setTopsAndBottomsToSelectAfterTypeSelected(productType: ProductType): void {
     this.allTopsToSelect = productType.topsForThisProductType;
     this.allBotomsToselect = productType.bottomsForThisProductType;
   }
 
-  onSubmit(): void {
+onSubmit(): void {
     console.error('in on Submit method');
     // tslint:disable-next-line:max-line-length
     if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
+      let partnerToCreateOrderDto: User;
       if (!this.isPartner) {
-        this.backendService.selectedParnter = this.selectedPartner;
+        partnerToCreateOrderDto = this.selectedPartner;
       } else if (this.isPartner) {
-        this.backendService.selectedParnter = this.authenticationService.user;
+        partnerToCreateOrderDto = this.authenticationService.user;
       }
       this.backendService.selectedMaterial = this.selectedMaterial;
       const createProductDto: CreateProductDto = {
@@ -246,7 +268,22 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
         productTop: this.selectedTop
       };
       this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
-        this.backendService.selectedProduct = product.body;
+        this.selectedProduct = product.body;
+        const createOrderDto: CreateOrderDto = {
+          businessPartner: this.selectedPartner,
+          index: null,
+          orderName: null,
+          commentToOrder: null,
+          orderVersionNumber: this.newOrderTotalNumber,
+          product: this.selectedProduct,
+          productMaterial: this.selectedMaterial,
+          orderTotalNumber: this.newOrderTotalNumber,
+          data: this.setDateInOrderTable(),
+          orderNumber: this.newOrderNumber,
+          creator: this.authenticationService.user,
+          orderDetails: null,
+        };
+        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = createOrderDto;
         this.router.navigateByUrl(`/orders/drawing?mode=${OrderOperationMode.CREATENEW}`);
       }, error => {
         console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
@@ -255,9 +292,13 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       // tslint:disable-next-line:max-line-length
     } else if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
       // tslint:disable-next-line:max-line-length
-      this.backendService.createOrderDtoForConfirmUpdateShowDrawing.businessPartner = this.selectedPartner;
-      this.backendService.createOrderDtoForConfirmUpdateShowDrawing.productMaterial = this.selectedMaterial;
-      this.backendService.addRecords(this.backendService.createOrderDtoForConfirmUpdateShowDrawing).subscribe((order) => {
+      this.createOrderDto.businessPartner = this.selectedPartner;
+      this.createOrderDto.productMaterial = this.selectedMaterial;
+      this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.createOrderDto);
+      this.tableFormService.setOrderName();
+      this.createOrderDto.orderName = this.tableFormService.orderName;
+      this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
+      this.backendService.addRecords(this.createOrderDto).subscribe((order) => {
           this.operationMessage = 'dodano nowe zamówienie';
         },
         error => {
@@ -272,31 +313,38 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
         productMaterial: this.selectedMaterial,
       };
       // tslint:disable-next-line:max-line-length
-      this.backendService.updateRecordById(String(this.orderTableService.selectedId), updateOrderDto).subscribe((order) => {
+      this.backendService.updateRecordById(String(this.selctedIdForUpdateOrShowDrawing), updateOrderDto).subscribe((order) => {
           this.operationMessage = 'zaktualizowano zamówinie';
         },
         error => {
           this.operationMessage = 'nie udało się zaktualizować zamówienia';
         });
     } else if (this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+      let selectedPartnerToDto: User;
       if (!this.isPartner) {
-        this.backendService.selectedParnter = this.selectedPartner;
+        selectedPartnerToDto = this.selectedPartner;
       } else if (this.isPartner) {
-        this.backendService.selectedParnter = this.authenticationService.user;
+        selectedPartnerToDto = this.authenticationService.user;
       }
-      this.backendService.selectedMaterial = this.selectedMaterial;
       const createProductDto: CreateProductDto = {
         productType: this.selectedtType,
         productBottom: this.selectedBottom,
         productTop: this.selectedTop
       };
       this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
-        this.backendService.selectedProduct = product.body;
+        this.selectedProduct = product.body;
+        this.setOrderNumbersinOrderTableForUpdateModes();
+        this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.createOrderDto);
+        this.tableFormService.setOrderName();
+        this.createOrderDto.orderName = this.tableFormService.orderName;
+        this.createOrderDto.orderNumber = this.newOrderNumber;
+        this.createOrderDto.orderTotalNumber = this.newOrderTotalNumber;
+        this.createOrderDto.data = this.setDateInOrderTable();
         const createOrderDtoWithCHangedProduct: CreateOrderDto = {
-          ...this.backendService.createOrderDtoForConfirmUpdateShowDrawing,
-          product: this.backendService.selectedProduct,
-          businessPartner: this.backendService.selectedParnter,
-          productMaterial: this.backendService.selectedMaterial,
+          ...this.createOrderDto,
+          product: this.selectedProduct,
+          businessPartner: selectedPartnerToDto,
+          productMaterial: this.selectedMaterial,
           orderDetails: null,
         };
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing = {
@@ -310,28 +358,28 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     }
   }
 
-  closeAndGoBack(): void {
+closeAndGoBack(): void {
     this.router.navigateByUrl('/orders');
   }
 
-  cleanOperationMessage(): void {
+cleanOperationMessage(): void {
     setTimeout(() => {
       this.showoperationStatusMessage = null;
-    }, 2000);
+    }, 2000 );
   }
 
-  changeModeTOCreateNewIfrProductChangedInUpdateOrCOnfirmMode(): void {
+changeModeTOCreateNewIfrProductChangedInUpdateOrCOnfirmMode(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+    if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMNEW) { } {
       // tslint:disable-next-line:max-line-length
-      let productMaterialOrPartnerHastBeenCHanged: boolean = this.productConfirmed === false;
+      const productMaterialOrPartnerHastBeenCHanged: boolean = this.productConfirmed === false;
       if (productMaterialOrPartnerHastBeenCHanged) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
       }
     }
   }
 
-  ngAfterContentChecked(): void {
+ngAfterContentChecked(): void {
     this.checkOperationMode();
     this.setUpdateModeOrPartnerLoggedValue();
     this.onTypeSelectedSetTopsAndBottoms();
@@ -339,7 +387,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     // this.changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode();
   }
 
-  setUpdateModeOrPartnerLoggedValue(): void {
+setUpdateModeOrPartnerLoggedValue(): void {
     if (this.isPartner || this.orderOperationMode === OrderOperationMode.UPDATE) {
       this.updateModeOrPartnerLogged = true;
     } else {
@@ -347,7 +395,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     }
   }
 
-  onTypeSelectedSetTopsAndBottoms(): void {
+onTypeSelectedSetTopsAndBottoms(): void {
     const type = this.type.value;
     console.log(`selected type= ${type}`);
     if (type) {
@@ -355,7 +403,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     }
   }
 
-  changeOrConfirmPartnerButtonAction(): void {
+changeOrConfirmPartnerButtonAction(): void {
     if (this.partnerConfirmed === false && this.businessPartner.value) {
       this.selectedPartner = this.businessPartner.value;
       this.businessPartner.disable({onlySelf: true});
@@ -373,7 +421,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 
   }
 
-  confirmOrchangeProductButtonAction(): void {
+confirmOrchangeProductButtonAction(): void {
     if (this.productConfirmed === false && this.type.value && this.top.value && this.bottom.value) {
       console.log('in confirmOrCHangeProductButtonMethod');
       this.selectedtType = this.type.value;
@@ -395,7 +443,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 
   }
 
-  confirmOrChangeMaterialButtonAction(): void {
+confirmOrChangeMaterialButtonAction(): void {
     if (this.materialConfirmed === false) {
       this.productMaterial.disable({onlySelf: true});
       this.confirmOrCHangeMaterialButtonInfo = 'Zmień materiał';
@@ -412,29 +460,38 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 
   }
 
-  ngAfterViewInit(): void {
+ngAfterViewInit(): void {
+    /*   if (this.orderOperationMode === OrderOperationMode.UPDATE) {
+      if (!this.productConfirmed) {
+        this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
+      }
+      if (!this.selectedMaterial && this.createOrderDto) {
+        this.setFormControlValuesForUpdateOrShowDrawingMode (this.createOrderDto);
+      }
+    }  */
   }
 
-  ngAfterViewChecked(): void {
+ngAfterViewChecked(): void {
   }
 
-  checkOperationMode(): void {
-    if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW || this.orderOperationMode === OrderOperationMode.UPDATE) {
+checkOperationMode(): void {
+    // tslint:disable-next-line:max-line-length
+    if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW || OrderOperationMode.UPDATE || OrderOperationMode.CONFIRMUPDATE) {
       this.operationModeEqualConfirmNewOrUpdate = true;
     } else {
       this.operationModeEqualConfirmNewOrUpdate = false;
     }
   }
 
-  seeDrawing(): void {
-    this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.SHOWDRAWING}`);
+seeDrawing(): void {
+    this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.SHOWDRAWINGCONFIRM}`);
   }
 
-  updateDrawing(): void {
+updateDrawing(): void {
     this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.UPDATEDRAWING}`);
   }
 
-  setAllowSubmit(): void {
+setAllowSubmit(): void {
     if (this.isPartner === true) {
       if (this.productConfirmed === true && this.materialConfirmed === true) {
         this.allowSubmit = true;
@@ -449,9 +506,46 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       }
     }
   }
+setOrderNumbersinOrderTableForNewOrder(): void {
+    // tslint:disable-next-line:max-line-length
+    if (this.orderOperationMode === OrderOperationMode.CREATENEW) {  // create new mode
+      this.newOrderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
+      this.backendService.getNewOrderNumber().subscribe((newNumber) => {
+        this.newOrderNumber = newNumber.body.newestNumber;
+        this.newOrderTotalNumber = this.newOrderNumber + '.' + this.newOrderVersionNumber;
+        this.newOrderTotalNumber = this.tableFormService.orderTotalNumber;
+      }, error => {
+        console.log('could not obtain newOrderNumber For new Order from backend');
+      });
+      // tslint:disable-next-line:max-line-length
+  }
+  }
+setOrderNumbersinOrderTableForUpdateModes(): void {
+    if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.CREATENEW) {
+      this.newOrderNumber = this.createOrderDto.orderNumber;
+      this.newOrderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
+      this.newOrderTotalNumber = this.tableFormService.orderTotalNumber;
+    }
+  }
 
-  @HostListener('click', ['$event'])
-  listenToChangeProductEvent(event: any): void {
+  private getCurrentDateAndTimeToBecomeOrderVersionNumber(): string {
+    const now = new Date();
+    const date = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+    const time = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+    const dateAndTimeNow = date + '.' + time;
+    return dateAndTimeNow;
+
+  }
+
+  private setDateInOrderTable(): string{
+    // tslint:disable-next-line:max-line-length
+    if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING) {
+      return  new Date().toLocaleDateString();
+    }
+  }
+
+@HostListener('click', ['$event'])
+listenToChangeProductEvent(event: any): void {
     const inputId = event.target.id;
     // tslint:disable-next-line:max-line-length
     const updateOrConfirmMode = this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMNEW;
