@@ -114,8 +114,8 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
         }
         const selectedOrder = await this.backendService.findRecordById(orderId).toPromise();
         this.createOrderDto = this.backendService.getCreateOrderDtoFromOrder(selectedOrder.body);
-        this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
         this.setFormControlValuesForUpdateOrShowDrawingMode(this.createOrderDto);
+        this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
         // tslint:disable-next-line:max-line-length
       } else if (mode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || mode === OrderOperationMode.CONFIRMUPDATE || OrderOperationMode.UPDATEDRAWING || mode === OrderOperationMode.CONFIRMNEW || OrderOperationMode.SHOWDRAWINGCONFIRM) {
         if (mode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
@@ -173,7 +173,7 @@ setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
       this.confirmOrCHangeProductParmatersButtonInfo = 'zmień parametry produktu';
       this.confirmOrCHangeMaterialButtonInfo = 'zmień materiał worka';
       this.confirmOrCHangePartnerButtonInfo = 'zmień partnera handlowego';
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+    } else if (this.orderOperationMode === OrderOperationMode.UPDATE) {
       this.submitButtonDescription = 'aktualizuj zapytanie';
       this.materialConfirmed = true;
       this.productConfirmed = true;
@@ -185,9 +185,8 @@ setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
     }
   }
 
-setFormControlValueForConfirmMode(): void {
-    if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
-      const createOrderDto: CreateOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
+setFormControlValueForConfirmMode(createOrderDto: CreateOrderDto): void {
+    if (createOrderDto) {
       this.type.setValue(createOrderDto.product.productType);
       this.selectedtType = this.type.value;
       this.top.setValue(createOrderDto.product.productTop);
@@ -484,11 +483,14 @@ checkOperationMode(): void {
   }
 
 seeDrawing(): void {
+
+    this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
     this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.SHOWDRAWINGCONFIRM}`);
   }
 
 updateDrawing(): void {
-    this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.UPDATEDRAWING}`);
+  this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
+  this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.UPDATEDRAWING}`);
   }
 
 setAllowSubmit(): void {

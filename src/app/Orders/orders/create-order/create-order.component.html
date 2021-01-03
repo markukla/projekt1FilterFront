@@ -99,7 +99,7 @@
         <button type="button" class="confirmOrChangeButton" id="confirmOrchangeProduct"
                 (click)="confirmOrchangeProductButtonAction();"> {{confirmOrCHangeProductParmatersButtonInfo}}  </button>
       </div>
-      <div class="form-group col-md-6" *ngIf="type.value">
+      <div class="form-group col-md-6" >
         <div *ngIf="materialConfirmed && selectedMaterial">
           Materiał Produktu: <br>
           Kod: {{selectedMaterial.materialCode}} <br>
