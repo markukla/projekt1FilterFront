@@ -51,7 +51,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     private authenticationService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
-    private host: ElementRef
+    private host: ElementRef,
+    private location: Location
   ) {
     this.tableForm = this.tableFormService.tableForm;
   }
@@ -83,9 +84,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         this.orderOperationMode = OrderOperationMode.CONFIRMUPDATE;
       }
       this.initPropertiValuesToServicesValues();
-      if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM) {
-        this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.createOrderDto);
-      }
     });
   }
 
@@ -95,47 +93,22 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
       this.orderBackendService.findRecordById(this.selectedOrderId).subscribe((order) => {
         this.createOrderDto = this.orderBackendService.getCreateOrderDtoFromOrder(order.body);
-        this.tableForm = this.tableFormService.tableForm;
-        this.tableFormService.antiEelectrostatic.setValue(this.createOrderDto.orderDetails.antiEelectrostatic);
-        this.tableFormService.antiEelectrostatic.disable();
-        this.tableFormService.workingSide.setValue(this.createOrderDto.orderDetails.workingSide);
-        this.tableFormService.workingSide.disable();
-        this.tableFormService.workingTemperature.setValue(this.createOrderDto.orderDetails.workingTemperature);
-        this.tableFormService.workingTemperature.disable();
-        this.tableFormService.orderCreator = this.createOrderDto.creator.fulName;
         this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
-        this.tableFormService.orderName = this.createOrderDto.orderName;
-        this.tableFormService.index = this.createOrderDto.index;
-        console.error(`this.createOrderDto.index = ${this.createOrderDto.index}`);
-        this.tableFormService.orderTotalNumber = this.createOrderDto.orderTotalNumber;
-        this.tableFormService.materialCode = this.createOrderDto.productMaterial.materialCode;
-        this.tableFormService.materialName = this.createOrderDto.productMaterial.materialName;
-        this.tableFormService.date = this.createOrderDto.data;
+        this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
+        this.tableFormService.disableTableForm();
       });
     } else if (this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM) {
       console.error(`in show drawing confirm method`);
       this.createOrderDto = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
-      this.tableForm = this.tableFormService.tableForm;
-      this.tableFormService.antiEelectrostatic.setValue(this.createOrderDto.orderDetails.antiEelectrostatic);
-      this.tableFormService.antiEelectrostatic.disable();
-      this.tableFormService.workingSide.setValue(this.createOrderDto.orderDetails.workingSide);
-      this.tableFormService.workingSide.disable();
-      this.tableFormService.workingTemperature.setValue(this.createOrderDto.orderDetails.workingTemperature);
-      this.tableFormService.workingTemperature.disable();
-      this.tableFormService.orderCreator = this.createOrderDto.creator.fulName;
       this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
-      this.tableFormService.orderName = this.createOrderDto.orderName;
-      this.tableFormService.index = this.createOrderDto.index;
-      console.error(`this.createOrderDto.index = ${this.createOrderDto.index}`);
-      this.tableFormService.orderTotalNumber = this.createOrderDto.orderTotalNumber;
-      this.tableFormService.materialCode = this.createOrderDto.productMaterial.materialCode;
-      this.tableFormService.materialName = this.createOrderDto.productMaterial.materialName;
-      this.tableFormService.date = this.createOrderDto.data;
+      this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
+      this.tableFormService.disableTableForm();
     } else {
       console.error('in elese block');
       this.createOrderDto = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
-      this.tableForm = this.tableFormService.tableForm;
+      this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
+      this.tableFormService.enableTableForm();
     }
   }
 
@@ -199,7 +172,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.DVaLe = input.value;
     }
     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING || this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM) {
-      this.renderer.setProperty(input, 'readonly', 'true');
+      this.renderer.setAttribute(input, 'readonly', 'true');
       console.error(`input readonly property = ${input.readonly}`);
     }
     else {
@@ -240,39 +213,38 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   onSubmit(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.orderTableService.orderOperationMode === OrderOperationMode.CREATENEW) {
+    if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
-      this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
-      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATE) {
+      this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
+    } else if (this.orderOperationMode === OrderOperationMode.UPDATE) {
+      // tslint:disable-next-line:max-line-length
+      this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
+    } else if (this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
-      this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
-      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+      // tslint:disable-next-line:max-line-length
+      this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
+     // this.location.back(); how to go back ? !!!!
+    } else if (this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM && this.selectedOrderId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
-      this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
-      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING && this.orderTableService.selectedId) {
+      // tslint:disable-next-line:max-line-length
+      this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
+    }
+    else if (this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM && !this.selectedOrderId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
-      this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
-      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING && !this.orderTableService.selectedId) {
+      this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
+    }else if (this.orderOperationMode === OrderOperationMode.UPDATEDRAWING && this.selectedOrderId ) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
-      this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
-      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && this.orderTableService.selectedId) {
+      // tslint:disable-next-line:max-line-length
+      this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
+    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && !this.selectedOrderId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
-      this.orderTableService.orderOperationMode = OrderOperationMode.UPDATE;
-      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && !this.orderTableService.selectedId) {
-      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
-      this.orderTableService.orderOperationMode = OrderOperationMode.CONFIRMNEW;
-      this.router.navigateByUrl('orders/addOrUpdateOrConfirmOrder');
+      this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
     }
 
   }
-
   ngAfterViewInit(): void {
+    // tslint:disable-next-line:max-line-length
     if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
       this.createDimensionInputsBasingOnProductData();
     } else { /* update or show drawing modes*/

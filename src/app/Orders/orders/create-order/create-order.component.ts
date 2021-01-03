@@ -63,7 +63,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   newOrderVersionNumber: string;
   newOrderTotalNumber: string;
   newData: string;
-  selctedIdForUpdateOrShowDrawing: string;
+  selctedOrderId: string;
 
   constructor(
     private backendService: OrderBackendService,
@@ -100,7 +100,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     this.route.queryParamMap.subscribe(async queryParams => {
       const mode = queryParams.get('mode');
       const orderId = queryParams.get('orderId');
-      this.selctedIdForUpdateOrShowDrawing = orderId;
+      this.selctedOrderId = orderId;
       if (mode === OrderOperationMode.CREATENEW ) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
         this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
@@ -162,9 +162,11 @@ setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
       this.confirmOrCHangeMaterialButtonInfo = 'zatwierdź materiał worka';
       this.confirmOrCHangePartnerButtonInfo = 'zatwierdż partnera handlowego';
       this.onSubmitButtonInfo = 'dalej';
+      this.operationModeEqualConfirmNewOrUpdate = false;
     }
     // tslint:disable-next-line:max-line-length
-    else if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+    else if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW || OrderOperationMode.CONFIRMUPDATE) {
+      this.operationModeEqualConfirmNewOrUpdate = true;
       this.submitButtonDescription = 'złóż zapytanie';
       this.materialConfirmed = true;
       this.productConfirmed = true;
@@ -174,6 +176,7 @@ setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
       this.confirmOrCHangeMaterialButtonInfo = 'zmień materiał worka';
       this.confirmOrCHangePartnerButtonInfo = 'zmień partnera handlowego';
     } else if (this.orderOperationMode === OrderOperationMode.UPDATE) {
+      this.operationModeEqualConfirmNewOrUpdate = true;
       this.submitButtonDescription = 'aktualizuj zapytanie';
       this.materialConfirmed = true;
       this.productConfirmed = true;
@@ -282,6 +285,7 @@ onSubmit(): void {
           creator: this.authenticationService.user,
           orderDetails: null,
         };
+        console.error(`createOrderDto.orderTotalNumber= ${createOrderDto.orderTotalNumber}`);
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing = createOrderDto;
         this.router.navigateByUrl(`/orders/drawing?mode=${OrderOperationMode.CREATENEW}`);
       }, error => {
@@ -293,7 +297,7 @@ onSubmit(): void {
       // tslint:disable-next-line:max-line-length
       this.createOrderDto.businessPartner = this.selectedPartner;
       this.createOrderDto.productMaterial = this.selectedMaterial;
-      this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.createOrderDto);
+      this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
       this.tableFormService.setOrderName();
       this.createOrderDto.orderName = this.tableFormService.orderName;
       this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
@@ -312,7 +316,7 @@ onSubmit(): void {
         productMaterial: this.selectedMaterial,
       };
       // tslint:disable-next-line:max-line-length
-      this.backendService.updateRecordById(String(this.selctedIdForUpdateOrShowDrawing), updateOrderDto).subscribe((order) => {
+      this.backendService.updateRecordById(String(this.selctedOrderId), updateOrderDto).subscribe((order) => {
           this.operationMessage = 'zaktualizowano zamówinie';
         },
         error => {
@@ -333,7 +337,7 @@ onSubmit(): void {
       this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
         this.selectedProduct = product.body;
         this.setOrderNumbersinOrderTableForUpdateModes();
-        this.tableFormService.setNonDimensionOrIndexRelateDataForDrawingTable(this.createOrderDto);
+        this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
         this.tableFormService.setOrderName();
         this.createOrderDto.orderName = this.tableFormService.orderName;
         this.createOrderDto.orderNumber = this.newOrderNumber;
@@ -460,14 +464,6 @@ confirmOrChangeMaterialButtonAction(): void {
   }
 
 ngAfterViewInit(): void {
-    /*   if (this.orderOperationMode === OrderOperationMode.UPDATE) {
-      if (!this.productConfirmed) {
-        this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
-      }
-      if (!this.selectedMaterial && this.createOrderDto) {
-        this.setFormControlValuesForUpdateOrShowDrawingMode (this.createOrderDto);
-      }
-    }  */
   }
 
 ngAfterViewChecked(): void {
@@ -475,7 +471,7 @@ ngAfterViewChecked(): void {
 
 checkOperationMode(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW || OrderOperationMode.UPDATE || OrderOperationMode.CONFIRMUPDATE) {
+    if (this.orderOperationMode !== OrderOperationMode.CREATENEW && this.orderOperationMode !== OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
       this.operationModeEqualConfirmNewOrUpdate = true;
     } else {
       this.operationModeEqualConfirmNewOrUpdate = false;
@@ -485,12 +481,22 @@ checkOperationMode(): void {
 seeDrawing(): void {
 
     this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
+    if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
     this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.SHOWDRAWINGCONFIRM}`);
+  }
+  else if (this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE || this.orderOperationMode === OrderOperationMode.UPDATE) {
+    this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.SHOWDRAWINGCONFIRM}`);
+  }
   }
 
 updateDrawing(): void {
   this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
-  this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.UPDATEDRAWING}`);
+  if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+    this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.UPDATEDRAWING}`);
+  }
+  else if (this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE || this.orderOperationMode === OrderOperationMode.UPDATE) {
+    this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.UPDATEDRAWING}`);
+  }
   }
 
 setAllowSubmit(): void {
@@ -515,7 +521,6 @@ setOrderNumbersinOrderTableForNewOrder(): void {
       this.backendService.getNewOrderNumber().subscribe((newNumber) => {
         this.newOrderNumber = newNumber.body.newestNumber;
         this.newOrderTotalNumber = this.newOrderNumber + '.' + this.newOrderVersionNumber;
-        this.newOrderTotalNumber = this.tableFormService.orderTotalNumber;
       }, error => {
         console.log('could not obtain newOrderNumber For new Order from backend');
       });

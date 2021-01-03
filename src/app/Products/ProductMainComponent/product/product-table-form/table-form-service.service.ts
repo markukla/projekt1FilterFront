@@ -117,7 +117,7 @@ export class TableFormServiceService {
   }
 
   /*  remember that createOrderDto is obtained in diffrentWay for diffrent modes*/
-  setNonDimensionOrIndexRelateDataForDrawingTable(createOrderDto: CreateOrderDto): void{
+  setInitDataFromDrawingTableFromCreateOrderDto(createOrderDto: CreateOrderDto): void{
       if (createOrderDto.orderTotalNumber) {
         this.orderTotalNumber = createOrderDto.orderTotalNumber;
       }
@@ -152,15 +152,30 @@ export class TableFormServiceService {
       this.productBottomCode = '0';
       this.productTopCode = '0';
     }
-      if (createOrderDto.orderDetails.workingTemperature) {
+      if (createOrderDto.orderDetails) {
       this.workingTemperature.setValue(createOrderDto.orderDetails.workingTemperature);
-    }
-      if (createOrderDto.orderDetails.workingSide) {
       this.workingSide.setValue(createOrderDto.orderDetails.workingSide);
-    }
-      if (createOrderDto.orderDetails.antiEelectrostatic) {
       this.antiEelectrostatic.setValue(createOrderDto.orderDetails.antiEelectrostatic);
     }
+      if (createOrderDto.index) {
+        this.index = createOrderDto.index;
+      }
+      if (createOrderDto.orderName) {
+        this.orderName = createOrderDto.orderName;
+      }
+      else {
+        this.orderName = '';
+      }
+  }
+  enableTableForm(): void {
+    this.antiEelectrostatic.enable();
+    this.workingSide.enable();
+    this.workingTemperature.enable();
+  }
+  disableTableForm(): void {
+    this.antiEelectrostatic.disable();
+    this.workingSide.disable();
+    this.workingTemperature.disable();
   }
   resetTableFormServiceProperties(): void{
     this.index = '';
