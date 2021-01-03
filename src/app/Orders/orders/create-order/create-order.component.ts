@@ -1,4 +1,14 @@
-import {AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2} from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  Renderer2,
+  ViewChild
+} from '@angular/core';
 import ProductBottom from '../../../Products/ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../Products/ProductTypesAndClasses/productTop.entity';
 import ProductType from '../../../Products/ProductTypesAndClasses/productType.entity';
@@ -64,7 +74,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   newOrderTotalNumber: string;
   newData: string;
   selctedOrderId: string;
-
+  @ViewChild('commentToOrder', {read: ElementRef}) commentToOrder: ElementRef;
   constructor(
     private backendService: OrderBackendService,
     private tableFormService: TableFormServiceService,
@@ -81,6 +91,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
     private route: ActivatedRoute,
     private router: Router) {
   }
+
 
   async ngOnInit(): Promise<void> {
     this.productHasBeenChanged = false;
@@ -300,6 +311,12 @@ onSubmit(): void {
       this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
       this.tableFormService.setOrderName();
       this.createOrderDto.orderName = this.tableFormService.orderName;
+      if (this.commentToOrder.nativeElement.value) {
+        this.createOrderDto.commentToOrder = this.commentToOrder.nativeElement.value;
+      }
+      else {
+        this.createOrderDto.commentToOrder = '';
+      }
       this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
       this.backendService.addRecords(this.createOrderDto).subscribe((order) => {
           this.operationMessage = 'dodano nowe zamówienie';
@@ -485,7 +502,7 @@ seeDrawing(): void {
     this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.SHOWDRAWINGCONFIRM}`);
   }
   else if (this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE || this.orderOperationMode === OrderOperationMode.UPDATE) {
-    this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.SHOWDRAWINGCONFIRM}`);
+    this.router.navigateByUrl(`orders/drawing?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.SHOWDRAWINGCONFIRM}`);
   }
   }
 
@@ -495,7 +512,7 @@ updateDrawing(): void {
     this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.UPDATEDRAWING}`);
   }
   else if (this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE || this.orderOperationMode === OrderOperationMode.UPDATE) {
-    this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.UPDATEDRAWING}`);
+    this.router.navigateByUrl(`orders/drawing?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.UPDATEDRAWING}`);
   }
   }
 

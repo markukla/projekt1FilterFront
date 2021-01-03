@@ -131,7 +131,7 @@
         <button type="button" class="confirmOrChangeButton" (click)="seeDrawing();"> Zobacz rysunek</button>
         <button type="button" class="confirmOrChangeButton" (click)="updateDrawing();"> Zmień wymiary produktu</button>
         <label for="commentToOrder">Twoje uwagi do zapytania </label> <br>
-        <textarea id="commentToOrder">  </textarea>
+        <textarea id="commentToOrder" #commentToOrder>  </textarea>
 
       </div>
       <button type="submit" [disabled]="this.allowSubmit === false" class="btn btn-danger">{{submitButtonDescription}}

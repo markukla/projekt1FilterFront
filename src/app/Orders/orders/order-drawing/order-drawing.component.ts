@@ -51,8 +51,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     private authenticationService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
-    private host: ElementRef,
-    private location: Location
+    private host: ElementRef
   ) {
     this.tableForm = this.tableFormService.tableForm;
   }
@@ -237,7 +236,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       // tslint:disable-next-line:max-line-length
       this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
-    } else if (this.orderTableService.orderOperationMode === OrderOperationMode.UPDATEDRAWING && !this.selectedOrderId) {
+    } else if (this.orderOperationMode === OrderOperationMode.UPDATEDRAWING && !this.selectedOrderId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
     }
@@ -271,7 +270,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   ngAfterViewChecked(): void {
-    // tslint:disable-next-line:max-line-length
+    if (this.createOrderDto !== undefined && this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
+      this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();
+    }
 
   }
 
