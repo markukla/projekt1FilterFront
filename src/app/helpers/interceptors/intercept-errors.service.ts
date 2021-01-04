@@ -12,7 +12,6 @@ export class ErrorsInterceptorService implements HttpInterceptor{
 
   constructor(private backendErrorService: BackendErrorService) { }
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log(`baclendErrorService in ErrorsInterceptorService = ${this.backendErrorService}`);
    /* if (this.backendErrorService.backendError) {
       this.backendErrorService.setbackendError(null);if (this.backendErrorService.backendError) {
       this.backendErrorService.setbackendError(null);} */
@@ -32,7 +31,6 @@ export class ErrorsInterceptorService implements HttpInterceptor{
       console.error(
         `Backend returned code ${error.status}, ` +
         `message was: ${error.error.message}`);
-      console.log(`baclendErrorService in handleError= ${this.backendErrorService}`);
       let backendErrorRespone: HttpErrorResponse = new HttpErrorResponse(error);
      // this.backendErrorService.setbackendError(backendErrorRespone); backendErrorSerrvice is undefined ????!!!!
      // const backendErrorMessage = this.backendErrorService.getBackendErrorMessage();
