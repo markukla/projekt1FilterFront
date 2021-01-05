@@ -41,8 +41,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   orderOperationMode: OrderOperationMode;
   createOrderDto: CreateOrderDto;
   selectedOrderId: string;
+  allowSubmit = true;
+  submitNotAllowedMessage: string;
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
-
   constructor(
     private orderBackendService: OrderBackendService,
     private orderTableService: OrderTableService,
@@ -211,21 +212,21 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   onSubmit(): void {
+    this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
+    this.checkIfAllFieldsValidInCreateOrderDto( this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing);
     // tslint:disable-next-line:max-line-length
-    if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
-      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
+    if (this.allowSubmit === true) {
+    if (this.orderOperationMode === OrderOperationMode.CREATENEW && this.allowSubmit === true) {
       this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
-    } else if (this.orderOperationMode === OrderOperationMode.UPDATE) {
+    } else if (this.orderOperationMode === OrderOperationMode.UPDATE && this.allowSubmit === true) {
       // tslint:disable-next-line:max-line-length
       this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
     } else if (this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
-      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       // tslint:disable-next-line:max-line-length
       this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
     } else if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
      // this.location.back(); how to go back ? !!!!
     } else if (this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM && this.selectedOrderId) {
-      this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       // tslint:disable-next-line:max-line-length
       this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
     }
@@ -239,6 +240,10 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     } else if (this.orderOperationMode === OrderOperationMode.UPDATEDRAWING && !this.selectedOrderId) {
       this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
       this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
+    }
+    }
+    else {
+      console.error(this.submitNotAllowedMessage);
     }
 
   }
@@ -255,18 +260,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   ngAfterContentChecked(): void {
-    // tslint:disable-next-line:max-line-length
-   // const modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing = this.orderOperationMode !== OrderOperationMode.CREATENEW && this.orderOperationMode !== OrderOperationMode.UPDATEWITHCHANGEDPRODUCT && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM;
-    // tslint:disable-next-line:max-line-length
-   // if (this.DVaLe.length > 0 && this.LValue.length > 0 && modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing) {  /* to allow proper initiation for update or update drawing*/
-    //  this.tableFormService.buildIndex(this.DVaLe, this.LValue);
-      // tslint:disable-next-line:max-line-length
-   // } else if (!modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM) {
-    //  this.tableFormService.buildIndex(this.DVaLe, this.LValue);
-   // }
-   // if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM) {
-     // this.tableFormService.setOrderName();
-    // }
   }
 
   ngAfterViewChecked(): void {
@@ -308,9 +301,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     }
 
   }
-
   createOrderDtoToSaveInDatabase(): CreateOrderDto {
-    const dimensions: Dimension[] = this.getInputElementsFromVievAndCreateDimensionTable();
+    const dimensions = this.getInputElementsFromVievAndCreateDimensionTable();
     const orderDetails: OrderDetails = {
       antiEelectrostatic: this.tableFormService.antiEelectrostatic.value,
       workingSide: this.tableFormService.workingSide.value,
@@ -325,6 +317,29 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     };
 
     return orderDtoToSaveInDatabae;
+  }
+  checkIfAllFieldsValidInCreateOrderDto(createOrderDto: CreateOrderDto): void {
+    this.submitNotAllowedMessage = '';
+    this.allowSubmit = true;
+    const dimensions: Dimension[] = createOrderDto.orderDetails.dimensions;
+    dimensions.forEach((dimension) => {
+      if (!dimension.dimensionvalue) {
+        this.allowSubmit = false;
+        this.submitNotAllowedMessage = 'Prosze podać wartości wszystkich wymiarów';
+      }
+    });
+    if (!this.tableFormService.workingTemperature.value) {
+      this.allowSubmit = false;
+      this.submitNotAllowedMessage = this.submitNotAllowedMessage + '  , Prosze podać wartość temperatury pracy';
+    }
+    if (!this.tableFormService.workingSide.value) {
+      this.allowSubmit = false;
+      this.submitNotAllowedMessage = this.submitNotAllowedMessage + '  , Prosze zaznaczyć stronę pracującą';
+    }
+    if (this.allowSubmit === false) {
+      window.alert(this.submitNotAllowedMessage);
+    }
+
   }
 
 }

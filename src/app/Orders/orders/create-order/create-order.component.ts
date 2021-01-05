@@ -267,7 +267,6 @@ setTopsAndBottomsToSelectAfterTypeSelected(productType: ProductType): void {
   }
 
 onSubmit(): void {
-    console.error('in on Submit method');
     // tslint:disable-next-line:max-line-length
     if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
       let partnerToCreateOrderDto: User;
@@ -285,19 +284,23 @@ onSubmit(): void {
       this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
         this.selectedProduct = product.body;
         this.createOrderDto = {
+          ...this.backendService.createOrderDtoForConfirmUpdateShowDrawing,
           businessPartner: this.selectedPartner,
           index: null,
           orderName: null,
           commentToOrder: null,
-          orderVersionNumber: this.newOrderTotalNumber,
           product: this.selectedProduct,
           productMaterial: this.selectedMaterial,
-          orderTotalNumber: this.newOrderTotalNumber,
           data: this.setDateInOrderTable(),
           orderNumber: this.newOrderNumber,
+          orderVersionNumber: this.newOrderVersionNumber,
+          orderTotalNumber: this.newOrderTotalNumber,
           creator: this.authenticationService.user,
           orderDetails: null,
         };
+        this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
+        this.createOrderDto.index = this.tableFormService.index;
+        this.createOrderDto.orderName = this.tableFormService.orderName;
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
         this.router.navigateByUrl(`/orders/drawing?mode=${OrderOperationMode.CREATENEW}`);
       }, error => {
@@ -345,6 +348,7 @@ onSubmit(): void {
       };
       this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
         this.selectedProduct = product.body;
+        this.createOrderDto.orderDetails = null;  // to reset dimensions and tableForm values
         this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
         this.router.navigateByUrl(`/orders/drawing?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.UPDATEWITHCHANGEDPRODUCT}`);
@@ -548,7 +552,7 @@ setOrderNumbersinOrderTableForUpdateOrConfirmModes(): void {
   updateCreateOrderDto(createOrderDto: CreateOrderDto): CreateOrderDto {
     this.setOrderNumbersinOrderTableForUpdateOrConfirmModes();
     let commmentToOrder: string;
-    if(this.commentToOrder.nativeElement.value) {
+    if (this.commentToOrder && this.commentToOrder.nativeElement.value) {
       commmentToOrder = this.commentToOrder.nativeElement.value;
     }
     else {
@@ -590,6 +594,9 @@ listenToChangeProductEvent(event: any): void {
       console.error(`this.productHasBeenChanged = ${this.productHasBeenChanged}`);
       this.submitButtonDescription = 'dalej';
       if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+        this.newOrderNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderNumber;
+        this.newOrderVersionNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderVersionNumber;
+        this.newOrderTotalNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderTotalNumber;
         this.orderOperationMode = OrderOperationMode.CREATENEW;
       }
       if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE) {

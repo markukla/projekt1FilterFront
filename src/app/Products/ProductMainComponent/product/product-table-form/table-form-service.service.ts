@@ -34,7 +34,7 @@ export class TableFormServiceService {
   initTableForm(): void {
     this.tableForm = new FormGroup({
       workingTemperature: new FormControl(null, [Validators.required]),
-      workingSide: new FormControl(WorkingSideEnum.INTERNAL, [Validators.required]),
+      workingSide: new FormControl(null, [Validators.required]),
       antiEelectrostatic: new FormControl(false)
     });
   }
@@ -80,7 +80,7 @@ export class TableFormServiceService {
     }
   }
 
- private setSecondIndexDimension(): void {
+  private setSecondIndexDimension(): void {
     if (this.Lvalue) {
       if (this.Lvalue.length === 5) {
         this.secondIndexDimension = `${this.Lvalue}`;
@@ -112,46 +112,43 @@ export class TableFormServiceService {
   }
 
   public setOrderName(): void {
-    if (this.Dvalue &&  this.Lvalue) {
+    if (this.Dvalue && this.Lvalue) {
       this.orderName = `${this.productTypeName}  ${this.Dvalue}  x  ${this.Lvalue} mm ${this.materialCode}`;
-    }
-    else if (this.Dvalue &&  !this.Lvalue) {
+    } else if (this.Dvalue && !this.Lvalue) {
       this.orderName = `${this.productTypeName}  ${this.Dvalue}  x  0 mm ${this.materialCode}`;
-    }
-    else if (!this.Dvalue &&  this.Lvalue) {
+    } else if (!this.Dvalue && this.Lvalue) {
       this.orderName = `${this.productTypeName}  0  x  ${this.Lvalue} mm ${this.materialCode}`;
-    }
-    else {
+    } else {
       this.orderName = `${this.productTypeName}  0  x  0 mm ${this.materialCode}`;
     }
   }
 
   /*  remember that createOrderDto is obtained in diffrentWay for diffrent modes*/
-  setInitDataFromDrawingTableFromCreateOrderDto(createOrderDto: CreateOrderDto): void{
-      if (createOrderDto.orderTotalNumber) {
-        this.orderTotalNumber = createOrderDto.orderTotalNumber;
-      }
-    else {
+  setInitDataFromDrawingTableFromCreateOrderDto(createOrderDto: CreateOrderDto): void {
+    this.resetTableFormServiceProperties();
+    if (createOrderDto.orderTotalNumber) {
+      this.orderTotalNumber = createOrderDto.orderTotalNumber;
+    } else {
       this.orderTotalNumber = '';
     }
-      if (createOrderDto.creator) {
+    if (createOrderDto.creator) {
       this.orderCreator = createOrderDto.creator.fulName;
     } else {
       this.orderCreator = '';
     }
-      if (createOrderDto.data) {
+    if (createOrderDto.data) {
       this.date = createOrderDto.data;
     } else {
       this.date = '';
     }
-      if (createOrderDto.productMaterial) {
+    if (createOrderDto.productMaterial) {
       this.materialCode = createOrderDto.productMaterial.materialCode;
       this.materialName = createOrderDto.productMaterial.materialName;
     } else {
       this.materialCode = '';
       this.materialName = '';
     }
-      if (createOrderDto.product) {
+    if (createOrderDto.product) {
       this.productTypeName = createOrderDto.product.productType.name;
       this.productTypeCode = createOrderDto.product.productType.code;
       this.productBottomCode = createOrderDto.product.productBottom.code;
@@ -162,53 +159,54 @@ export class TableFormServiceService {
       this.productBottomCode = '0';
       this.productTopCode = '0';
     }
-      if (createOrderDto.orderDetails) {
+    if (createOrderDto.orderDetails) {
       this.workingTemperature.setValue(createOrderDto.orderDetails.workingTemperature);
       this.workingSide.setValue(createOrderDto.orderDetails.workingSide);
       this.antiEelectrostatic.setValue(createOrderDto.orderDetails.antiEelectrostatic);
       if (createOrderDto.orderDetails.dimensions) {
-     const dimensions = createOrderDto.orderDetails.dimensions;
-     dimensions.forEach((dimension) => {
-       if (allFirstIndexDimensionCodes.includes(dimension.dimensionId)) {
-         this.Dvalue = dimension.dimensionvalue;
-       }
-       if (allSecondIndexDimensionCodes.includes(dimension.dimensionId)) {
-         this.Lvalue = dimension.dimensionvalue;
-       }
-     });
-   }
+        const dimensions = createOrderDto.orderDetails.dimensions;
+        dimensions.forEach((dimension) => {
+          if (allFirstIndexDimensionCodes.includes(dimension.dimensionId)) {
+            this.Dvalue = dimension.dimensionvalue;
+          }
+          if (allSecondIndexDimensionCodes.includes(dimension.dimensionId)) {
+            this.Lvalue = dimension.dimensionvalue;
+          }
+        });
+      }
     }
-      if (createOrderDto.index) {
-        this.index = createOrderDto.index;
-      }
-      else {
-        this.buildIndex();
-      }
-      if (createOrderDto.orderName) {
-        this.orderName = createOrderDto.orderName;
-      }
-      else {
-        this.setOrderName();
-      }
+    if (createOrderDto.index) {
+      this.index = createOrderDto.index;
+    } else {
+      this.buildIndex();
+    }
+    if (createOrderDto.orderName) {
+      this.orderName = createOrderDto.orderName;
+    } else {
+      this.setOrderName();
+    }
   }
+
   enableTableForm(): void {
     this.antiEelectrostatic.enable();
     this.workingSide.enable();
     this.workingTemperature.enable();
   }
+
   disableTableForm(): void {
     this.antiEelectrostatic.disable();
     this.workingSide.disable();
     this.workingTemperature.disable();
   }
-  resetTableFormServiceProperties(): void{
+
+  resetTableFormServiceProperties(): void {
     this.index = '';
     this.orderCreator = '';
     this.orderName = '';
     this.date = '';
     this.materialName = '';
     this.materialCode = '';
-    this. Lvalue = '';
+    this.Lvalue = '';
     this.Dvalue = '';
     this.productTypeName = '';
     this.productTypeCode = '';
@@ -217,6 +215,9 @@ export class TableFormServiceService {
     this.materialPartialCodeForIndex = '';
     this.firstIndexDimension = '';
     this.secondIndexDimension = '';
+    this.antiEelectrostatic.setValue(false);
+    this.workingSide.setValue(null);
+    this.workingTemperature.setValue(null);
   }
 }
 
