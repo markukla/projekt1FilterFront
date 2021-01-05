@@ -256,17 +256,17 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   ngAfterContentChecked(): void {
     // tslint:disable-next-line:max-line-length
-    const modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing = this.orderOperationMode !== OrderOperationMode.CREATENEW && this.orderOperationMode !== OrderOperationMode.UPDATEWITHCHANGEDPRODUCT && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM;
+   // const modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing = this.orderOperationMode !== OrderOperationMode.CREATENEW && this.orderOperationMode !== OrderOperationMode.UPDATEWITHCHANGEDPRODUCT && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM;
     // tslint:disable-next-line:max-line-length
-    if (this.DVaLe.length > 0 && this.LValue.length > 0 && modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing) {  /* to allow proper initiation for update or update drawing*/
-      this.tableFormService.buildIndex(this.DVaLe, this.LValue);
+   // if (this.DVaLe.length > 0 && this.LValue.length > 0 && modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing) {  /* to allow proper initiation for update or update drawing*/
+    //  this.tableFormService.buildIndex(this.DVaLe, this.LValue);
       // tslint:disable-next-line:max-line-length
-    } else if (!modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM) {
-      this.tableFormService.buildIndex(this.DVaLe, this.LValue);
-    }
-    if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM) {
-      this.tableFormService.setOrderName();
-    }
+   // } else if (!modeDifrentThanCreateNewOrUpdateWithNewProductAndShowDrawing && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM) {
+    //  this.tableFormService.buildIndex(this.DVaLe, this.LValue);
+   // }
+   // if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWDRAWINGCONFIRM) {
+     // this.tableFormService.setOrderName();
+    // }
   }
 
   ngAfterViewChecked(): void {
@@ -287,14 +287,18 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);
       }
-      this.LValue = String(event.target.value);
+      this.tableFormService.Lvalue = String(event.target.value);
+      this.tableFormService.buildIndex();
+      this.tableFormService.setOrderName();
     }
     if (allFirstIndexDimensionCodes.includes(event.target.id)) {
       const maxLength = 4;
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);
       }
-      this.DVaLe = String(event.target.value);
+      this.tableFormService.Dvalue = String(event.target.value);
+      this.tableFormService.buildIndex();
+      this.tableFormService.setOrderName();
     }
     if (!allSecondIndexDimensionCodes.includes(event.target.id) && !allFirstIndexDimensionCodes.includes(event.target.id)) {
       const maxLength = 3;

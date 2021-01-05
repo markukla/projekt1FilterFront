@@ -3,6 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CreateOrderDto} from '../../../../Orders/OrdersTypesAndClasses/orderDto';
 import WorkingSideEnum from '../../../../Orders/OrdersTypesAndClasses/workingSideEnum';
 import OrderOperationMode from '../../../../Orders/OrdersTypesAndClasses/orderOperationMode';
+import {allFirstIndexDimensionCodes, allSecondIndexDimensionCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
 
 @Injectable({
   providedIn: 'root'
@@ -53,9 +54,7 @@ export class TableFormServiceService {
     return this.tableForm.get('antiEelectrostatic');
   }
 
-  public buildIndex(DValue: string, LValue: string ): void {
-    this.Dvalue = DValue;
-    this.Lvalue = LValue;
+  public buildIndex(): void {
     this.setMaterialPartialCodeForIndex();
     this.setFirstIndexDimension();
     this.setSecondIndexDimension();
@@ -113,7 +112,18 @@ export class TableFormServiceService {
   }
 
   public setOrderName(): void {
-    this.orderName = `${this.productTypeName}  ${this.Dvalue}  x  ${this.Lvalue} mm ${this.materialCode}`;
+    if (this.Dvalue &&  this.Lvalue) {
+      this.orderName = `${this.productTypeName}  ${this.Dvalue}  x  ${this.Lvalue} mm ${this.materialCode}`;
+    }
+    else if (this.Dvalue &&  !this.Lvalue) {
+      this.orderName = `${this.productTypeName}  ${this.Dvalue}  x  0 mm ${this.materialCode}`;
+    }
+    else if (!this.Dvalue &&  this.Lvalue) {
+      this.orderName = `${this.productTypeName}  0  x  ${this.Lvalue} mm ${this.materialCode}`;
+    }
+    else {
+      this.orderName = `${this.productTypeName}  0  x  0 mm ${this.materialCode}`;
+    }
   }
 
   /*  remember that createOrderDto is obtained in diffrentWay for diffrent modes*/
@@ -156,15 +166,29 @@ export class TableFormServiceService {
       this.workingTemperature.setValue(createOrderDto.orderDetails.workingTemperature);
       this.workingSide.setValue(createOrderDto.orderDetails.workingSide);
       this.antiEelectrostatic.setValue(createOrderDto.orderDetails.antiEelectrostatic);
+      if (createOrderDto.orderDetails.dimensions) {
+     const dimensions = createOrderDto.orderDetails.dimensions;
+     dimensions.forEach((dimension) => {
+       if (allFirstIndexDimensionCodes.includes(dimension.dimensionId)) {
+         this.Dvalue = dimension.dimensionvalue;
+       }
+       if (allSecondIndexDimensionCodes.includes(dimension.dimensionId)) {
+         this.Lvalue = dimension.dimensionvalue;
+       }
+     });
+   }
     }
       if (createOrderDto.index) {
         this.index = createOrderDto.index;
+      }
+      else {
+        this.buildIndex();
       }
       if (createOrderDto.orderName) {
         this.orderName = createOrderDto.orderName;
       }
       else {
-        this.orderName = '';
+        this.setOrderName();
       }
   }
   enableTableForm(): void {

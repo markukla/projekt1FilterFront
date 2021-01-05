@@ -150,16 +150,17 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 setFormControlValuesForUpdateOrShowDrawingMode(createOrderDto: CreateOrderDto): void {
     if (createOrderDto) {
       console.error('in setFormControlValuesForUpdateOrShowDrawingMode');
-      this.businessPartner.setValue(this.createOrderDto.businessPartner);
-      this.productMaterial.setValue(this.createOrderDto.productMaterial);
+      this.businessPartner.setValue(createOrderDto.businessPartner);
+      this.productMaterial.setValue(createOrderDto.productMaterial);
       this.selectedMaterial = this.productMaterial.value;
       this.selectedPartner = this.businessPartner.value;
-      this.type.setValue(this.createOrderDto.product.productType);
+      this.type.setValue(createOrderDto.product.productType);
       this.selectedtType = this.type.value;
-      this.top.setValue(this.createOrderDto.product.productTop);
+      this.top.setValue(createOrderDto.product.productTop);
       this.selectedTop = this.top.value;
-      this.bottom.setValue(this.createOrderDto.product.productBottom);
+      this.bottom.setValue(createOrderDto.product.productBottom);
       this.selectedBottom = this.bottom.value;
+      this.selectedProduct = createOrderDto.product;
     }
   }
 
@@ -282,7 +283,7 @@ onSubmit(): void {
       };
       this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
         this.selectedProduct = product.body;
-        const createOrderDto: CreateOrderDto = {
+        this.createOrderDto = {
           businessPartner: this.selectedPartner,
           index: null,
           orderName: null,
@@ -296,8 +297,7 @@ onSubmit(): void {
           creator: this.authenticationService.user,
           orderDetails: null,
         };
-        console.error(`createOrderDto.orderTotalNumber= ${createOrderDto.orderTotalNumber}`);
-        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = createOrderDto;
+        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
         this.router.navigateByUrl(`/orders/drawing?mode=${OrderOperationMode.CREATENEW}`);
       }, error => {
         console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
@@ -305,40 +305,30 @@ onSubmit(): void {
       });
       // tslint:disable-next-line:max-line-length
     } else if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
-      // tslint:disable-next-line:max-line-length
-      this.createOrderDto.businessPartner = this.selectedPartner;
-      this.createOrderDto.productMaterial = this.selectedMaterial;
-      this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
-      this.tableFormService.setOrderName();
-      this.createOrderDto.orderName = this.tableFormService.orderName;
-      if (this.commentToOrder.nativeElement.value) {
-        this.createOrderDto.commentToOrder = this.commentToOrder.nativeElement.value;
-      }
-      else {
-        this.createOrderDto.commentToOrder = '';
-      }
-      this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
-      this.backendService.addRecords(this.createOrderDto).subscribe((order) => {
-          this.operationMessage = 'dodano nowe zamówienie';
-        },
-        error => {
-          this.operationMessage = 'nie udało się dodać nowego zamówienia';
+      if (this.productHasBeenChanged === false) {
 
-        });
-    } else if (this.orderOperationMode === OrderOperationMode.UPDATE && this.productHasBeenChanged === false) {
+        this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
+        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
+        this.backendService.addRecords(this.createOrderDto).subscribe((order) => {
+            this.operationMessage = 'dodano nowe zamówienie';
+          },
+          error => {
+            this.operationMessage = 'nie udało się dodać nowego zamówienia';
 
+          });
+      }
+    } else if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE) {
+
+      if (this.productHasBeenChanged === false) {
+        this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
+        this.backendService.updateRecordById(String(this.selctedOrderId), this.createOrderDto).subscribe((order) => {
+            this.operationMessage = 'zaktualizowano zamówinie';
+          },
+          error => {
+            this.operationMessage = 'nie udało się zaktualizować zamówienia';
+          });
+      }
       // tslint:disable-next-line:max-line-length
-      const updateOrderDto: CreateOrderDto = {
-        ...this.backendService.createOrderDtoForConfirmUpdateShowDrawing,
-        productMaterial: this.selectedMaterial,
-      };
-      // tslint:disable-next-line:max-line-length
-      this.backendService.updateRecordById(String(this.selctedOrderId), updateOrderDto).subscribe((order) => {
-          this.operationMessage = 'zaktualizowano zamówinie';
-        },
-        error => {
-          this.operationMessage = 'nie udało się zaktualizować zamówienia';
-        });
     } else if (this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
       let selectedPartnerToDto: User;
       if (!this.isPartner) {
@@ -353,24 +343,9 @@ onSubmit(): void {
       };
       this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
         this.selectedProduct = product.body;
-        this.setOrderNumbersinOrderTableForUpdateModes();
-        this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
-        this.tableFormService.setOrderName();
-        this.createOrderDto.orderName = this.tableFormService.orderName;
-        this.createOrderDto.orderNumber = this.newOrderNumber;
-        this.createOrderDto.orderTotalNumber = this.newOrderTotalNumber;
-        this.createOrderDto.data = this.setDateInOrderTable();
-        const createOrderDtoWithCHangedProduct: CreateOrderDto = {
-          ...this.createOrderDto,
-          product: this.selectedProduct,
-          businessPartner: selectedPartnerToDto,
-          productMaterial: this.selectedMaterial,
-          orderDetails: null,
-        };
-        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = {
-          ...createOrderDtoWithCHangedProduct
-        };
-        this.router.navigateByUrl(`/orders/drawing?mode=${OrderOperationMode.UPDATEWITHCHANGEDPRODUCT}`);
+        this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
+        this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
+        this.router.navigateByUrl(`/orders/drawing?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.UPDATEWITHCHANGEDPRODUCT}`);
       }, error => {
         console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
         this.operationMessage = 'nie udało się znaleźć produktu na postawie wybranych parametrów. Spróbuj ponownie';
@@ -496,9 +471,9 @@ checkOperationMode(): void {
   }
 
 seeDrawing(): void {
-
-    this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
-    if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+     this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
+     this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
+     if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
     this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.SHOWDRAWINGCONFIRM}`);
   }
   else if (this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE || this.orderOperationMode === OrderOperationMode.UPDATE) {
@@ -507,8 +482,9 @@ seeDrawing(): void {
   }
 
 updateDrawing(): void {
-  this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
-  if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
+    this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
+    this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
+    if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
     this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.UPDATEDRAWING}`);
   }
   else if (this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE || this.orderOperationMode === OrderOperationMode.UPDATE) {
@@ -544,11 +520,11 @@ setOrderNumbersinOrderTableForNewOrder(): void {
       // tslint:disable-next-line:max-line-length
   }
   }
-setOrderNumbersinOrderTableForUpdateModes(): void {
+setOrderNumbersinOrderTableForUpdateOrConfirmModes(): void {
     if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.CREATENEW) {
       this.newOrderNumber = this.createOrderDto.orderNumber;
       this.newOrderVersionNumber = this.getCurrentDateAndTimeToBecomeOrderVersionNumber();
-      this.newOrderTotalNumber = this.tableFormService.orderTotalNumber;
+      this.newOrderTotalNumber = this.newOrderNumber + '.' + this.newOrderVersionNumber;
     }
   }
 
@@ -567,12 +543,43 @@ setOrderNumbersinOrderTableForUpdateModes(): void {
       return  new Date().toLocaleDateString();
     }
   }
+  updateCreateOrderDto(createOrderDto: CreateOrderDto): CreateOrderDto {
+    this.setOrderNumbersinOrderTableForUpdateOrConfirmModes();
+    let commmentToOrder: string;
+    if(this.commentToOrder.nativeElement.value) {
+      commmentToOrder = this.commentToOrder.nativeElement.value;
+    }
+    else {
+      commmentToOrder = '';
+    }
+    const updatedCreateOrderDtoWithoutIndexAndOrderNameRebuild: CreateOrderDto = {
+        ...createOrderDto,
+        businessPartner: this.selectedPartner,
+        productMaterial: this.selectedMaterial,
+        product: this.selectedProduct,
+        commentToOrder: commmentToOrder,
+        // tslint:disable-next-line:max-line-length
+        index: null,  // if index and order name set to null they will be automaticaly updated by next method: this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(updatedCreateOrderDtoWithoutIndexAndOrderNameRebuild);
+        orderName: null,  // cause it call buildIndex() and setOrderNameMethods(); where these values are null
+        orderNumber: this.newOrderNumber,
+        data: this.setDateInOrderTable(),
+        orderVersionNumber: this.newOrderVersionNumber,
+        orderTotalNumber: this.newOrderTotalNumber,
+      };
+    this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(updatedCreateOrderDtoWithoutIndexAndOrderNameRebuild);
+    const updatedCreateOrderDto: CreateOrderDto = {
+      ... updatedCreateOrderDtoWithoutIndexAndOrderNameRebuild,
+      index: this.tableFormService.index,
+      orderName: this.tableFormService.orderName
+    };
+    return updatedCreateOrderDto;
+  }
 
 @HostListener('click', ['$event'])
 listenToChangeProductEvent(event: any): void {
     const inputId = event.target.id;
     // tslint:disable-next-line:max-line-length
-    const updateOrConfirmMode = this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMNEW;
+    const updateOrConfirmMode = this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMNEW || this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE;
     if (event.target.id === 'confirmOrchangeProduct' && updateOrConfirmMode) {
       this.productHasBeenChanged = true;
       console.error(`this.productHasBeenChanged = ${this.productHasBeenChanged}`);
@@ -580,7 +587,7 @@ listenToChangeProductEvent(event: any): void {
       if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
       }
-      if (this.orderOperationMode === OrderOperationMode.UPDATE) {
+      if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE) {
         this.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
       }
     }
