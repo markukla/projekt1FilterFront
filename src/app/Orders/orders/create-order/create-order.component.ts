@@ -31,6 +31,7 @@ import {OrderTableService} from '../OrderServices/order-table.service';
 import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 import {TableFormServiceService} from '../../../Products/ProductMainComponent/product/product-table-form/table-form-service.service';
+import OrderDetails from '../../OrdersTypesAndClasses/orderDetail';
 
 @Component({
   selector: 'app-create-order',
@@ -320,7 +321,8 @@ onSubmit(): void {
     } else if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE) {
 
       if (this.productHasBeenChanged === false) {
-        this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
+        const updatedCreateOrderDto = this.updateCreateOrderDto(this.createOrderDto);
+        this.createOrderDto = updatedCreateOrderDto;
         this.backendService.updateRecordById(String(this.selctedOrderId), this.createOrderDto).subscribe((order) => {
             this.operationMessage = 'zaktualizowano zamówinie';
           },
@@ -552,11 +554,14 @@ setOrderNumbersinOrderTableForUpdateOrConfirmModes(): void {
     else {
       commmentToOrder = '';
     }
+    const orderDetails: OrderDetails = {...this.createOrderDto.orderDetails,
+    id: null};
     const updatedCreateOrderDtoWithoutIndexAndOrderNameRebuild: CreateOrderDto = {
         ...createOrderDto,
         businessPartner: this.selectedPartner,
         productMaterial: this.selectedMaterial,
         product: this.selectedProduct,
+        orderDetails: orderDetails,
         commentToOrder: commmentToOrder,
         // tslint:disable-next-line:max-line-length
         index: null,  // if index and order name set to null they will be automaticaly updated by next method: this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(updatedCreateOrderDtoWithoutIndexAndOrderNameRebuild);
