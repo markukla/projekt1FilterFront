@@ -44,7 +44,7 @@ export class OrderTableService {
       businessPartnerCode: order.businessPartner.code,
       businessPartnerFulname: order.businessPartner.fulName,
       businessPartnerEmail: order.businessPartner.email,
-      data: order.data,
+      date: order.data,
       id: order.id,
       index: order.index,
       orderName: order.orderName,

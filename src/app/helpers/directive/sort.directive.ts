@@ -16,23 +16,30 @@ export class SortDirective {
   @HostListener('click')
   // tslint:disable-next-line:typedef
   sortData() {
+    console.log('in sort directive');
 
     const sort = new Sort();
 
     const elem = this.targetElement.nativeElement;
 
-    const order = elem.getAttribute('newData-order');
+    const order = elem.getAttribute('data-order');
 
-    const type = elem.getAttribute('newData-type');
+    const type = elem.getAttribute('data-typ');
 
-    const property = elem.getAttribute('newData-name');
+    const property = elem.getAttribute('data-name');
 
     if (order === 'desc') {
       this.appSort.sort(sort.startSort(property, order, type));
-      elem.setAttribute('newData-order', 'asc');
+      this.appSort.forEach((el) => {
+        console.log(el);
+      });
+      elem.setAttribute('data-order', 'asc');
     } else {
       this.appSort.sort(sort.startSort(property, order, type));
-      elem.setAttribute('newData-order', 'desc');
+      this.appSort.forEach((el) => {
+        console.log(el);
+      });
+      elem.setAttribute('data-order', 'desc');
     }
 
   }

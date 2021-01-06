@@ -3,6 +3,10 @@ import {OrderBackendService} from '../../../Orders/orders/OrderServices/order-ba
 import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
 import RoleEnum from '../../../Users/users/userTypes/roleEnum';
 import {OrderTableService} from '../../../Orders/orders/OrderServices/order-table.service';
+import {ActivatedRoute} from '@angular/router';
+import {BusinesPartnerBackendService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/busines-partner-backend.service';
+import Order from '../../../Orders/OrdersTypesAndClasses/orderEntity';
+import OrderforTableCell from '../../../Orders/OrdersTypesAndClasses/orderforTableCell';
 
 @Directive({
   selector: '[appOrderSearchDirective]'
@@ -20,33 +24,45 @@ export class OrderSearchDirectiveDirective implements OnInit, AfterContentChecke
   /* @Input() searchedProperty: any; */
   temporatyArray: Array<any> = [];
   allowOrginalArrayCopyChange: boolean;
+  partnerIdForOrdersShow: string;
 
 
   constructor(private renderer: Renderer2,
               private targetElement: ElementRef,
               private backendService: OrderBackendService,
+              private partnerBackendService: BusinesPartnerBackendService,
               private tableService: OrderTableService,
-              private authenticationService: AuthenticationService) {
+              private authenticationService: AuthenticationService,
+              private route: ActivatedRoute
+  ) {
     this.allowOrginalArrayCopyChange = true;
   }
 
   @HostListener('input')
 // tslint:disable-next-line:typedef
-  serchTable() {
+  async serchTable() {
 
     const elem = this.targetElement.nativeElement;
-
+    if (this.partnerIdForOrdersShow) {
+  const foundParnter = await this.partnerBackendService.findRecordById(this.partnerIdForOrdersShow).toPromise();
+  this.orginalArrayCopy = this.createOrdersForTableCellFromOrders(foundParnter.body.ordersOfPartner) ;
+}
+ else if (this.authenticationService.userRole === RoleEnum.PARTNER) {
+   const foundOrders = await this.backendService.getCurrentOrdersForPartners(this.authenticationService.user.code).toPromise();
+   this.orginalArrayCopy = this.createOrdersForTableCellFromOrders(foundOrders.body);
+ }
+ else {
+      const foundOrders = await  this.backendService.getCurrentOrdersForPrivilligedUsers().toPromise();
+      this.orginalArrayCopy = this.createOrdersForTableCellFromOrders(foundOrders.body);
+    }
     // tslint:disable-next-line:max-line-length
     /*remember using directives it is better to access element property using target element than doing some extra binding with ng model etc */
     this.serchCondition = elem.value;
     this.temporatyArray.length = 0;
     this.searchedArray.length = 0;
-    this.temporatyArray = this.orginalArrayCopy.filter((x) => {
-      /* if (this.searchedProperty) {
-         x[this.searchedProperty][this.serchedColumn].includes(this.serchCondition);
-      }*/
-      x[this.serchedColumn].includes(this.serchCondition);
-    });
+    this.temporatyArray = this.orginalArrayCopy.filter(
+      x => x[this.serchedColumn].includes(this.serchCondition)
+    );
 
     // tslint:disable-next-line:max-line-length
     /*when i use filter to serch array it some how does not work, because it is creating new instance of array and directive is bind to previous instance*/
@@ -62,7 +78,10 @@ export class OrderSearchDirectiveDirective implements OnInit, AfterContentChecke
   }
 
   ngOnInit(): void {
-    this.setOrginalArrayCopy();
+     this.route.queryParamMap.subscribe(queryParams => {
+      this.partnerIdForOrdersShow = queryParams.get('patnerId');
+    });
+    // this.setOrginalArrayCopy();
   }
   setOrginalArrayCopy(): void {
     this.orginalArrayCopy.length = 0;
@@ -83,6 +102,13 @@ export class OrderSearchDirectiveDirective implements OnInit, AfterContentChecke
   }
 
   ngAfterContentChecked(): void {
+  }
+  createOrdersForTableCellFromOrders(orders: Order[]): OrderforTableCell[] {
+const orderForTableCel: OrderforTableCell[] = [];
+orders.forEach((order) => {
+  orderForTableCel.push(this.tableService.createOrderTableCellFromOrderEntity(order));
+});
+return orderForTableCel;
   }
 
   }

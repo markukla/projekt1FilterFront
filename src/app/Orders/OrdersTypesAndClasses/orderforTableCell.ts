@@ -10,7 +10,7 @@ class OrderforTableCell {
   orderVersionNumber: string;
   orderTotalNumber: string; // newOrderNumber and version number with some separator
   index: string;
-  data: string;
+  date: string;
   orderName: string;
   businessPartnerFulname: string;
   businessPartnerCode: string;
