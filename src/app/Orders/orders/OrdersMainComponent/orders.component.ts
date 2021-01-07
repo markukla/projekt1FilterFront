@@ -93,11 +93,13 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
     }
   }
 
-  deleteSelectedRecord(materialId: number): void {
-    this.backendService.deleteRecordById(String(materialId)).subscribe((response) => {
+  deleteSelectedRecord(currrentOrderId: number): void {
+    this.backendService.deleteOrderWithVersionRegisterByCurrentId(String(currrentOrderId)).subscribe((response) => {
       this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
+      console.log(`${this.operationStatusMessage}`);
     }, error => {
       this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+      console.log(`${this.operationStatusMessage}`);
     });
   }
 

@@ -50,7 +50,7 @@ export class OrderBackendService {
       }));
   }
 
-  deleteRecordById(id: string): Observable<HttpResponse<any>> {
+  deleteOrderWithVersionRegisterByCurrentId(id: string): Observable<HttpResponse<any>> {
     const deleteUrl = `${this.rootURL + this.endpointUrl}/currents/${id}`;
     return this.http.delete(deleteUrl, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
