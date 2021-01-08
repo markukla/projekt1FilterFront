@@ -10,7 +10,7 @@ class Order {
   orderVersionNumber: string;
   orderTotalNumber: string; // newOrderNumber and version number with some separator
   index: string;
-  data: string;
+  date: Date;
   orderName: string;
   commentToOrder?: string;
   businessPartner: User;

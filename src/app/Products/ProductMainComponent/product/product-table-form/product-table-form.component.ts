@@ -18,7 +18,7 @@ export class ProductTableFormComponent implements OnInit, AfterContentChecked {
   index: string;
   orderCreator: string;
   orderName: string;
-  date: Date|string;
+  date: string;
   materialName: string;
   materialCode: string;
   Lvalue: string;  // value for second indexDimension
@@ -52,7 +52,12 @@ export class ProductTableFormComponent implements OnInit, AfterContentChecked {
     this.materialCode = this.tableFormService.materialCode;
     this.Lvalue = this.tableFormService.Lvalue;
     this.Dvalue = this.tableFormService.Dvalue;
-    this.date = this.tableFormService.date;
+    if (this.tableFormService.date) {
+      this.date = this.tableFormService.date.toLocaleDateString();
+    }
+    else {
+      this.date = '';
+    }
     this.productTypeName = this.tableFormService.productTypeName;
     this.productTypeCode = this.tableFormService.productTypeCode;
     this.productTopCode = this.tableFormService.productTopCode;

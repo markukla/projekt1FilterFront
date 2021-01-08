@@ -15,7 +15,7 @@ export class Sort {
       this.sortOrder = -1;
     }
     return (a, b) => {
-      const aSplited = a[property].split('.');
+    /*  const aSplited = a[property].split('.');
       const ayear: number = Number(aSplited[2]);
       const aMonth: number = Number(aSplited[1]) - 1;
       const aDay: number = Number(aSplited[0]);
@@ -26,6 +26,12 @@ export class Sort {
 
       if (type === 'date') {
         return this.sortData(new Date(ayear, aMonth, aDay), new Date(byear, bMonth, bDay));
+      } else {
+        return this.collator.compare(a[property], b[property]) * this.sortOrder;
+      }
+    }; */
+      if (type === 'date') {
+        return this.sortData(new Date(a[property]), new Date(b[property]));
       } else {
         return this.collator.compare(a[property], b[property]) * this.sortOrder;
       }

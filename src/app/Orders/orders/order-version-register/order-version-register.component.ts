@@ -7,6 +7,7 @@ import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
 import {VersionRegisterTableService} from '../OrderServices/version-register-table.service';
 import OrderVersionRegister from '../../OrdersTypesAndClasses/orderVersionRegister';
 import Order from '../../OrdersTypesAndClasses/orderEntity';
+import {Sort} from '../../../util/sort';
 
 @Component({
   selector: 'app-order-version-register',
@@ -42,6 +43,7 @@ export class OrderVersionRegisterComponent implements OnInit, AfterContentChecke
   }
 
   ngOnInit(): void {
+    this.records = [];
     this.route.queryParamMap.subscribe(queryParams => {
       this.selectedOrderId = queryParams.get('orderId');
     });
@@ -61,6 +63,12 @@ export class OrderVersionRegisterComponent implements OnInit, AfterContentChecke
       this.backendService.findOrderVersionRegisterById(String(order.body.orderVersionRegister.id)).subscribe((register) => {
           this.orderVersionRegister = register.body;
           this.ordersInRegister = this.orderVersionRegister.ordersInthisRegister;
+          this.ordersInRegister.forEach((order) => {
+              this.records.push(this.orderTableService.createOrderTableCellFromOrderEntity(order));
+              const sort = new Sort();
+              this.records.sort(sort.startSort('date', 'desc', 'date'));
+            }
+          );
         }, error => {
           console.error('could not get order version register');
         }

@@ -291,7 +291,7 @@ onSubmit(): void {
           commentToOrder: null,
           product: this.selectedProduct,
           productMaterial: this.selectedMaterial,
-          data: this.setDateInOrderTable(),
+          date: this.setDateInOrderTable(),
           orderNumber: this.newOrderNumber,
           orderVersionNumber: this.newOrderVersionNumber,
           orderTotalNumber: this.newOrderTotalNumber,
@@ -543,10 +543,10 @@ setOrderNumbersinOrderTableForUpdateOrConfirmModes(): void {
 
   }
 
-  private setDateInOrderTable(): string{
+  private setDateInOrderTable(): Date{
     // tslint:disable-next-line:max-line-length
     if (this.orderOperationMode !== OrderOperationMode.SHOWDRAWING) {
-      return  new Date().toLocaleDateString();
+      return  new Date();
     }
   }
   updateCreateOrderDto(createOrderDto: CreateOrderDto): CreateOrderDto {
@@ -565,13 +565,13 @@ setOrderNumbersinOrderTableForUpdateOrConfirmModes(): void {
         businessPartner: this.selectedPartner,
         productMaterial: this.selectedMaterial,
         product: this.selectedProduct,
-        orderDetails: orderDetails,
+        orderDetails,
         commentToOrder: commmentToOrder,
         // tslint:disable-next-line:max-line-length
         index: null,  // if index and order name set to null they will be automaticaly updated by next method: this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(updatedCreateOrderDtoWithoutIndexAndOrderNameRebuild);
         orderName: null,  // cause it call buildIndex() and setOrderNameMethods(); where these values are null
         orderNumber: this.newOrderNumber,
-        data: this.setDateInOrderTable(),
+        date: this.setDateInOrderTable(),
         orderVersionNumber: this.newOrderVersionNumber,
         orderTotalNumber: this.newOrderTotalNumber,
       };

@@ -14,7 +14,7 @@ export class TableFormServiceService {
   index: string;
   orderCreator: string;
   orderName: string;
-  date: string;
+  date: Date;
   materialName: string;
   materialCode: string;
   Lvalue: string;  // value for second indexDimension
@@ -136,10 +136,10 @@ export class TableFormServiceService {
     } else {
       this.orderCreator = '';
     }
-    if (createOrderDto.data) {
-      this.date = createOrderDto.data;
+    if (createOrderDto.date) {
+      this.date = new Date(createOrderDto.date);
     } else {
-      this.date = '';
+      this.date = null;
     }
     if (createOrderDto.productMaterial) {
       this.materialCode = createOrderDto.productMaterial.materialCode;
@@ -203,7 +203,7 @@ export class TableFormServiceService {
     this.index = '';
     this.orderCreator = '';
     this.orderName = '';
-    this.date = '';
+    this.date = null;
     this.materialName = '';
     this.materialCode = '';
     this.Lvalue = '';

@@ -10,13 +10,15 @@ class OrderforTableCell {
   orderVersionNumber: string;
   orderTotalNumber: string; // newOrderNumber and version number with some separator
   index: string;
-  date: string;
+  date: Date;
+  dateString: string;
   orderName: string;
   businessPartnerFulname: string;
   businessPartnerCode: string;
   businessPartnerCompanyName: string;
   businessPartnerEmail: string;
   orderVersionRegisterId: number;
+  commentToOrderString: string;
 }
 
 

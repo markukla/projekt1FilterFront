@@ -34,7 +34,7 @@
       <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="businessPartnerEmail" id="serchInEmails" placeholder="Wyszukaj" /></th>
       <th><input class="tableSearchInput" [appOrderSearchDirective]="records" serchedColumn="index" id="serchInIndex" placeholder="Wyszukaj" /></th>
       <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="orderName" id="serchInOrderNames" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="date" id="serchInDates" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="dateString" id="serchInDates" placeholder="Wyszukaj" /></th>
       <th>{{this.recordNumbers}}</th>
     </tr>
     </thead>
@@ -47,7 +47,7 @@
       <td>{{record.businessPartnerEmail}}</td>
       <td>{{record.index}}</td>
       <td>{{record.orderName}}</td>
-      <td>{{record.date}}</td>
+      <td>{{record.dateString}}</td>
       <td>{{this.recordNumbers}}</td>
       <td>
         <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>

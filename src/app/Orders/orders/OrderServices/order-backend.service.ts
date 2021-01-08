@@ -84,7 +84,7 @@ export class OrderBackendService {
       orderName: order.orderName,
       orderVersionNumber: order.orderVersionNumber,
       commentToOrder: order.commentToOrder,
-      data: order.data,
+      date: order.date,
       businessPartner: order.businessPartner,
       creator: order.creator,
       index: order.index,

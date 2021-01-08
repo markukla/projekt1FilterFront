@@ -12,7 +12,7 @@ export class CreateOrderDto {
   index: string;
   orderName: string;
   commentToOrder: string;
-  data: string;
+  date: Date;
   orderNumber: number;  // it is not id because it is the same for orders with the same order version register
   orderVersionNumber: string;
   orderTotalNumber: string; // newOrderNumber and version number with some separator

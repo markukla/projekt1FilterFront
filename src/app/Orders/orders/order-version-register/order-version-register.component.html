@@ -22,13 +22,13 @@
     </thead>
     <tbody>
 
-    <tr *ngFor="let order of ordersInRegister">
+    <tr *ngFor="let order of records">
       <td>{{order.orderTotalNumber}}</td>
       <td>{{order.index}}</td>
       <td>{{order.orderName}}</td>
-      <td>{{order.commentToOrder}}</td>
+      <td>{{order.commentToOrderString}}</td>
 
-      <td>{{order.data}}</td>
+      <td>{{order.dateString}}</td>
       <td>
         <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
         <br>
