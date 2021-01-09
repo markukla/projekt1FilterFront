@@ -341,6 +341,19 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     }
 
   }
-  /*  ssdsdsd */
-
+  async getDrawingPdf(): Promise<void> {
+    console.error(`this.router.url= ${this.router.url}`);
+    console.error(`window.location.href= ${window.location.href}`);
+    const pdfTodownLoad = await this.orderBackendService.getDrawingPdf(window.location.href).toPromise();
+    const downloadURL = URL.createObjectURL(pdfTodownLoad );
+    window.open(downloadURL);
+  }
+  checkIfShowDrawingMode(): boolean {
+    if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
 }

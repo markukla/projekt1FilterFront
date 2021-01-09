@@ -13,5 +13,9 @@
     </div>
 
     <button class="saveButton" (click)="onSubmit()">Zatwierdź</button>
+    <div *ngIf=" checkIfShowDrawingMode();">
+      <button class="saveButton" (click)="getDrawingPdf();">Zapisz do pdf</button>
+
+    </div>
   </div>
 </div>
