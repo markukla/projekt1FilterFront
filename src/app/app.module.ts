@@ -60,6 +60,9 @@ import { UpdateOrderComponent } from './Orders/orders/update-order/update-order.
 import { OrderVersionRegisterComponent } from './Orders/orders/order-version-register/order-version-register.component';
 import { OrderSearchDirectiveDirective } from './helpers/directive/ForOrders/order-search-directive.directive';
 import { OrderDrawingComponent } from './Orders/orders/order-drawing/order-drawing.component';
+import { DimensionCodesMainComponent } from './DimensionCodes/dimension-codes-main/dimension-codes-main.component';
+import { CreateDimensionCodeComponent } from './DimensionCodes/create-dimension-code/create-dimension-code.component';
+import { UpdateDImensionCodeComponent } from './DimensionCodes/update-dimension-code/update-dimension-code.component';
 
 
 
@@ -113,7 +116,10 @@ import { OrderDrawingComponent } from './Orders/orders/order-drawing/order-drawi
     UpdateOrderComponent,
     OrderVersionRegisterComponent,
     OrderSearchDirectiveDirective,
-    OrderDrawingComponent
+    OrderDrawingComponent,
+    DimensionCodesMainComponent,
+    CreateDimensionCodeComponent,
+    UpdateDImensionCodeComponent
     ],
   imports: [
     BrowserModule,

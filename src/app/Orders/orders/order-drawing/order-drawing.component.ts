@@ -345,9 +345,25 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     console.error(`this.router.url= ${this.router.url}`);
     console.error(`window.location.href= ${window.location.href}`);
     const pdfTodownLoad = await this.orderBackendService.getDrawingPdf(window.location.href).toPromise();
-    const downloadURL = URL.createObjectURL(pdfTodownLoad );
-    window.open(downloadURL);
+    const newBlob = new Blob([pdfTodownLoad], {type: 'application/pdf'});
+
+    // IE doesn't allow using a blob object directly as link href
+    // instead it is necessary to use msSaveOrOpenBlob
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(newBlob);
+      return;
+    }
+    const data = window.URL.createObjectURL(newBlob);
+    const link = document.createElement('a');
+    link.href = data;
+    link.download = 'file.pdf';
+    link.click();
+    setTimeout(() => {
+      // For Firefox it is necessary to delay revoking the ObjectURL
+      window.URL.revokeObjectURL(data);
+    }, 100);
   }
+
   checkIfShowDrawingMode(): boolean {
     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
       return true;

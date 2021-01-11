@@ -44,7 +44,9 @@
         <select class="form-control" formControlName="type" id="type">
           <option [ngValue]="null" disabled>Wybierz Typ produktu</option>
           <option *ngFor="let type of allTypesToSelect" [ngValue]="type">
-            {{ type.code + ' - ' + type.name }}
+            {{ type.code + ' - ' + type.name
+            }}
+            <!-- type.names-->
           </option>
         </select>
         <div *ngIf="type.invalid && (type.dirty || type.touched)"

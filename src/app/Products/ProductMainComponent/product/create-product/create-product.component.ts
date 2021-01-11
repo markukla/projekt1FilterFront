@@ -26,6 +26,7 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
   allBotomsToselect: ProductBottom[];
   allTopsToSelect: ProductTop[];
   allTypesToSelect: ProductType[];
+  allTypeTOSelectInChoosenLanguage:
   form: FormGroup;
   upladDrawingForm: FormGroup;
   uploadSuccessStatus: boolean;
