@@ -59,7 +59,7 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
     deleteMaterialById(id: number): any {
       this.materialService.deleteMaterialById(String(id))
         .subscribe((newData) => {
-          this.deleTedMaterialMessage = newData;
+          this.deleTedRecordMessage = newData;
           this.getMaterials();
 
         });

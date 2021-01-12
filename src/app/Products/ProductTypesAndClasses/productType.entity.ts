@@ -5,7 +5,7 @@ import Product from './product.entity';
 
 class ProductType {
   public id?: number;
-  name: string [];
+  name: string;
   code: string;
   productsWithThisType?: Product[];
   topsForThisProductType: ProductTop[];

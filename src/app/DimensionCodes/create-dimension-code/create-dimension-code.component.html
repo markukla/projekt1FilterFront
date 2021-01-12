@@ -1,1 +1,102 @@
-<p>create-dimension-code works!</p>
+<div class="createMaterial">
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
+  <h2>Dodaj nowy typ produktu</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row">
+
+      <div class="form-group col-md-6">
+        <label class="label" for="code">Kod Wymiaru</label>
+        <input type="text" class="form-control" formControlName="code" id="code"
+               placeholder="Kod Wymiaru">
+        <div *ngIf="code.invalid && (code.dirty || code.touched)"
+             class="alert alert-danger">
+
+          <div class="validatorInfo" *ngIf="code.errors.required">
+            To pole jest wymagane
+          </div>
+          <div class="validatorInfo" *ngIf="code.errors?.taken">
+            Podana kod jest już zajęty.
+          </div>
+          <div class="validatorInfo" *ngIf="code.errors.minlength">
+            Kod nie może być krótszy niż 2 znaki
+          </div>
+          <div class="validatorInfo" *ngIf="code.errors.maxlength">
+            Kod nie może być dłuższy niż 2 znaki.
+          </div>
+        </div>
+
+      </div>
+      <div class="form-group col-md-6">
+        <label class="label" for="role"> Wybierz Rolę Wymiaru</label>
+        <select class="form-control" formControlName="role" id="role">
+          <option [ngValue]="this.allDimensionRolesToSelect[0]">
+            {{firstIndexDimensionRole}}
+          </option>
+          <option [ngValue]="this.allDimensionRolesToSelect[1]">
+            {{secondIndexDimensionRole}}
+          </option>
+          <option [ngValue]="this.allDimensionRolesToSelect[2]">
+            {{noIndexDimensionRole}}
+          </option>
+        </select>
+        <div *ngIf="role.invalid && (role.dirty || role.touched)"
+             class="alert alert-danger">
+
+          <div class="validatorInfo" *ngIf="role.errors.required">
+            To pole jest wymagane
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <form [formGroup]="languageForm">
+      <div class="row">
+      <div class="form-group col-md-6">
+        <label class="label" for="languageCode:">Kod Języka</label>
+        <input type="text" class="form-control" formControlName="languageCode" id="languageCode:"
+               placeholder="Kod Wymiaru">
+        <div *ngIf="lamguageCode.invalid && (lamguageCode.dirty || lamguageCode.touched)"
+             class="alert alert-danger">
+
+          <div class="validatorInfo" *ngIf="lamguageCode.errors.required">
+            To pole jest wymagane
+          </div>
+        </div>
+
+      </div>
+        <div class="form-group col-md-6">
+          <label class="label" for="nameInThisLanguage">Nazwa</label>
+          <input type="text" class="form-control" formControlName="nameInThisLanguage" id="nameInThisLanguage"
+                 placeholder="Nazwa" >
+          <div *ngIf="nameInThisLanguage.invalid && (nameInThisLanguage.dirty || nameInThisLanguage.touched)"
+               class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="nameInThisLanguage.errors.required">
+              To pole jest wymagane
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <button type="button" [disabled]="!languageForm.valid" class="btn btn-danger" (click)="addLanguageToCreateDto()">Dodaj Język</button>
+    </form>
+    <div class="addButon">
+      <button type="submit" [disabled]="!form.valid" class="btn btn-danger">Zapisz</button>
+    </div>
+
+
+</form>
+
+<div *ngIf="showoperationStatusMessage">
+  <textarea>{{showoperationStatusMessage}}</textarea>
+</div>
+</div>
+
+
+
+
+
+
+
+
+

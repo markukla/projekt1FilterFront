@@ -1,1 +1,59 @@
-<p>dimension-codes-main works!</p>
+
+<!--sss-->
+
+<div>
+
+  <a  [routerLink]="['/dimensionCodes/add']" routerLinkActive="active">
+    {{ createNewMaterialDescription }}
+  </a>
+</div>
+
+<div class="materialComponent">
+
+  <table class="table table-striped border mt-1">
+    <thead>
+    <tr>
+      <th [appSort]="records" data-order="desc" data-name="dimensionCode" scope="col">Kod Wymiaru <br></th>
+      <th [appSort]="records" data-order="desc" data-name="dimensionRole" scope="col">Rola wymiaru <br></th>
+      <th *ngFor="let lang of langs"> {{lang+': Opis Wymiaru'}}</th>
+      <th>{{this.recordNumbers}}</th>
+      <th>ilość</th>
+
+    </tr>
+    <tr>
+      <th>
+
+        <input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
+      </th>
+      <th><input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
+    </tr>
+
+    </thead>
+    <tbody>
+
+    <tr *ngFor="let record of records">
+      <td>{{record.dimensionCode}}</td>
+      <td>{{record.dimensionRole}}</td>
+      <td *ngFor="let lang of record.localizedDimensionNames">{{lang.nameInThisLanguage}}</td>
+      <td>
+        <text *ngIf="deleTedRecordMessage">{{deleTedRecordMessage}}</text>
+        <br>
+        <button (click)="this.deleteSelectedRecord(record.id)" [title]="deleteButtonInfo" >x</button>
+        <button (click)="updateSelectedRecord(record.id);" [title]="updateButtonInfo">u</button>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+

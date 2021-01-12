@@ -63,6 +63,7 @@ import { OrderDrawingComponent } from './Orders/orders/order-drawing/order-drawi
 import { DimensionCodesMainComponent } from './DimensionCodes/dimension-codes-main/dimension-codes-main.component';
 import { CreateDimensionCodeComponent } from './DimensionCodes/create-dimension-code/create-dimension-code.component';
 import { UpdateDImensionCodeComponent } from './DimensionCodes/update-dimension-code/update-dimension-code.component';
+import { DimensionSearchDirective } from './helpers/directive/ForDimensionCode/dimension-search.directive';
 
 
 
@@ -119,7 +120,8 @@ import { UpdateDImensionCodeComponent } from './DimensionCodes/update-dimension-
     OrderDrawingComponent,
     DimensionCodesMainComponent,
     CreateDimensionCodeComponent,
-    UpdateDImensionCodeComponent
+    UpdateDImensionCodeComponent,
+    DimensionSearchDirective
     ],
   imports: [
     BrowserModule,
@@ -136,6 +138,9 @@ import { UpdateDImensionCodeComponent } from './DimensionCodes/update-dimension-
       {path: 'materials', component: MaterialsComponent },
       { path: 'materials/add', component: CreateNewMaterialComponent},
       { path: 'materials/update', component: UpdateMaterialComponent},
+      {path: 'dimensionCodes', component: DimensionCodesMainComponent },
+      { path: 'dimensionCodes/add', component: CreateDimensionCodeComponent},
+      { path: 'dimensionCodes/update', component: UpdateDImensionCodeComponent},
       { path: 'users', component: UsersComponent},
       { path: 'users/add', component: CreateNewUserComponent},
       { path: 'users/update', component: UpdateUserComponent},
