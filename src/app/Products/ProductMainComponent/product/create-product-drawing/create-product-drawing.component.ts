@@ -32,6 +32,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   operationSuccessStatusMessage: string;
   previouslyUsedUniqueDimensionCodes: string[] = [];
   idValue: string;
+  angle = -90;
   rootUrl = 'http://localhost:5000';
   // tslint:disable-next-line:max-line-length
   /* view child is a get elementby id equivalent, and Viev childrens is something like get element by class name, but element must be marked with #elementname*/
@@ -71,69 +72,121 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
 
   onSubmitForInputCreating(): void {
 
-    const input = this.renderer.createElement('input');
-    const inputDiv = this.renderer.createElement('div');
+    const input = this.renderer.createElement('textarea');
     this.renderer.setProperty(input, 'value', this.idValue);
     this.renderer.setProperty(input, 'id', this.idValue);
     // this.renderer.setProperty(input, 'type', 'number');
     console.log(`inputId= ${input.id}`);
-    if (this.dimensionOrientation.value === 'horizontal') {
-      input.className = 'dimensionInputHorizontal';
-      inputDiv.className = 'inputDivHorizontal';
-    } else if (this.dimensionOrientation.value === 'vertical') {
-      input.className = 'dimensionInputVertical';
-      inputDiv.className = 'inputDivVertical';
-    }
+    input.className = 'dimensionInputHorizontal';
+    input.style.overflow = 'auto';
+    input.style.resize = 'both';
     /* const drawing = document.getElementById('drawingContainer'); */
-    this.renderer.appendChild(inputDiv, input);
-    this.renderer.appendChild(this.drawing.nativeElement, inputDiv);
-    this.makeInputDivDragable(inputDiv);
+    this.renderer.appendChild(this.drawing.nativeElement, input);
+    this.makeInputDivDragable(input);
+    this.rotateTextField(input);
 
 
   }
 
-  makeInputDivDragable(inputDiv: HTMLElement): void {
+   rotateTextField(textField): void {
+
+    textField.addEventListener('dblclick', () => {
+
+      console.log(this.angle);
+      textField.style.transform = `rotate(${this.angle}deg)`;
+      if (this.angle === -90) {
+        this.angle = 90;
+      }
+      else if (this.angle === 90) {
+        this.angle = 0;
+      }
+      else {
+        this.angle = -90;
+      }
+    });
+  }
+
+  makeInputDivDragable(input: HTMLElement): void {
+
+    let dragable = true;
+
+    input.addEventListener('contextmenu', (ev) => {
+
+      ev.preventDefault();
+      if (dragable === true) {
+        dragable = false;
+      } else if (dragable === false) {
+        dragable = true;
+      }
+    });
 
 
-    inputDiv.onmousedown = (event) => {
+    input.onmousedown = (event) => {
 
-      const shiftX = event.clientX - inputDiv.getBoundingClientRect().left;
-      const shiftY = event.clientY - inputDiv.getBoundingClientRect().top;
-      const moveAt = (pageX, pageY) => {
-        inputDiv.style.left = pageX - shiftX + 'px';
-        inputDiv.style.top = pageY - shiftY + 'px';
-      };
+      console.log(`event.type= ${event.type}`);
+      console.log(`textfield.style.transform= ${input.style.transform}`);
+      console.log(`textfield.style.width= ${input.style.width}`);
+      console.log(`textfield.style.height= ${input.style.height}`);
+      const texfieldWith = document.getElementById(input.id).style.width;
+      console.log(`texfieldWith= ${texfieldWith}`);
+      if (dragable === true && event.type !== 'dblclick') {
+        // event.clientX and event.clientY are mouse pointer coordinates
+        //  textField.getBoundingClientRect().left distance from left corner to html.element
+        const transform = input.style.transform;
+        const inputWidth = input.style.width;
+        const inputWidthNumber = Number(inputWidth.split('px')[0]);
+        const inputHeight = input.style.height;
+        const inputHeightNumber = Number(inputHeight.split('px')[0]);
+        const widthMinusHeightDevidedBy2 = (inputWidthNumber - inputHeightNumber) / 2;
+        let shiftX: number;
+        let shiftY: number;
+        if (!transform || transform === '') {
+           shiftX = event.clientX - input.getBoundingClientRect().left;
+           shiftY = event.clientY - input.getBoundingClientRect().top;
+        }
+        else if (transform && (transform === 'rotate(-90deg)' || transform === 'rotate(90deg)')) {
+          shiftX = event.clientX - input.getBoundingClientRect().left + widthMinusHeightDevidedBy2;
+          shiftY = event.clientY - input.getBoundingClientRect().top - widthMinusHeightDevidedBy2;
+        }
 
-      // tslint:disable-next-line:no-shadowed-variable
-      const onMouseMove = (event: any) => {
+        input.style.position = 'absolute';
+        input.style.zIndex = '1000';
+        this.renderer.appendChild(this.drawing.nativeElement, input);
+        const moveAt = (pageX, pageY) => {
+          const textFieldWidth = input.style.width;
+          const textFieldHeight = input.getBoundingClientRect().height;
+          console.log(textFieldHeight);
+          input.style.left = pageX - shiftX + 'px';
+          input.style.top = pageY - shiftY + 'px';
+
+          /*
+          widght=60, height=20 widght-height= 40, widght-height/2 = 20 which is correction value
+           textField.style.left = pageX - shiftX - 20  + 'px';
+          textField.style.top = pageY - shiftY + 20 + 'px';*/
+        };
         moveAt(event.pageX, event.pageY);
+
+        // moves the ball at (pageX, pageY) coordinates
+        // taking initial shifts into account
+        const onMouseMove = (event: any) => {
+          moveAt(event.pageX, event.pageY);
+        };
+
+        // move the ball on mousemove
+        document.addEventListener('mousemove', onMouseMove);
+
+        // drop the ball, remove unneeded handlers
+        document.onmouseup = () => {
+          document.removeEventListener('mousemove', onMouseMove);
+          input.onmouseup = null;
+        };
+
+      }
+      input.ondragstart = () => {
+        return false;
       };
-      inputDiv.style.position = 'absolute';
-      inputDiv.style.zIndex = '1000';
-      this.renderer.appendChild(this.drawing.nativeElement, inputDiv);
-
-      moveAt(event.pageX, event.pageY);
-
-      // moves the ball at (pageX, pageY) coordinates
-      // taking initial shifts into account
-      // move the ball on mousemove
-      document.addEventListener('mousemove', onMouseMove);
-
-      // drop the ball, remove unneeded handlers
-      inputDiv.onmouseup = () => {
-        document.removeEventListener('mousemove', onMouseMove);
-        inputDiv.onmouseup = null;
-      };
-
     };
-
-    inputDiv.ondragstart = () => {
-      return false;
-    };
-
-
   }
-
   saveProductInDatabas(): void {
 
     const dimensionFieldInfoTable: DimensionTextFIeldInfo[] = this.getTextFieldsPositionsAndIdAndPushItToTable();
@@ -153,8 +206,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
       const errorMessage = getBackendErrrorMesage(error);
       if (errorMessage.includes('Already exist in database')) {
         this.operationFailerStatusMessage = 'nie udało się dodać produktu, produkt o podanych parametrach już istnieje w bazie danych';
-      }
-      else {
+      } else {
         this.operationFailerStatusMessage = 'wystąpił bład, nie udało sie dodać produktu, spróbuj ponownie';
       }
     });
@@ -166,16 +218,17 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
 
     const dimensionsTextFieldInfoTable: DimensionTextFIeldInfo[] = [];
     // tslint:disable-next-line:max-line-length
-    const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.inputDivHorizontal, .inputDivVertical'); /* does not work for 2 class at once selected  */
-    console.log(`inoutDivs lenhth=   ${inputDivs.length}`);
+    const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.dimensionInputHorizontal');
     for (let i = 0; i < inputDivs.length; i++) {
-     /* const inputDivRelativeToContainerXPosition = inputDivs[i].style.left/this.drawing */
+      /* const inputDivRelativeToContainerXPosition = inputDivs[i].style.left/this.drawing */
       const dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
-        dimensionId: inputDivs[i].firstElementChild.id,
+        dimensionId: inputDivs[i].id,
         dimensionTexfieldXposition: `${inputDivs[i].style.left}`,
         dimensionTexfieldYposition: `${inputDivs[i].style.top}`,
-        dimensionDivClass: inputDivs[i].className,
-        dimensionInputClass: inputDivs[i].firstElementChild.className
+        dimensionTexFieldHeight: `${inputDivs[i].style.height}`,
+        dimensionTexFieldWidth: `${inputDivs[i].style.width}`,
+        dimensionInputClass: inputDivs[i].className,
+        transform: `${inputDivs[i].style.transform}`,
       };
       dimensionsTextFieldInfoTable.push(dimensionTextFIeldInfo);
     }
@@ -212,13 +265,14 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
     }
     if (this.newDimensionId.value && !this.dimensionId.value) {
 
-        console.log('in (!this.dimensionId.value) && this.newDimensionId) ');
-        this.idValue = this.newDimensionId.value;
-        this.dimensionId.setValue(this.newDimensionId.value);
-    /* const selectElement = this.host.nativeElement.querySelector('select.dimensionIdSelect');
-    this.renderer.setProperty(selectElement, 'value', this.newDimensionId.value ); */
+      console.log('in (!this.dimensionId.value) && this.newDimensionId) ');
+      this.idValue = this.newDimensionId.value;
+      this.dimensionId.setValue(this.newDimensionId.value);
+      /* const selectElement = this.host.nativeElement.querySelector('select.dimensionIdSelect');
+      this.renderer.setProperty(selectElement, 'value', this.newDimensionId.value ); */
+    }
   }
-}
+
   ngAfterContentChecked(): void {
     this.setIdValue();
   }

@@ -115,25 +115,22 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   getInputElementsFromVievAndCreateDimensionTable(): Dimension[] {
     // tslint:disable-next-line:max-line-length
-    const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.inputDivHorizontal, .inputDivVertical'); /* does not work for 2 class at once selected  */
+    const inputs: HTMLTextAreaElement [] = this.host.nativeElement.querySelectorAll('.dimensionInputHorizontal'); /* does not work for 2 class at once selected  */
     const dimensionsForDatabase: Dimension[] = [];
-    console.log(`inoutDivs lenhth=   ${inputDivs.length}`);
-    for (let i = 0; i < inputDivs.length; i++) {
-      /* const inputDivRelativeToContainerXPosition = inputDivs[i].style.left/this.drawing */
-      const input: HTMLInputElement = inputDivs[i].getElementsByTagName('input')[0];
+    inputs.forEach((input) => {
       const dimension: Dimension = {
-        dimensionId: input.id,
-        dimensionvalue: input.value
+        dimensionvalue: input.value,
+        dimensionId: input.id
       };
       dimensionsForDatabase.push(dimension);
-    }
+    });
     return dimensionsForDatabase;
   }
 
 
   createDimensionInputsBasingOnProductData(): void {
     this.createOrderDto.product.dimensionsTextFieldInfo.forEach((di) => {
-      this.createDimensionInputOnDrawingBasingOnDimensionInfo(di, 'input');
+      this.createDimensionInputOnDrawingBasingOnDimensionInfo(di, 'textarea');
     });
   }
 
@@ -144,7 +141,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       dimensionsInfo.forEach((dimensionInfo) => {
         dimensions.forEach((dimension) => {
           if (dimensionInfo.dimensionId === dimension.dimensionId) {
-            this.createDimensionInputOnDrawingWithSetValueBasingOnDimensionInfoAndOrderData(dimensionInfo, dimension, 'input');
+            this.createDimensionInputOnDrawingWithSetValueBasingOnDimensionInfoAndOrderData(dimensionInfo, dimension, 'textarea');
           }
         });
       });
@@ -153,17 +150,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   // tslint:disable-next-line:max-line-length
   createDimensionInputOnDrawingWithSetValueBasingOnDimensionInfoAndOrderData(dimensionInfo: DimensionTextFIeldInfo, dimension: Dimension, inputTag: string): void {
-    const inputId: string = dimensionInfo.dimensionId;
-    const inputXposition: string = dimensionInfo.dimensionTexfieldXposition;
-    const inputYPosition: string = dimensionInfo.dimensionTexfieldYposition;
-    const inputDivClass: string = dimensionInfo.dimensionDivClass;
-    const inputClass: string = dimensionInfo.dimensionInputClass;
-    const inputDiv = this.renderer.createElement('div');
     const input = this.renderer.createElement(inputTag);
-    input.className = inputClass;
-    input.type = 'number';
-    input.id = inputId;
     input.value = dimension.dimensionvalue;
+    this.setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo, input);
     if (allSecondIndexDimensionCodes.includes(input.id)) {
       this.LValue = input.value;
       console.log(`setting Lvalue to = ${this.LValue}`);
@@ -180,35 +169,36 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.renderer.setProperty(input, 'readonly', 'false');
       console.error(`input readonly property = ${input.readonly}`);
     }
-    inputDiv.className = inputDivClass;
-    inputDiv.style.left = inputXposition;
-    inputDiv.style.top = inputYPosition;
-    inputDiv.style.position = 'absolute';
-    inputDiv.style.zIndex = 1000;
-
-    this.renderer.appendChild(inputDiv, input);
-    this.renderer.appendChild(this.drawing.nativeElement, inputDiv);
+    this.renderer.appendChild(this.drawing.nativeElement, input);
   }
 
 
   createDimensionInputOnDrawingBasingOnDimensionInfo(dimensionInfo: DimensionTextFIeldInfo, inputTag: string): void {
-    const inputId: string = dimensionInfo.dimensionId;
-    const inputXposition: string = dimensionInfo.dimensionTexfieldXposition;
-    const inputYPosition: string = dimensionInfo.dimensionTexfieldYposition;
-    const inputDivClass: string = dimensionInfo.dimensionDivClass;
-    const inputClass: string = dimensionInfo.dimensionInputClass;
-    const inputDiv = this.renderer.createElement('div');
     const input = this.renderer.createElement(inputTag);
-    input.className = inputClass;
-    input.type = 'number';
-    input.id = inputId;
-    inputDiv.className = inputDivClass;
-    inputDiv.style.left = inputXposition;
-    inputDiv.style.top = inputYPosition;
-    inputDiv.style.position = 'absolute';
-    inputDiv.style.zIndex = 1000;
-    this.renderer.appendChild(inputDiv, input);
-    this.renderer.appendChild(this.drawing.nativeElement, inputDiv);
+   // input.type = 'number';
+    this.setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo, input);
+    this.renderer.appendChild(this.drawing.nativeElement, input);
+  }
+  setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo: DimensionTextFIeldInfo, input: HTMLElement): void {
+    if (dimensionInfo.transform) {
+      input.style.transform = dimensionInfo.transform;
+    }
+    if (dimensionInfo.dimensionTexFieldWidth) {
+      input.style.width = dimensionInfo.dimensionTexFieldWidth;
+    }
+    if (dimensionInfo.dimensionTexFieldHeight) {
+      input.style.height = dimensionInfo.dimensionTexFieldHeight;
+    }
+    input.style.left = dimensionInfo.dimensionTexfieldXposition;
+    input.style.top = dimensionInfo.dimensionTexfieldYposition;
+    input.className = dimensionInfo.dimensionInputClass;
+    input.id = dimensionInfo.dimensionId;
+    input.style.position = 'absolute';
+    input.style.zIndex = '1000';
+    input.style.resize = 'none';
+    if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING || this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM) {
+      input.style.border = 'none';
+    }
   }
 
   onSubmit(): void {

@@ -1,6 +1,6 @@
 <div id="mainCointener">
   <div id="drawingAndTableContainer" #drawingAndTableContainer>
-  <div id="drawingContainer">
+  <div id="drawingContainer" #drawingContainer>
     <!--[style.background-image]="'url('+bgImageVariable+')'"-->
     <img [src]="bgImageVariable" alt="">
   </div>
@@ -20,7 +20,7 @@
           <select  class="form-control" formControlName="dimensionId" id="dimensionIdSelect" #dimensionIdSelect>
             <option [ngValue]="null" disabled> Wybierz Kod Wymiaru</option>
             <option  [ngValue]="null" (click)="this.newDimensionId.setValue(null);">Nie wybrano kodu wymiaru</option>
-            <option *ngIf="newDimensionId.value !==null" [ngValue]="newDimensionId.value" >{{newDimensionId.value}}</option>
+            <option  [ngValue]="newDimensionId.value" >{{newDimensionId.value}}</option>
             <option *ngFor="let code of previouslyUsedUniqueDimensionCodes" [ngValue]="code">
               {{ code}}
             </option>
@@ -30,31 +30,8 @@
               <input type="text" class="form-control" formControlName="newDimensionId"  id="dimensionIdCreate" placeholder="Nazwa kodu wymiaru">
 
         </div>
-          <div class="form-group col-md-6">
-            <p>Wybierz orientacje wymiaru</p>
-            <label class="label" for="horizonntal">Orientacja Pozioma</label>
-            <input type="radio" class="form-control" name="dimensionOrientation" formControlName="dimensionOrientation"
-                   id="horizonntal"
-                   placeholder="Kod typu produktu" value="horizontal">
-
-            <label class="label" for="vertical">Orientacja pionowa</label>
-            <input type="radio" class="form-control" name="dimensionOrientation" formControlName="dimensionOrientation"
-                   id="vertical"
-                   placeholder="Kod typu produktu" value="vertical">
-
-            <div *ngIf="dimensionOrientation.invalid && (dimensionOrientation.dirty || dimensionOrientation.touched)"
-                 class="alert alert-danger">
-
-              <div class="validatorInfo" *ngIf="dimensionOrientation.errors.required">
-                To pole jest wymagane
-              </div>
-
-            </div>
-
-
-          </div>
           <div class="addButon">
-            <button type="submit" [disabled]="!createDimensionForm.valid" class="btn btn-danger">Utwórz</button>
+            <button type="submit" [disabled]="createDimensionForm.valid" class="btn btn-danger">Utwórz</button>
           </div>
         </div>
       </div>

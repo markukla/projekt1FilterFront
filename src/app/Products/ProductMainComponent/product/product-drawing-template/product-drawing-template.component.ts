@@ -56,13 +56,11 @@ export class ProductDrawingTemplateComponent implements OnInit, AfterViewInit, A
     const inputId: string = dimensionInfo.dimensionId;
     const inputXposition: string = dimensionInfo.dimensionTexfieldXposition;
     const inputYPosition: string = dimensionInfo.dimensionTexfieldYposition;
-    const inputDivClass: string = dimensionInfo.dimensionDivClass;
     const inputClass: string = dimensionInfo.dimensionInputClass;
     const inputDiv = this.renderer.createElement('div');
     const input = this.renderer.createElement(inputTag);
     input.className = inputClass;
     input.value = inputId;
-    inputDiv.className = inputDivClass;
     inputDiv.style.left = inputXposition;
     inputDiv.style.top = inputYPosition;
     inputDiv.style.position = 'absolute';

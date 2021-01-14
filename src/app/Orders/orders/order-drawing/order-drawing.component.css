@@ -2,7 +2,7 @@
 
 }
 #drawingContainer {
-  /* background-image: url('W702L_V_prawie_ostateczna.png'); */
+  /* background-image: url('W702L_V_prawie_ostateczna.png');*/
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -10,34 +10,12 @@
   height: 600px;
 
 }
-
+/**/
 .dimensionInputHorizontal {
-  height: 100%;
-  position: absolute;
-  text-align: center; /* Optional */
-  width: 100%;
-
-}
-.inputDivHorizontal {
-  position: relative;
   width: 60px;
   height: 20px;
-
-
-}
-.dimensionInputVertical {
-  height: 100%;
-  position: absolute;
-  text-align: center; /* Optional */
-  width: 100%;
 }
 
-.inputDivVertical {
-  display: inline-block;
-  position: relative;
-  width: 20px;
-  height: 60px;
-}
 #tableContainer {
 
 }
