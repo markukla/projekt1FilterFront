@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import ProductBottom from '../../Products/ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../Products/ProductTypesAndClasses/productTop.entity';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -8,6 +8,7 @@ import {ValidateDiemensionCodeService} from '../DimensionCodeServices/validate-d
 import DimensionRoleEnum from '../DimensionCodesTypesAnClasses/dimensionRoleEnum';
 import CreateDimensionCodeDto from '../DimensionCodesTypesAnClasses/createDimensionCode.dto';
 import LocalizedName from '../DimensionCodesTypesAnClasses/localizedName';
+import DimensionCode from '../DimensionCodesTypesAnClasses/diemensionCode.entity';
 
 @Component({
   selector: 'app-create-dimension-code',
@@ -28,6 +29,9 @@ export class CreateDimensionCodeComponent implements OnInit {
   noIndexDimensionRole = 'Nie wchodzi do Indeksu';
   createDimensionCodeDto: CreateDimensionCodeDto;
   localizedNames: LocalizedName[] = [];
+  createdDimensinoCode: DimensionCode;
+  @Output()
+  createdDimensionEmiter: EventEmitter<DimensionCode>;
   constructor(
     private backendService: DimensionCodeBackendService,
     public validationService: ValidateDiemensionCodeService,
@@ -36,9 +40,12 @@ export class CreateDimensionCodeComponent implements OnInit {
     private router: Router) {
     console.log('creating component:CreateProductTypeComponent');
     this.getDataToDropdownLists();
+    this.createdDimensionEmiter = new EventEmitter<DimensionCode>();
+
   }
 
   ngOnInit(): void {
+    this.createdDimensionEmiter = new EventEmitter<DimensionCode>();
     this.form = new FormGroup({
       // tslint:disable-next-line:max-line-length
       role: new FormControl('', [Validators.nullValidator, Validators.required]),
@@ -83,6 +90,8 @@ export class CreateDimensionCodeComponent implements OnInit {
     };
     this.backendService.addRecords(this.createDimensionCodeDto).subscribe((material) => {
       this.showoperationStatusMessage = 'Dodano nowy rekord';
+      this.createdDimensinoCode = material.body;
+      this.createdDimensionEmiter.emit(this.createdDimensinoCode);
       this.cleanOperationMessage();
     }, error => {
       this.showoperationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego rekordu';

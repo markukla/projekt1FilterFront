@@ -10,26 +10,34 @@
 
 
 </div>
-  <div id="createFormContainer" (mouseover)="this.getPreviouslyUsedCodes()">
+  <div id="createFormContainer">
     <p> utwórz wymiar</p>
     <form [formGroup]="createDimensionForm" (ngSubmit)="onSubmitForInputCreating()">
       <div class="row">
         <div class="form-group col-md-6">
 
-          <label class="label" for="dimensionIdSelect">Wybierz z listy nazwę poprzednio używanego kodu wymiaru</label>
-          <select  class="form-control" formControlName="dimensionId" id="dimensionIdSelect" #dimensionIdSelect>
+          <label class="label" for="firstIndexDimension">Wybierz z listy nazwę wymiaru bedącego pierwszym wymiarem indeksu</label>
+          <select  class="form-control" formControlName="dimensionId" id="firstIndexDimension" #dimensionIdSelect>
             <option [ngValue]="null" disabled> Wybierz Kod Wymiaru</option>
-            <option  [ngValue]="null" (click)="this.newDimensionId.setValue(null);">Nie wybrano kodu wymiaru</option>
-            <option  [ngValue]="newDimensionId.value" >{{newDimensionId.value}}</option>
-            <option *ngFor="let code of previouslyUsedUniqueDimensionCodes" [ngValue]="code">
-              {{ code}}
+            <option *ngFor="let code of allFirstIndexDimensionCodes" [ngValue]="code.dimensionCode">
+              {{ code.dimensionCode +'-' + code.localizedDimensionName.nameInThisLanguage}}
             </option>
           </select>
-            <div *ngIf="!this.dimensionId.value">
-              <label class="label" for="dimensionIdCreate">Dodaj Nowy kod wymiaru</label>
-              <input type="text" class="form-control" formControlName="newDimensionId"  id="dimensionIdCreate" placeholder="Nazwa kodu wymiaru">
+          <label class="label" for="secondIndexDimension">Wybierz z listy nazwę wymiaru bedącego drugim wymiarem indeksu</label>
+          <select  class="form-control" formControlName="dimensionId" id="secondIndexDimension" #dimensionIdSelect>
+            <option [ngValue]="null" disabled> Wybierz Kod Wymiaru</option>
+            <option *ngFor="let code of allSecondIndexDimensionCOde" [ngValue]="code.dimensionCode">
+              {{ code.dimensionCode +'-' + code.localizedDimensionName.nameInThisLanguage}}
+            </option>
+          </select>
+          <label class="label" for="noIndexDimension">Wybierz z listy nazwę wymiaru bedącego drugim wymiarem indeksu</label>
+          <select  class="form-control" formControlName="dimensionId" id="noIndexDimension" #dimensionIdSelect>
+            <option [ngValue]="null" disabled> Wybierz Kod Wymiaru</option>
+            <option *ngFor="let code of allNonIndexDimensionCodes" [ngValue]="code.dimensionCode">
+              {{ code.dimensionCode +'-' + code.localizedDimensionName.nameInThisLanguage}}
+            </option>
+          </select>
 
-        </div>
           <div class="addButon">
             <button type="submit" [disabled]="createDimensionForm.valid" class="btn btn-danger">Utwórz</button>
           </div>
@@ -40,6 +48,12 @@
 
   </div>
   <button class="saveButton" (click)="saveProductInDatabas()">Dodaj produkt </button>
+  <div >
+    <button type="button" (click)="addNewClicked = true; newDimension = null;" >Dodaj Nowy kod wymiaru</button>
+    <div *ngIf="addNewClicked">
+      <app-create-dimension-code (createdDimensionEmiter)="onNewProductCreated($event)"></app-create-dimension-code>
+    </div>
+  </div>
   <div *ngIf="operationFailerStatusMessage" class="alert-danger">
     <p>{{operationFailerStatusMessage}}</p>
   </div>

@@ -14,6 +14,8 @@
 .dimensionInputHorizontal {
   width: 60px;
   height: 20px;
+  white-space: nowrap;
+  resize: horizontal;
 }
 
 #tableContainer {

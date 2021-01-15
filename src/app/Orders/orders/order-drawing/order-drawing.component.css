@@ -12,8 +12,12 @@
 }
 /**/
 .dimensionInputHorizontal {
-  width: 60px;
+
+  width: auto;
   height: 20px;
+  white-space: nowrap;
+  overflow-x: auto;
+  resize: horizontal;
 }
 
 #tableContainer {

@@ -1,10 +1,11 @@
 import {
-  AfterContentChecked, AfterViewChecked,
+  AfterContentChecked,
+  AfterViewChecked,
   AfterViewInit,
   Component,
-  ElementRef, Input,
+  ElementRef,
+  Input,
   OnInit,
-  QueryList,
   Renderer2,
   ViewChild,
   ViewChildren
@@ -14,9 +15,10 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
 import DimensionTextFIeldInfo from '../../../ProductTypesAndClasses/dimensionTextFIeldInfo';
 import {getBackendErrrorMesage} from '../../../../helpers/errorHandlingFucntion/handleBackendError';
-import {allUsedDimensionsCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
-import {allSecondIndexDimensionCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
-import {allFirstIndexDimensionCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
+import {DimensionCodeBackendService} from '../../../../DimensionCodes/DimensionCodeServices/dimension-code-backend.service';
+import DimensionCode from '../../../../DimensionCodes/DimensionCodesTypesAnClasses/diemensionCode.entity';
+import LocalizedDimensionCode from '../../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedDimensionCode';
+import DimensionRoleEnum from '../../../../DimensionCodes/DimensionCodesTypesAnClasses/dimensionRoleEnum';
 
 @Component({
   selector: 'app-create-product-drawing',
@@ -30,10 +32,18 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   createDimensionForm: FormGroup;
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
-  previouslyUsedUniqueDimensionCodes: string[] = [];
+  allDimensionCodes: LocalizedDimensionCode [];
+  allFirstIndexDimensionCodes: LocalizedDimensionCode[];
+  allSecondIndexDimensionCOde: LocalizedDimensionCode [];
+  allNonIndexDimensionCodes: LocalizedDimensionCode [];
+  selectedLanguageLang: string = 'PL'; /* it will be the value obtained form login service in the future*/
+  addNewClicked = false;
   idValue: string;
   angle = -90;
   rootUrl = 'http://localhost:5000';
+  @Input()
+  newDimension: DimensionCode;
+  newLocalizedDimension: LocalizedDimensionCode;
   // tslint:disable-next-line:max-line-length
   /* view child is a get elementby id equivalent, and Viev childrens is something like get element by class name, but element must be marked with #elementname*/
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
@@ -41,18 +51,19 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
 
   constructor(private backendService: ProductBackendService,
               private renderer: Renderer2,
-              private host: ElementRef) {
+              private host: ElementRef,
+              private dimensionBackendService: DimensionCodeBackendService) {
     this.bgImageVariable = this.rootUrl + this.backendService.drawingPaths.urlOfOrginalDrawing;
   }
 
 
-  ngOnInit(): void {
-    this.createDimensionForm = new FormGroup({
-      dimensionId: new FormControl(null, [Validators.required]),
-      dimensionOrientation: new FormControl(null, [Validators.required]),
-      newDimensionId: new FormControl(null)
-    });
-    console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
+ async ngOnInit(): Promise<void> {
+   this.createDimensionForm = new FormGroup({
+     dimensionId: new FormControl(null, [Validators.required]),
+     dimensionOrientation: new FormControl(null, [Validators.required]),
+   });
+   await this.getPreviouslyUsedCodes();
+   console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
   }
 
   // tslint:disable-next-line:typedef
@@ -61,9 +72,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   }
 
   // tslint:disable-next-line:typedef
-  get newDimensionId() {
-    return this.createDimensionForm.get('newDimensionId');
-  }
+
 
   // tslint:disable-next-line:typedef
   get dimensionOrientation() {
@@ -103,6 +112,8 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
       else {
         this.angle = -90;
       }
+      /*  it is always horizontal, because rotation means that horizontal dimension become also vertical*/
+      textField.style.resize = 'horizontal';
     });
   }
 
@@ -235,45 +246,66 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
     return dimensionsTextFieldInfoTable;
   }
 
-  getPreviouslyUsedCodes(): void {
-    console.log('in getPreviouslyUsedCodes ');
-    if (this.previouslyUsedUniqueDimensionCodes.length === 0) {
-      this.backendService.getRecords().subscribe((products) => {
-        const allProducts = products.body;
-        const allpreviouslyUsedCodes: string[] = [];
-        allProducts.forEach((p) => {
-          p.dimensionsTextFieldInfo.forEach((d) => {
-            allpreviouslyUsedCodes.push(d.dimensionId);
-          });
-        });
-        /* i make sure that L i D codes crucial for Index Binding will be always present, and that is why push it to table*/
-        allpreviouslyUsedCodes.push(...allUsedDimensionsCodes);
-        console.log(`allpreviouslyUsedCodes.length= ${allpreviouslyUsedCodes.length} `);
-        const allUniquePreviouslyUsedCodes: string[] = allpreviouslyUsedCodes.filter((x, index, self) => {
-          return index === self.indexOf(x);
-        });
-        console.log(`allUniquePreviouslyUsedCodes.length= ${allUniquePreviouslyUsedCodes.length} `);
-        this.previouslyUsedUniqueDimensionCodes = allUniquePreviouslyUsedCodes;
-      });
+  async getPreviouslyUsedCodes(): Promise<void> {
+    try {
+      const allDimensions = await this.dimensionBackendService.getRecords().toPromise();
+      this.allDimensionCodes = this.getLocalizedNameFromAllLanguage(allDimensions.body);
 
+    }
+    catch (error: any) {
+      console.log('could not get all dimensions');
+    }
+    try {
+      const allFirstIndexDimensions = await this.dimensionBackendService.getFirstIndexDimensions().toPromise();
+      this.allFirstIndexDimensionCodes = this.getLocalizedNameFromAllLanguage(allFirstIndexDimensions.body);
+
+    }
+    catch (error: any) {
+      console.log('could not get allFirstIndexDimensions');
+    }
+    try {
+      const secondIndexDimensions = await this.dimensionBackendService.getSecondIndexDimensions().toPromise();
+      this.allSecondIndexDimensionCOde = this.getLocalizedNameFromAllLanguage(secondIndexDimensions.body);
+
+    }
+    catch (error: any) {
+      console.log('could not get secondIndexDimensions');
+    }
+    try {
+      const noIndexDimensions = await this.dimensionBackendService.getNonIndexDimensions().toPromise();
+      this.allNonIndexDimensionCodes = this.getLocalizedNameFromAllLanguage(noIndexDimensions.body);
+
+    }
+    catch (error: any) {
+      console.log('could not get noIndexDimensions');
     }
   }
 
   setIdValue(): void {
-    if (this.dimensionId.value) {
-      this.idValue = this.dimensionId.value;
-    }
-    if (this.newDimensionId.value && !this.dimensionId.value) {
-
-      console.log('in (!this.dimensionId.value) && this.newDimensionId) ');
-      this.idValue = this.newDimensionId.value;
-      this.dimensionId.setValue(this.newDimensionId.value);
+    if (this.newDimension) {
+      this.addNewClicked = false;
+      console.log('in (!this.dimensionId.value) && this.newDimension) ');
+      this.newLocalizedDimension = this.getLocalizedDimensionFromDimension(this.newDimension);
+      if (this.newLocalizedDimension.dimensionRole === DimensionRoleEnum.FIRSTINDEXDIMENSION) {
+        this.allFirstIndexDimensionCodes.push(this.newLocalizedDimension);
+      }
+      else if (this.newLocalizedDimension.dimensionRole === DimensionRoleEnum.SECONDINDEXDIMENSION) {
+        this.allSecondIndexDimensionCOde.push(this.newLocalizedDimension);
+      }
+      else if (this.newLocalizedDimension.dimensionRole === DimensionRoleEnum.NOINDEXDIMENSION) {
+        this.allNonIndexDimensionCodes.push(this.newLocalizedDimension);
+      }
+      this.idValue = this.newLocalizedDimension.dimensionCode;
+      this.dimensionId.setValue(this.newLocalizedDimension.dimensionCode);
       /* const selectElement = this.host.nativeElement.querySelector('select.dimensionIdSelect');
-      this.renderer.setProperty(selectElement, 'value', this.newDimensionId.value ); */
+      this.renderer.setProperty(selectElement, 'value', this.newDimension.value ); */
+    }
+    else if (this.dimensionId.value) {
+      this.idValue = this.dimensionId.value;
     }
   }
 
-  ngAfterContentChecked(): void {
+    ngAfterContentChecked(): void {
     this.setIdValue();
   }
 
@@ -281,6 +313,39 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   }
 
   ngAfterViewChecked(): void {
+
+  }
+  getLocalizedNameFromAllLanguage(dimensnionCodes: DimensionCode[]): LocalizedDimensionCode[] {
+    const localizedDimensionCodes: LocalizedDimensionCode[] = [];
+    dimensnionCodes.forEach((dimensionCOde) => {
+      dimensionCOde.localizedDimensionNames.forEach((localizedName) => {
+        if (localizedName.languageCode === this.selectedLanguageLang) {
+          const localizedCode: LocalizedDimensionCode = {
+            ...dimensionCOde,
+            localizedDimensionName: localizedName
+          };
+          localizedDimensionCodes.push(localizedCode);
+        }
+      });
+    });
+    return localizedDimensionCodes;
+  }
+  getLocalizedDimensionFromDimension(dimension: DimensionCode): LocalizedDimensionCode {
+    let localizedDimensionCode: LocalizedDimensionCode;
+    dimension.localizedDimensionNames.forEach((localizedName) => {
+        if (localizedName.languageCode === this.selectedLanguageLang) {
+          localizedDimensionCode = {
+            ...dimension,
+            localizedDimensionName: localizedName
+          };
+        }
+      });
+    return localizedDimensionCode;
+  }
+  onNewProductCreated(event: DimensionCode): void {
+    console.log('in on product created');
+    this.newDimension = event;
+    this.addNewClicked = false;
 
   }
 
