@@ -30,6 +30,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   tableForm: FormGroup;
   bgImageVariable: string;
   createDimensionForm: FormGroup;
+  dimensionRoleForm: FormGroup;
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
   allDimensionCodes: LocalizedDimensionCode [];
@@ -48,6 +49,12 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   /* view child is a get elementby id equivalent, and Viev childrens is something like get element by class name, but element must be marked with #elementname*/
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
   @ViewChildren('.inputDivHorizontal', {read: HTMLElement}) inputDivs: HTMLElement[];
+  dimensionRoleFirstIndexDimensionDescription = 'Pierwszy Wymiar Indeksu';
+  dimensionRoleFirstIndex: DimensionRoleEnum = DimensionRoleEnum.FIRSTINDEXDIMENSION;
+  dimensionRoleSecondIndexDimensionDescription = 'Drugi wymiar Indeksu';
+  dimensionRoleSecondIndex: DimensionRoleEnum = DimensionRoleEnum.SECONDINDEXDIMENSION;
+  dimensionRoleNoIndexDimensionDescription = 'Wymiar nie wchodzący do indeksu';
+  dimensionRoleNoIndex: DimensionRoleEnum = DimensionRoleEnum.NOINDEXDIMENSION;
 
   constructor(private backendService: ProductBackendService,
               private renderer: Renderer2,
@@ -62,10 +69,15 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
      dimensionId: new FormControl(null, [Validators.required]),
      dimensionOrientation: new FormControl(null, [Validators.required]),
    });
+   this.dimensionRoleForm = new FormGroup({
+     dimensionRole: new FormControl(null, [Validators.required]),
+   });
    await this.getPreviouslyUsedCodes();
    console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
   }
-
+  get dimensionRole() {
+    return this.dimensionRoleForm.get('dimensionRole');
+  }
   // tslint:disable-next-line:typedef
   get dimensionId() {
     return this.createDimensionForm.get('dimensionId');
@@ -75,6 +87,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
 
 
   // tslint:disable-next-line:typedef
+
   get dimensionOrientation() {
     return this.createDimensionForm.get('dimensionOrientation');
   }
@@ -342,6 +355,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
       });
     return localizedDimensionCode;
   }
+
   onNewProductCreated(event: DimensionCode): void {
     console.log('in on product created');
     this.newDimension = event;
