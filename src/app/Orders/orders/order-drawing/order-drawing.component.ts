@@ -54,7 +54,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   firstIndexDimensions: string[] = [];
   secondIndexDimensions: string[] = [];
   /* below fields moved from create-product drawing component*/
-  createDimensionForm: FormGroup;
+  createDimensionsForm: FormGroup;
   dimensionRoleForm: FormGroup;
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
@@ -95,7 +95,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   async ngOnInit(): Promise<void> {
-    this.createDimensionForm = new FormGroup({
+    this.createDimensionsForm = new FormGroup({
       dimensionCodeControll: new FormControl(null, [Validators.required]),
     });
     this.dimensionRoleForm = new FormGroup({
@@ -106,6 +106,14 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     await this.getDimensionCodes();
 
     // tslint:disable-next-line:max-line-length
+  }
+  // tslint:disable-next-line:typedef
+  get dimensionRole() {
+    return this.dimensionRoleForm.get('dimensionRole');
+  }
+  // tslint:disable-next-line:typedef
+  get dimensionCodeControll() {
+    return this.createDimensionsForm.get('dimensionCodeControll');
   }
   async getDimensionCodes(): Promise<void> {
     const firstIndexDimension = await this.dimensionBackendService.getFirstIndexDimensions().toPromise();
@@ -363,6 +371,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   @HostListener('input', ['$event'])
   bindInputWithIndex(event: any): void {
     const inputId = event.target.id;
+    if (event.target.className === 'dimensionInputHorizontal' ){
     if (this.secondIndexDimensions.includes(event.target.id)) {
       const maxLength = 5;
       if (event.target.value.length > maxLength) {
@@ -386,6 +395,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);
       }
+    }
     }
 
   }
@@ -462,20 +472,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   /* below all methods moved from create-product-drawing*/
-  // tslint:disable-next-line:typedef
-  get dimensionRole() {
-    return this.dimensionRoleForm.get('dimensionRole');
-  }
-  // tslint:disable-next-line:typedef
-  get dimensionCodeControll() {
-    return this.createDimensionForm.get('dimensionCodeControll');
-  }
-
-  // tslint:disable-next-line:typedef
-
-
-  // tslint:disable-next-line:typedef
-
 
   onSubmitForInputCreating(): void {
     this.setIdValue();
@@ -675,7 +671,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   setIdValue(): void {
-    console.error(`this.createDimensionForm =${this.createDimensionForm}`);
+    console.error(`this.createDimensionForm =${this.createDimensionsForm}`);
     if (this.dimensionCodeControll.value) {
 
       this.idValue = this.dimensionCodeControll.value;
