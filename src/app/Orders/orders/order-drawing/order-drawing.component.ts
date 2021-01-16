@@ -4,12 +4,12 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
+  HostListener, Input,
   OnChanges,
   OnInit,
   Renderer2,
   SimpleChanges,
-  ViewChild
+  ViewChild, ViewChildren
 } from '@angular/core';
 import DimensionTextFIeldInfo from '../../../Products/ProductTypesAndClasses/dimensionTextFIeldInfo';
 import {FormGroup} from '@angular/forms';
@@ -18,14 +18,17 @@ import {OrderTableService} from '../OrderServices/order-table.service';
 import {TableFormServiceService} from '../../../Products/ProductMainComponent/product/product-table-form/table-form-service.service';
 import Dimension from '../../OrdersTypesAndClasses/dimension';
 import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
-import {
-  allFirstIndexDimensionCodes,
-  allSecondIndexDimensionCodes
-} from '../../../Products/ProductTypesAndClasses/alreadyExistingDimensionList';
+
 import OrderDetails from '../../OrdersTypesAndClasses/orderDetail';
 import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
 import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
 import {ActivatedRoute, Router} from '@angular/router';
+import {DimensionCodeBackendService} from '../../../DimensionCodes/DimensionCodeServices/dimension-code-backend.service';
+import {ProductBackendService} from '../../../Products/ProductMainComponent/product/ProductServices/product-backend.service';
+import Product from '../../../Products/ProductTypesAndClasses/product.entity';
+import LocalizedDimensionCode from '../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedDimensionCode';
+import DimensionCode from '../../../DimensionCodes/DimensionCodesTypesAnClasses/diemensionCode.entity';
+import DimensionRoleEnum from '../../../DimensionCodes/DimensionCodesTypesAnClasses/dimensionRoleEnum';
 
 @Component({
   selector: 'app-order-drawing',
@@ -41,15 +44,45 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   orderOperationMode: OrderOperationMode;
   createOrderDto: CreateOrderDto;
   selectedOrderId: string;
+  selectedProductId: string;
   allowSubmit = true;
   submitNotAllowedMessage: string;
+  firstIndexDimensions: string[] = [];
+  secondIndexDimensions: string[] = [];
+  /* below fields moved from create-product drawing component*/
+  createDimensionForm: FormGroup;
+  dimensionRoleForm: FormGroup;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
+  allDimensionCodes: LocalizedDimensionCode [];
+  allFirstIndexDimensionCodes: LocalizedDimensionCode[];
+  allSecondIndexDimensionCOde: LocalizedDimensionCode [];
+  allNonIndexDimensionCodes: LocalizedDimensionCode [];
+  selectedLanguageLang: string = 'PL'; /* it will be the value obtained form login service in the future*/
+  addNewClicked = false;
+  idValue: string;
+  angle = -90;
+  newDimension: DimensionCode;
+  newLocalizedDimension: LocalizedDimensionCode;
+  // tslint:disable-next-line:max-line-length
+  /* view child is a get elementby id equivalent, and Viev childrens is something like get element by class name, but element must be marked with #elementname*/
+  dimensionRoleFirstIndexDimensionDescription = 'Pierwszy Wymiar Indeksu';
+  dimensionRoleFirstIndex: DimensionRoleEnum = DimensionRoleEnum.FIRSTINDEXDIMENSION;
+  dimensionRoleSecondIndexDimensionDescription = 'Drugi wymiar Indeksu';
+  dimensionRoleSecondIndex: DimensionRoleEnum = DimensionRoleEnum.SECONDINDEXDIMENSION;
+  dimensionRoleNoIndexDimensionDescription = 'Wymiar nie wchodzący do indeksu';
+  dimensionRoleNoIndex: DimensionRoleEnum = DimensionRoleEnum.NOINDEXDIMENSION;
+
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
+  @ViewChildren('.inputDivHorizontal', {read: HTMLElement}) inputDivs: HTMLElement[];
   constructor(
     private orderBackendService: OrderBackendService,
     private orderTableService: OrderTableService,
     private renderer: Renderer2,
+    private productBackendService: ProductBackendService,
     private tableFormService: TableFormServiceService,
     private authenticationService: AuthenticationService,
+    private dimensionCodeService: DimensionCodeBackendService,
     private router: Router,
     private route: ActivatedRoute,
     private host: ElementRef
@@ -57,17 +90,29 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     this.tableForm = this.tableFormService.tableForm;
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.setOrderOperatiomModeAndSelectedOrderBasingOnQueryParamters();
+    await this.getDimensionCodes();
 
     // tslint:disable-next-line:max-line-length
   }
+  async getDimensionCodes(): Promise<void> {
+    const firstIndexDimension = await this.dimensionCodeService.getFirstIndexDimensions().toPromise();
+    const secondIndeXDimensions = await this.dimensionCodeService.getSecondIndexDimensions().toPromise();
+    firstIndexDimension.body.forEach((firstDimension) => {
+      this.firstIndexDimensions.push(firstDimension.dimensionCode);
+    });
+    secondIndeXDimensions.body.forEach((secondDimension) => {
+      this.secondIndexDimensions.push(secondDimension.dimensionCode);
+    });
+  }
 
-  setOrderOperatiomModeAndSelectedOrderBasingOnQueryParamters(): void {
+   setOrderOperatiomModeAndSelectedOrderBasingOnQueryParamters(): void {
     this.route.queryParamMap.subscribe(queryParams => {
       const mode = queryParams.get('mode');
       console.error(`mode= ${mode}`);
       this.selectedOrderId = queryParams.get('orderId');
+      this.selectedProductId = queryParams.get('productId');
       if (mode === OrderOperationMode.CREATENEW) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
       } else if (mode === OrderOperationMode.UPDATE) {
@@ -82,6 +127,12 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         this.orderOperationMode = OrderOperationMode.SHOWDRAWINGCONFIRM;
       } else if (mode === OrderOperationMode.CONFIRMUPDATE) {
         this.orderOperationMode = OrderOperationMode.CONFIRMUPDATE;
+      }
+      else if (mode === OrderOperationMode.SHOWPRODUCT) {
+        this.orderOperationMode = OrderOperationMode.SHOWPRODUCT;
+      }
+      else if (mode === OrderOperationMode.UPDATEPRODUCT) {
+        this.orderOperationMode = OrderOperationMode.UPDATEPRODUCT;
       }
       this.initPropertiValuesToServicesValues();
     });
@@ -103,7 +154,36 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
       this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
       this.tableFormService.disableTableForm();
-    } else {
+    }
+    else if (this.orderOperationMode === OrderOperationMode.SHOWPRODUCT) {
+      this.productBackendService.findRecordById(this.selectedProductId).subscribe((product)=> {
+        const foundproduct: Product = product.body;
+        this.createOrderDto = {
+          orderNumber: null,
+          product: foundproduct,
+          orderDetails: null,
+          orderName: null,
+          index: null,
+          orderTotalNumber: null,
+          orderVersionNumber: null,
+          businessPartner: null,
+          commentToOrder: null,
+          productMaterial: null,
+          creator: null,
+          date: null
+        };
+        this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
+        this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
+        this.tableFormService.disableTableForm();
+      });
+    }
+    else if (this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT || this.orderOperationMode === OrderOperationMode.CREATENEWPRODUCT) {
+      this.createOrderDto = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
+      this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
+      this.tableFormService.setInitDataFromDrawingTableFromCreateOrderDto(this.createOrderDto);
+      this.tableFormService.disableTableForm();
+    }
+    else {
       console.error('in elese block');
       this.createOrderDto = this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing;
       this.bgImageVariable = this.rootUrl + this.createOrderDto.product.urlOfOrginalDrawing;
@@ -153,11 +233,11 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     const input = this.renderer.createElement(inputTag);
     input.value = dimension.dimensionvalue;
     this.setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo, input);
-    if (allSecondIndexDimensionCodes.includes(input.id)) {
+    if (this.secondIndexDimensions.includes(input.id)) {
       this.LValue = input.value;
       console.log(`setting Lvalue to = ${this.LValue}`);
     }
-    if (allFirstIndexDimensionCodes.includes(input.id)) {
+    if (this.firstIndexDimensions.includes(input.id)) {
       this.DVaLe = input.value;
     }
     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING || this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM) {
@@ -239,7 +319,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
   ngAfterViewInit(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+    if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT) {
       this.createDimensionInputsBasingOnProductData();
     } else { /* update or show drawing modes*/
       // tslint:disable-next-line:max-line-length
@@ -256,6 +336,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     if (this.createOrderDto !== undefined && this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
       this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();
     }
+    else if (this.createOrderDto !== undefined && this.orderOperationMode === OrderOperationMode.SHOWPRODUCT) {
+      this.createDimensionInputsBasingOnProductData();
+    }
 
   }
 
@@ -265,7 +348,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   @HostListener('input', ['$event'])
   bindInputWithIndex(event: any): void {
     const inputId = event.target.id;
-    if (allSecondIndexDimensionCodes.includes(event.target.id)) {
+    if (this.secondIndexDimensions.includes(event.target.id)) {
       const maxLength = 5;
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);
@@ -274,7 +357,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.tableFormService.buildIndex();
       this.tableFormService.setOrderName();
     }
-    if (allFirstIndexDimensionCodes.includes(event.target.id)) {
+    if (this.firstIndexDimensions.includes(event.target.id)) {
       const maxLength = 4;
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);
@@ -283,7 +366,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.tableFormService.buildIndex();
       this.tableFormService.setOrderName();
     }
-    if (!allSecondIndexDimensionCodes.includes(event.target.id) && !allFirstIndexDimensionCodes.includes(event.target.id)) {
+    if (!this.secondIndexDimensions.includes(event.target.id) && !this.firstIndexDimensions.includes(event.target.id)) {
       const maxLength = 3;
       if (event.target.value.length > maxLength) {
         event.target.value = event.target.value.slice(0, maxLength);
@@ -355,11 +438,14 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   checkIfShowDrawingMode(): boolean {
-    if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
+    if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING || this.orderOperationMode === OrderOperationMode.SHOWPRODUCT) {
       return true;
     }
     else {
       return false;
     }
   }
+
+  /* below all methods moved from create-product-drawing*/
+
 }

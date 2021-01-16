@@ -7,6 +7,9 @@ enum OrderOperationMode {
   SHOWDRAWING = 'Orderdrawing',
   SHOWDRAWINGCONFIRM = 'DrawingConfirMode',
   UPDATEDRAWING = 'updateDrawingFormData',
+  SHOWPRODUCT = 'showProduct',
+  UPDATEPRODUCT = 'updateProduct',
+  CREATENEWPRODUCT = 'createNewProduct'
 
 }
 export default OrderOperationMode;

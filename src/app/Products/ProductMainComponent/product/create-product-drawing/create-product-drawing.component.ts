@@ -75,6 +75,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
    await this.getPreviouslyUsedCodes();
    console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
   }
+  // tslint:disable-next-line:typedef
   get dimensionRole() {
     return this.dimensionRoleForm.get('dimensionRole');
   }
@@ -88,9 +89,6 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
 
   // tslint:disable-next-line:typedef
 
-  get dimensionOrientation() {
-    return this.createDimensionForm.get('dimensionOrientation');
-  }
 
   onSubmitForInputCreating(): void {
 

@@ -67,14 +67,15 @@
           </select>
           </div>
 
-          <div class="addButon">
-            <button type="submit" [disabled]="createDimensionForm.valid" class="btn btn-danger">Utwórz</button>
-          </div>
-        </div>
-    </form>
 
+        </div>
+      <div *ngIf="dimensionId.value" class="addButon">
+        <button type="submit" [disabled]="createDimensionForm.valid" class="btn btn-danger">Utwórz</button>
+      </div>
+    </form>
+    <button class="saveButton" (click)="saveProductInDatabas()">Dodaj produkt </button>
   </div>
-  <button class="saveButton" (click)="saveProductInDatabas()">Dodaj produkt </button>
+
  <!--<div >
     <button type="button" (click)="addNewClicked = true; newDimension = null;" >Dodaj Nowy kod wymiaru</button>
     <div *ngIf="addNewClicked">

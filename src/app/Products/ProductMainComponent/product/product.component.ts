@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import Product from '../../ProductTypesAndClasses/product.entity';
 import {ProductTableService} from './ProductServices/product-table.service';
 import {ProductBackendService} from './ProductServices/product-backend.service';
+import OrderOperationMode from '../../../Orders/OrdersTypesAndClasses/orderOperationMode';
 
 @Component({
   selector: 'app-product',
@@ -67,7 +68,6 @@ export class ProductComponent implements OnInit, AfterContentChecked {
 
 
   showDrawing(id: number): void {
-    this.tableService.selectedId = id;
-    this.router.navigateByUrl('/products/productDrawingBlueprint');
+      this.router.navigateByUrl(`orders/drawing?productId=${id}&mode=${OrderOperationMode.SHOWPRODUCT}`);
   }
 }
