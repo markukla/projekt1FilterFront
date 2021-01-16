@@ -4,6 +4,7 @@ import {CreateOrderDto} from '../../../../Orders/OrdersTypesAndClasses/orderDto'
 import WorkingSideEnum from '../../../../Orders/OrdersTypesAndClasses/workingSideEnum';
 import OrderOperationMode from '../../../../Orders/OrdersTypesAndClasses/orderOperationMode';
 import {allFirstIndexDimensionCodes, allSecondIndexDimensionCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
+import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -124,42 +125,49 @@ export class TableFormServiceService {
   }
 
   /*  remember that createOrderDto is obtained in diffrentWay for diffrent modes*/
-  setInitDataFromDrawingTableFromCreateOrderDto(createOrderDto: CreateOrderDto): void {
+  setInitDataFromDrawingTableFromCreateOrderDto(createOrderDto?: CreateOrderDto, createProductDto?: CreateProductDto): void {
     this.resetTableFormServiceProperties();
-    if (createOrderDto.orderTotalNumber) {
+    if (createOrderDto && createOrderDto.orderTotalNumber) {
       this.orderTotalNumber = createOrderDto.orderTotalNumber;
     } else {
       this.orderTotalNumber = '';
     }
-    if (createOrderDto.creator) {
+    if (createOrderDto && createOrderDto.creator) {
       this.orderCreator = createOrderDto.creator.fulName;
     } else {
       this.orderCreator = '';
     }
-    if (createOrderDto.date) {
+    if (createOrderDto && createOrderDto.date) {
       this.date = new Date(createOrderDto.date);
     } else {
       this.date = null;
     }
-    if (createOrderDto.productMaterial) {
+    if (createOrderDto && createOrderDto.productMaterial) {
       this.materialCode = createOrderDto.productMaterial.materialCode;
       this.materialName = createOrderDto.productMaterial.materialName;
     } else {
       this.materialCode = '';
       this.materialName = '';
     }
-    if (createOrderDto.product) {
+    if (createOrderDto && createOrderDto.product) {
       this.productTypeName = createOrderDto.product.productType.name;
       this.productTypeCode = createOrderDto.product.productType.code;
       this.productBottomCode = createOrderDto.product.productBottom.code;
       this.productTopCode = createOrderDto.product.productTop.code;
-    } else {
+    }
+    else if (createProductDto) {
+      this.productTypeName = createProductDto.productType.name;
+      this.productTypeCode = createProductDto.productType.code;
+      this.productBottomCode = createProductDto.productBottom.code;
+      this.productTopCode = createProductDto.productTop.code;
+    }
+      else {
       this.productTypeName = '';
       this.productTypeCode = '00';
       this.productBottomCode = '0';
       this.productTopCode = '0';
     }
-    if (createOrderDto.orderDetails) {
+    if (createOrderDto && createOrderDto.orderDetails) {
       this.workingTemperature.setValue(createOrderDto.orderDetails.workingTemperature);
       this.workingSide.setValue(createOrderDto.orderDetails.workingSide);
       this.antiEelectrostatic.setValue(createOrderDto.orderDetails.antiEelectrostatic);
@@ -175,12 +183,12 @@ export class TableFormServiceService {
         });
       }
     }
-    if (createOrderDto.index) {
+    if (createOrderDto && createOrderDto.index) {
       this.index = createOrderDto.index;
     } else {
       this.buildIndex();
     }
-    if (createOrderDto.orderName) {
+    if (createOrderDto && createOrderDto.orderName) {
       this.orderName = createOrderDto.orderName;
     } else {
       this.setOrderName();

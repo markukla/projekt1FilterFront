@@ -66,7 +66,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
 
  async ngOnInit(): Promise<void> {
    this.createDimensionForm = new FormGroup({
-     dimensionId: new FormControl(null, [Validators.required]),
+     dimensionCode: new FormControl(null, [Validators.required]),
      dimensionOrientation: new FormControl(null, [Validators.required]),
    });
    this.dimensionRoleForm = new FormGroup({
@@ -213,12 +213,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
 
     const dimensionFieldInfoTable: DimensionTextFIeldInfo[] = this.getTextFieldsPositionsAndIdAndPushItToTable();
     const createProductDto: CreateProductDto = {
-      productBottom: this.backendService.selectedBottom,
-      productTop: this.backendService.selectedTop,
-      productType: this.backendService.selectedType,
-      urlOfOrginalDrawing: this.backendService.drawingPaths.urlOfOrginalDrawing,
-      urlOfThumbnailDrawing: this.backendService.drawingPaths.urlOfThumbnailDrawing,
-      dimensionsCodes: '',
+      ...this.backendService.createProductDto,
       dimensionsTextFieldInfo: dimensionFieldInfoTable
     };
     this.backendService.addRecords(createProductDto).subscribe((product) => {
@@ -293,27 +288,6 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
   }
 
   setIdValue(): void {
-    if (this.newDimension) {
-      this.addNewClicked = false;
-      console.log('in (!this.dimensionId.value) && this.newDimension) ');
-      this.newLocalizedDimension = this.getLocalizedDimensionFromDimension(this.newDimension);
-      if (this.newLocalizedDimension.dimensionRole === DimensionRoleEnum.FIRSTINDEXDIMENSION) {
-        this.allFirstIndexDimensionCodes.push(this.newLocalizedDimension);
-      }
-      else if (this.newLocalizedDimension.dimensionRole === DimensionRoleEnum.SECONDINDEXDIMENSION) {
-        this.allSecondIndexDimensionCOde.push(this.newLocalizedDimension);
-      }
-      else if (this.newLocalizedDimension.dimensionRole === DimensionRoleEnum.NOINDEXDIMENSION) {
-        this.allNonIndexDimensionCodes.push(this.newLocalizedDimension);
-      }
-      this.idValue = this.newLocalizedDimension.dimensionCode;
-      this.dimensionId.setValue(this.newLocalizedDimension.dimensionCode);
-      /* const selectElement = this.host.nativeElement.querySelector('select.dimensionIdSelect');
-      this.renderer.setProperty(selectElement, 'value', this.newDimension.value ); */
-    }
-    else if (this.dimensionId.value) {
-      this.idValue = this.dimensionId.value;
-    }
   }
 
     ngAfterContentChecked(): void {

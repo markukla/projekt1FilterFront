@@ -17,9 +17,7 @@ import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
 export class ProductBackendService {
   rootURL = 'http://localhost:5000';
   endpointUrl = '/products';
-  selectedType: ProductType;
-  selectedBottom: ProductBottom;
-  selectedTop: ProductTop;
+  createProductDto: CreateProductDto;
   drawingPaths: DrawingPaths;
   constructor(private http: HttpClient,
               private tableService: ProductTableService) {

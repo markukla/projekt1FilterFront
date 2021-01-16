@@ -13,6 +13,7 @@ import {ProductValidatorService} from '../ProductServices/product-validator.serv
 import {DrawingPaths} from '../../../ProductTypesAndClasses/drawingPaths';
 import {ProductComunicationService} from '../ProductServices/product-comunication.service';
 import {getBackendErrrorMesage} from '../../../../helpers/errorHandlingFucntion/handleBackendError';
+import OrderOperationMode from '../../../../Orders/OrdersTypesAndClasses/orderOperationMode';
 
 @Component({
   selector: 'app-create-product',
@@ -86,10 +87,16 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
     this.allBotomsToselect = productType.bottomsForThisProductType;
   }
   onSubmit(): void {
-    this.backendService.selectedType = this.type.value;
-    this.backendService.selectedBottom = this.bottom.value;
-    this.backendService.selectedTop = this.top.value;
-    this.router.navigateByUrl('/products/addDrawing');
+    this.backendService.createProductDto = {
+      dimensionsCodes: null,
+      dimensionsTextFieldInfo: null,
+      productBottom: this.bottom.value,
+      productTop: this.top.value,
+      productType: this.type.value,
+      urlOfOrginalDrawing: this.backendService.drawingPaths.urlOfOrginalDrawing,
+      urlOfThumbnailDrawing: ''
+    };
+    this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.CREATENEWPRODUCT}`);
   }
   onUpload(): void {
     this.uploadSuccessStatus = false;
@@ -135,8 +142,8 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
     const type = this.type.value;
     console.log(`selected type= ${type}`);
     if (type) {
-      this.backendService.selectedType = type;
-      this.setTopsAndBottomsToSelectAfterTypeSelected(this.backendService.selectedType);
+
+      this.setTopsAndBottomsToSelectAfterTypeSelected(type);
     }
   }
 
