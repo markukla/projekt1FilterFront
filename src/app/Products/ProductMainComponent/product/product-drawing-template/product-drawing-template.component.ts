@@ -33,7 +33,7 @@ export class ProductDrawingTemplateComponent implements OnInit, AfterViewInit, A
 
   ngOnInit(): void {
     this.tableForm = this.tableFormService.tableForm;
-    this.bgImageVariable = this.productBackendService.drawingPaths.urlOfOrginalDrawing;
+    this.bgImageVariable = this.productBackendService.createProductDto.urlOfOrginalDrawing;
     console.log(` this.bgImageVariable= ${this.bgImageVariable}`);
   }
   getSelectedProductFromDatabase(): void {

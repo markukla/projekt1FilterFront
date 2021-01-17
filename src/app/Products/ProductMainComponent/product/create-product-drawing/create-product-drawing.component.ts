@@ -60,7 +60,7 @@ export class CreateProductDrawingComponent implements OnInit, AfterContentChecke
               private renderer: Renderer2,
               private host: ElementRef,
               private dimensionBackendService: DimensionCodeBackendService) {
-    this.bgImageVariable = this.rootUrl + this.backendService.drawingPaths.urlOfOrginalDrawing;
+    this.bgImageVariable = this.rootUrl + this.backendService.createProductDto.urlOfOrginalDrawing;
   }
 
 

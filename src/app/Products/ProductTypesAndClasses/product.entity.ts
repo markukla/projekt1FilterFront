@@ -9,7 +9,6 @@ class Product{
    productType: ProductType;
     productBottom: ProductBottom;
     productTop: ProductTop;
-    dimensionsCodes: string; // all dimensions separeted by coma
     urlOfOrginalDrawing: string;
     urlOfThumbnailDrawing: string; // smaller drawing obtained by library
     dimensionsTextFieldInfo: DimensionTextFIeldInfo[];

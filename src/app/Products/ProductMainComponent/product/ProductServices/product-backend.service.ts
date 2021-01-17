@@ -18,7 +18,6 @@ export class ProductBackendService {
   rootURL = 'http://localhost:5000';
   endpointUrl = '/products';
   createProductDto: CreateProductDto;
-  drawingPaths: DrawingPaths;
   constructor(private http: HttpClient,
               private tableService: ProductTableService) {
   }

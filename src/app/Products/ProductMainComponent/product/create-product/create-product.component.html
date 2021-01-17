@@ -1,8 +1,8 @@
 <div class="createMaterial">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
   <h2>Dodaj nowy typ produktu</h2>
-
-  <form enctype="multipart/form-data" [formGroup]="upladDrawingForm" (ngSubmit)="onUpload()">
+<button *ngIf="showChangeDrawingButton() === true;" type="button" (click)="onDrawingCHangeForUpdate();"></button>
+  <form *ngIf="createNewOrChangeDrawingClicked()" enctype="multipart/form-data" [formGroup]="upladDrawingForm" (ngSubmit)="onUpload()">
 
     <div class="col">
       <div class="form-group col-md-6">
@@ -41,9 +41,9 @@
 
       <div class="form-group col-md-6">
         <label class="label" for="type">Wybierz Typ produktu</label>
-        <select class="form-control" formControlName="type" id="type">
+        <select class="form-control" formControlName="type" id="type" #selectType>
           <option [ngValue]="null" disabled>Wybierz Typ produktu</option>
-          <option *ngFor="let type of allTypesToSelect" [ngValue]="type">
+          <option class="selectTypeValues" [id]="'type'+type.id"  *ngFor="let type of allTypesToSelect" [ngValue]="type">
             {{ type.code + ' - ' + type.name
             }}
             <!-- type.names-->
@@ -61,7 +61,7 @@
         <label class="label" for="top">Wybierz wykończenia góry</label>
         <select class="form-control" formControlName="top" id="top">
           <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
-          <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
+          <option [id]="'top'+top.id"*ngFor="let top of allTopsToSelect" [ngValue]="top">
             {{ top.code + ' - ' + top.name }}
           </option>
         </select>
@@ -77,7 +77,7 @@
         <label class="label" for="bottom">Wybierz wykończenia dna</label>
         <select class="form-control" formControlName="bottom" id="bottom">
           <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
-          <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
+          <option  [id]="'bottom'+bottom.id"*ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
             {{ bottom.code + ' - ' + bottom.name }}
           </option>
         </select>

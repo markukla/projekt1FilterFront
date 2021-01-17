@@ -48,7 +48,6 @@ import { ProductTypeSearchDirective } from './helpers/directive/ForProductType/p
 import { TopsForProductTypeComponent } from './Products/ProductType/tops-for-product-type/tops-for-product-type.component';
 import { BottomsForProductTypeComponent } from './Products/ProductType/bottoms-for-product-type/bottoms-for-product-type.component';
 import { CreateProductComponent } from './Products/ProductMainComponent/product/create-product/create-product.component';
-import { UpdateProductComponent } from './Products/ProductMainComponent/product/update-product/update-product.component';
 import { ProductSearchDirective } from './helpers/directive/ForProducts/product-search.directive';
 import { CreateProductDrawingComponent } from './Products/ProductMainComponent/product/create-product-drawing/create-product-drawing.component';
 import { ContainerForDragableComponent } from './Products/ProductMainComponent/product/DragAndDropTest/container-for-dragable/container-for-dragable.component';
@@ -106,7 +105,6 @@ import { DimensionSearchDirective } from './helpers/directive/ForDimensionCode/d
     TopsForProductTypeComponent,
     BottomsForProductTypeComponent,
     CreateProductComponent,
-    UpdateProductComponent,
     ProductSearchDirective,
     CreateProductDrawingComponent,
     ContainerForDragableComponent,
@@ -151,7 +149,6 @@ import { DimensionSearchDirective } from './helpers/directive/ForDimensionCode/d
       { path: 'businessPartners/changePassword', component: BusinessPartnerChangePasswordComponent},
       { path: 'products', component: ProductComponent},
       { path: 'products/add', component: CreateProductComponent},
-      { path: 'products/update', component: UpdateProductComponent},
       { path: 'products/types', component: ProductTypeComponent},
       { path: 'products/types/add', component: CreateProductTypeComponent},
       { path: 'products/types/update', component: UpdateProductTypeComponent},

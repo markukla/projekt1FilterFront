@@ -7,6 +7,7 @@ import Product from '../../ProductTypesAndClasses/product.entity';
 import {ProductTableService} from './ProductServices/product-table.service';
 import {ProductBackendService} from './ProductServices/product-backend.service';
 import OrderOperationMode from '../../../Orders/OrdersTypesAndClasses/orderOperationMode';
+import ProductModeEnum from '../../ProductTypesAndClasses/productMode';
 
 @Component({
   selector: 'app-product',
@@ -61,9 +62,12 @@ export class ProductComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  updateSelectedRecord(materialId: number): void {
-    this.tableService.selectedId = materialId;
-    this.router.navigateByUrl('/products/update');
+  updateSelectedRecord(productToUpdateId: number): void {
+    this.tableService.selectedId = productToUpdateId;
+    this.router.navigateByUrl(`products/add?mode=${ProductModeEnum.UPDATE}&productId=${productToUpdateId}`);
+  }
+  createNewProduct(): void {
+    this.router.navigateByUrl(`products/add?mode=${ProductModeEnum.CREATENEW}`);
   }
 
 
