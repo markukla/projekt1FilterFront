@@ -1,4 +1,4 @@
-import {AfterContentChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterContentChecked, AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import ProductBottom from '../../../ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -18,7 +18,7 @@ import Product from '../../../ProductTypesAndClasses/product.entity';
   templateUrl: './create-product.component.html',
   styleUrls: ['./create-product.component.css']
 })
-export class CreateProductComponent implements OnInit, AfterContentChecked {
+export class CreateProductComponent implements OnInit, AfterContentChecked, AfterViewChecked {
   operationMessage: string;
   uploadOperationMessage: string;
   showoperationStatusMessage: string;
@@ -35,7 +35,9 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
   selectedProductToUpdateId: string;
   productToUpdate: Product;
   changeDrawingClicked: boolean;
-@ViewChild('selectType', {read: ElementRef}) selectTypeElement: ElementRef;
+  @ViewChild('selectType', {read: ElementRef}) selectTypeElement: ElementRef;
+  @ViewChild('selectTop', {read: ElementRef}) selectTopElement: ElementRef;
+  @ViewChild('selectBottom', {read: ElementRef}) selectBottomElement: ElementRef;
   constructor(
     private backendService: ProductBackendService,
     public validationService: ProductValidatorService,
@@ -67,19 +69,28 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
         this.backendService.findRecordById(this.selectedProductToUpdateId).subscribe((product) =>{
           this.productToUpdate = product.body;
           this.initFormValuesForUpdateMode(this.productToUpdate);
-          const HtmlOpTions: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectTypeValues');
+          const HtmlTypeOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectTypeValues');
           const productTypeId = `type${this.productToUpdate.productType.id}`;
-          HtmlOpTions.forEach((option) => {
+          HtmlTypeOptionElement.forEach((option) => {
            if (option.id === productTypeId ) {
              this.selectTypeElement.nativeElement.value = option.value;
            }
          });
-          const selectedTypeId = `type${this.type.value.id}`;
-          const selectedTopId = `top${this.top.value.id}`;
-          const selectedBottomId = `bottom${this.bottom.value.id}`;
-         // this.setSelectedValueForSelectElement('type', selectedTypeId);
-          this.setSelectedValueForSelectElement('top', selectedTopId);
-          this.setSelectedValueForSelectElement('bottom', selectedBottomId);
+          this.setTopsAndBottomsToSelectAfterTypeSelected(this.productToUpdate.productType);
+          const HtmlTopOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectTopValues');
+          const productTopId = `top${this.productToUpdate.productTop.id}`;
+          HtmlTopOptionElement.forEach((option) => {
+            if (option.id === productTopId ) {
+              this.selectTopElement.nativeElement.value = option.value;
+            }
+          });
+          const HtmlBottomOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectBottomValues');
+          const productBottomId = `bottom${this.productToUpdate.productBottom.id}`;
+          HtmlBottomOptionElement.forEach((option) => {
+            if (option.id === productBottomId ) {
+              this.selectBottomElement.nativeElement.value = option.value;
+            }
+          });
         });
       }
     });
@@ -122,8 +133,10 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
   }
 
   setTopsAndBottomsToSelectAfterTypeSelected(productType: ProductType): void {
-    this.allTopsToSelect = productType.topsForThisProductType;
-    this.allBotomsToselect = productType.bottomsForThisProductType;
+    if (productType) {
+      this.allTopsToSelect = productType.topsForThisProductType;
+      this.allBotomsToselect = productType.bottomsForThisProductType;
+    }
   }
 
   initFormValuesForUpdateMode(productToUpdate: Product): void {
@@ -225,5 +238,11 @@ export class CreateProductComponent implements OnInit, AfterContentChecked {
 
   onDrawingCHangeForUpdate(): void {
     this.changeDrawingClicked = true;
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.type && this.type.value){
+     this.setTopsAndBottomsToSelectAfterTypeSelected(this.type.value);
+    }
   }
 }

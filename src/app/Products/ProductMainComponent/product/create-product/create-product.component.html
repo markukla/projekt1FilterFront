@@ -59,9 +59,9 @@
       </div>
       <div class="form-group col-md-6" *ngIf="type.value">
         <label class="label" for="top">Wybierz wykończenia góry</label>
-        <select class="form-control" formControlName="top" id="top">
+        <select class="form-control" formControlName="top" id="top" #selectTop>
           <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
-          <option [id]="'top'+top.id"*ngFor="let top of allTopsToSelect" [ngValue]="top">
+          <option class="selectTopValues" [id]="'top'+top.id"*ngFor="let top of allTopsToSelect" [ngValue]="top">
             {{ top.code + ' - ' + top.name }}
           </option>
         </select>
@@ -75,9 +75,9 @@
       </div>
       <div class="form-group col-md-6" *ngIf="type.value">
         <label class="label" for="bottom">Wybierz wykończenia dna</label>
-        <select class="form-control" formControlName="bottom" id="bottom">
+        <select class="form-control" formControlName="bottom" id="bottom" #selectBottom>
           <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
-          <option  [id]="'bottom'+bottom.id"*ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
+          <option class="selectBottomValues" [id]="'bottom'+bottom.id"*ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
             {{ bottom.code + ' - ' + bottom.name }}
           </option>
         </select>
