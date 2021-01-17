@@ -1,4 +1,4 @@
-import {AfterContentChecked, AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import ProductBottom from '../../../ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -18,7 +18,7 @@ import Product from '../../../ProductTypesAndClasses/product.entity';
   templateUrl: './create-product.component.html',
   styleUrls: ['./create-product.component.css']
 })
-export class CreateProductComponent implements OnInit, AfterContentChecked, AfterViewChecked {
+export class CreateProductComponent implements OnInit, AfterContentChecked, AfterViewChecked, AfterViewInit {
   operationMessage: string;
   uploadOperationMessage: string;
   showoperationStatusMessage: string;
@@ -35,9 +35,13 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
   selectedProductToUpdateId: string;
   productToUpdate: Product;
   changeDrawingClicked: boolean;
+  selectTopClicked = false;
+  selectBottomClicked = false;
+  productTypeOfProductToUpdate: ProductType;
   @ViewChild('selectType', {read: ElementRef}) selectTypeElement: ElementRef;
   @ViewChild('selectTop', {read: ElementRef}) selectTopElement: ElementRef;
   @ViewChild('selectBottom', {read: ElementRef}) selectBottomElement: ElementRef;
+
   constructor(
     private backendService: ProductBackendService,
     public validationService: ProductValidatorService,
@@ -58,7 +62,6 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
       file: new FormControl('', Validators.required),
       fileSource: new FormControl('', [Validators.required])
     });
-    await this.getDataToDropdownLists();
     this.route.queryParamMap.subscribe(queryParams => {
       const mode = queryParams.get('mode');
       this.selectedProductToUpdateId = queryParams.get('productId');
@@ -66,36 +69,19 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
         this.operationMode = ProductModeEnum.CREATENEW;
       } else if (mode === ProductModeEnum.UPDATE) {
         this.operationMode = ProductModeEnum.UPDATE;
-        this.backendService.findRecordById(this.selectedProductToUpdateId).subscribe((product) =>{
-          this.productToUpdate = product.body;
-          this.initFormValuesForUpdateMode(this.productToUpdate);
-          const HtmlTypeOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectTypeValues');
-          const productTypeId = `type${this.productToUpdate.productType.id}`;
-          HtmlTypeOptionElement.forEach((option) => {
-           if (option.id === productTypeId ) {
-             this.selectTypeElement.nativeElement.value = option.value;
-           }
-         });
-          this.setTopsAndBottomsToSelectAfterTypeSelected(this.productToUpdate.productType);
-          const HtmlTopOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectTopValues');
-          const productTopId = `top${this.productToUpdate.productTop.id}`;
-          HtmlTopOptionElement.forEach((option) => {
-            if (option.id === productTopId ) {
-              this.selectTopElement.nativeElement.value = option.value;
-            }
-          });
-          const HtmlBottomOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectBottomValues');
-          const productBottomId = `bottom${this.productToUpdate.productBottom.id}`;
-          HtmlBottomOptionElement.forEach((option) => {
-            if (option.id === productBottomId ) {
-              this.selectBottomElement.nativeElement.value = option.value;
-            }
-          });
-        });
+
       }
     });
+    await this.getDataToDropdownLists();
+    if (this.operationMode === ProductModeEnum.UPDATE) {
+      const foundProduct = await this.backendService.findRecordById(this.selectedProductToUpdateId).toPromise();
+      this.productToUpdate = foundProduct.body;
+      // tslint:disable-next-line:max-line-length
+      await this.initFormValuesForUpdateMode(this.productToUpdate); // it does not set select element it is done in ngAfterContent checked due to ngFor synchronization problem
+    }
     this.uploadSuccessStatus = false;
   }
+
   setSelectedValueForSelectElement(selectId: string, selectedValueId: string): void {
     const selectElement: HTMLSelectElement = this.element.nativeElement.querySelector('[id=' + selectId + ']');
     const selectValueElement: HTMLOptionElement = this.element.nativeElement.querySelector('[id=' + selectedValueId + ']');
@@ -139,10 +125,12 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
     }
   }
 
-  initFormValuesForUpdateMode(productToUpdate: Product): void {
-    this.form.controls.type.setValue(productToUpdate.productType);
-    this.form.controls.bottom.setValue(productToUpdate.productBottom);
-    this.form.controls.top.setValue(productToUpdate.productTop);
+  async initFormValuesForUpdateMode(productToUpdate: Product): Promise<void> {
+    const productTypeOfPtoductToUpdate = await this.typesBackendService.findRecordById(String(productToUpdate.productType.id)).toPromise();
+    this.productTypeOfProductToUpdate = productTypeOfPtoductToUpdate.body;
+    this.form.controls.type.setValue(this.productTypeOfProductToUpdate);
+    this.bottom.setValue(this.productToUpdate.productBottom);
+    this.top.setValue(this.productToUpdate.productTop);
     this.minimalizedDrawingPath = productToUpdate.urlOfThumbnailDrawing;
     this.orginalDrawingPath = productToUpdate.urlOfOrginalDrawing;
   }
@@ -212,12 +200,38 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
   }
 
   ngAfterContentChecked(): void {
-    const type = this.type.value;
-    console.log(`selected type= ${type}`);
-    if (type) {
-
-      this.setTopsAndBottomsToSelectAfterTypeSelected(type);
+    // tslint:disable-next-line:max-line-length
+    if (this.productTypeOfProductToUpdate && this.type.value.code === this.productTypeOfProductToUpdate.code && this.selectTopClicked === false && this.selectBottomClicked === false  ) {
+     this.initSelectElementsFromProductToupdate();
     }
+    if (this.type.value) {
+
+       this.setTopsAndBottomsToSelectAfterTypeSelected(this.type.value);
+    }
+  }
+  initSelectElementsFromProductToupdate(): void {
+    console.error(` this.productTypeOfProductToUpdate.code =${this.productTypeOfProductToUpdate.code}`);
+    const HtmlTypeOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectTypeValues');
+    const productTypeId = `type${this.productToUpdate.productType.id}`;
+    HtmlTypeOptionElement.forEach((option) => {
+      if (option.id === productTypeId) {
+        this.selectTypeElement.nativeElement.value = option.value;
+      }
+    });
+    const HtmlTopOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectTopValues');
+    const productTopId = `top${this.productToUpdate.productTop.id}`;
+    HtmlTopOptionElement.forEach((option) => {
+      if (option.id === productTopId) {
+        this.selectTopElement.nativeElement.value = option.value;
+      }
+    });
+    const HtmlBottomOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectBottomValues');
+    const productBottomId = `bottom${this.productToUpdate.productBottom.id}`;
+    HtmlBottomOptionElement.forEach((option) => {
+      if (option.id === productBottomId) {
+        this.selectBottomElement.nativeElement.value = option.value;
+      }
+    });
   }
 
   createNewOrChangeDrawingClicked(): boolean {
@@ -241,8 +255,9 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
   }
 
   ngAfterViewChecked(): void {
-    if (this.type && this.type.value){
-     this.setTopsAndBottomsToSelectAfterTypeSelected(this.type.value);
-    }
+
+  }
+
+  ngAfterViewInit(): void {
   }
 }
