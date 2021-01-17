@@ -58,6 +58,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   dimensionRoleForm: FormGroup;
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
+  drawingInputCreatedForUpdateMode = false;
   allDimensionCodes: LocalizedDimensionCode [];
   allFirstIndexDimensionCodes: LocalizedDimensionCode[];
   allSecondIndexDimensionCOde: LocalizedDimensionCode [];
@@ -231,9 +232,18 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
 
   createDimensionInputsBasingOnProductData(): void {
-    this.createOrderDto.product.dimensionsTextFieldInfo.forEach((di) => {
-      this.createDimensionInputOnDrawingBasingOnDimensionInfo(di, 'textarea');
-    });
+    if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT ) {
+      this.createOrderDto.product.dimensionsTextFieldInfo.forEach((di) => {
+        this.createDimensionInputOnDrawingBasingOnDimensionInfo(di, 'textarea');
+      });
+    }
+    else if (this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT) {
+      if (this.createProductDto && this.createProductDto.dimensionsTextFieldInfo) {
+        this.createProductDto.dimensionsTextFieldInfo.forEach((di) => {
+          this.createDimensionInputOnDrawingBasingOnDimensionInfo(di, 'textarea');
+        });
+      }
+      }
   }
 
   createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData(): void {
@@ -280,6 +290,10 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
    // input.type = 'number';
     this.setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo, input);
     this.renderer.appendChild(this.drawing.nativeElement, input);
+    if (this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT) {
+     this.rotateTextField(input);
+     this.makeInputDivDragable(input);
+   }
   }
   setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo: DimensionTextFIeldInfo, input: HTMLElement): void {
     if (dimensionInfo.transform) {
@@ -341,14 +355,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
   ngAfterViewInit(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT) {
-      this.createDimensionInputsBasingOnProductData();
-    } else { /* update or show drawing modes*/
-      // tslint:disable-next-line:max-line-length
-      if (this.createOrderDto !== undefined) {
-        this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();
-      }
-    }
+
   }
 
   ngAfterContentChecked(): void {
@@ -356,11 +363,18 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   ngAfterViewChecked(): void {
-    if (this.createOrderDto !== undefined && this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
-      this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();
+    if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
+      this.createDimensionInputsBasingOnProductData();
     }
     else if (this.createOrderDto !== undefined && this.orderOperationMode === OrderOperationMode.SHOWPRODUCT) {
       this.createDimensionInputsBasingOnProductData();
+    }
+    else if (this.createProductDto && this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT && this.drawingInputCreatedForUpdateMode === false) {
+      this.createDimensionInputsBasingOnProductData();
+      this.drawingInputCreatedForUpdateMode = true;
+    }
+    else{
+      this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();
     }
 
   }

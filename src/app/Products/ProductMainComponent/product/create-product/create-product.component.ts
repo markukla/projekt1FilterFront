@@ -29,14 +29,15 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
   orginalDrawingPath: string;
   minimalizedDrawingPath: string;
   upladDrawingForm: FormGroup;
-  uploadSuccessStatus: boolean;
+  uploadSuccessStatus = false;
   drawingPaths: DrawingPaths;
   operationMode: ProductModeEnum;
   selectedProductToUpdateId: string;
   productToUpdate: Product;
-  changeDrawingClicked: boolean;
+  changeDrawingClicked = false;
   selectTopClicked = false;
   selectBottomClicked = false;
+  changeDrawingButtonDescription: string;
   productTypeOfProductToUpdate: ProductType;
   @ViewChild('selectType', {read: ElementRef}) selectTypeElement: ElementRef;
   @ViewChild('selectTop', {read: ElementRef}) selectTopElement: ElementRef;
@@ -62,6 +63,7 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
       file: new FormControl('', Validators.required),
       fileSource: new FormControl('', [Validators.required])
     });
+    this.initUserInterfaceVariablesForGivenLanguage();
     this.route.queryParamMap.subscribe(queryParams => {
       const mode = queryParams.get('mode');
       this.selectedProductToUpdateId = queryParams.get('productId');
@@ -80,6 +82,9 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
       await this.initFormValuesForUpdateMode(this.productToUpdate); // it does not set select element it is done in ngAfterContent checked due to ngFor synchronization problem
     }
     this.uploadSuccessStatus = false;
+  }
+  initUserInterfaceVariablesForGivenLanguage(): void {
+    this.changeDrawingButtonDescription = 'zmień rysunek';
   }
 
   setSelectedValueForSelectElement(selectId: string, selectedValueId: string): void {
@@ -155,9 +160,19 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
         urlOfOrginalDrawing: this.orginalDrawingPath,
         urlOfThumbnailDrawing: this.minimalizedDrawingPath,
       };
+      this.router.navigateByUrl(`orders/drawing?productId=${this.selectedProductToUpdateId}&mode=${OrderOperationMode.UPDATEPRODUCT}`);
+    } else if (this.operationMode === ProductModeEnum.UPDATE && this.changeDrawingClicked === true) {
+      this.backendService.createProductDto = {
+        dimensionsTextFieldInfo: null,
+        productBottom: this.bottom.value,
+        productTop: this.top.value,
+        productType: this.type.value,
+        urlOfOrginalDrawing: this.orginalDrawingPath,
+        urlOfThumbnailDrawing: this.minimalizedDrawingPath,
+      };
+      this.router.navigateByUrl(`orders/drawing?productId=${this.selectedProductToUpdateId}&mode=${OrderOperationMode.UPDATEPRODUCT}`);
     }
   }
-
   onUpload(): void {
     this.uploadSuccessStatus = false;
     const formData = new FormData();
@@ -201,14 +216,15 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
 
   ngAfterContentChecked(): void {
     // tslint:disable-next-line:max-line-length
-    if (this.productTypeOfProductToUpdate && this.type.value.code === this.productTypeOfProductToUpdate.code && this.selectTopClicked === false && this.selectBottomClicked === false  ) {
-     this.initSelectElementsFromProductToupdate();
+    if (this.productTypeOfProductToUpdate && this.type.value.code === this.productTypeOfProductToUpdate.code && this.selectTopClicked === false && this.selectBottomClicked === false) {
+      this.initSelectElementsFromProductToupdate();
     }
     if (this.type.value) {
 
-       this.setTopsAndBottomsToSelectAfterTypeSelected(this.type.value);
+      this.setTopsAndBottomsToSelectAfterTypeSelected(this.type.value);
     }
   }
+
   initSelectElementsFromProductToupdate(): void {
     console.error(` this.productTypeOfProductToUpdate.code =${this.productTypeOfProductToUpdate.code}`);
     const HtmlTypeOptionElement: HTMLOptionElement[] = this.element.nativeElement.querySelectorAll('.selectTypeValues');
@@ -259,5 +275,28 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
   }
 
   ngAfterViewInit(): void {
+  }
+
+  allowSubmit(): boolean {
+    if (this.operationMode === ProductModeEnum.CREATENEW) {
+      if (this.form.valid && this.uploadSuccessStatus === true) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (this.operationMode === ProductModeEnum.UPDATE && this.changeDrawingClicked === false) {
+      if (this.form.valid) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    else if (this.operationMode === ProductModeEnum.UPDATE && this.changeDrawingClicked === true) {
+      if (this.form.valid && this.uploadSuccessStatus === true) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 }

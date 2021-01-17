@@ -26,6 +26,7 @@
   top: 0%;
 }
 .addButon {
+  width: fit-content;
   position: relative;
   left: 40%;
   bottom: 10%;

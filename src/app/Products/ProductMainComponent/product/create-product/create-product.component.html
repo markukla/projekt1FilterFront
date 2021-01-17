@@ -1,7 +1,10 @@
 <div class="createMaterial">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
   <h2>Dodaj nowy typ produktu</h2>
-<button *ngIf="showChangeDrawingButton() === true;" type="button" (click)="onDrawingCHangeForUpdate();"></button>
+  <div class="addButon">
+    <button class="btn btn-danger" *ngIf="showChangeDrawingButton() === true;" type="button" (click)="onDrawingCHangeForUpdate();">{{changeDrawingButtonDescription}}</button>
+  </div>
+
   <form *ngIf="createNewOrChangeDrawingClicked()" enctype="multipart/form-data" [formGroup]="upladDrawingForm" (ngSubmit)="onUpload()">
 
     <div class="col">
@@ -91,7 +94,7 @@
       </div>
     </div>
     <div class="addButon">
-      <button type="submit" [disabled]="!form.valid || uploadSuccessStatus === false" class="btn btn-danger">Dalej
+      <button type="submit" [disabled]="allowSubmit() === false" class="btn btn-danger">Dalej
       </button>
     </div>
 
