@@ -15,8 +15,7 @@
     <tr>
       <th [appSort]="records" data-order="desc" data-name="dimensionCode" scope="col">Kod Wymiaru <br></th>
       <th [appSort]="records" data-order="desc" data-name="dimensionRole" scope="col">Rola wymiaru <br></th>
-      <th *ngFor="let lang of langs"> {{lang+': Opis Wymiaru'}}</th>
-      <th>{{this.recordNumbers}}</th>
+      <th> Opis Wymiaru </th>
       <th>ilość</th>
 
     </tr>
@@ -34,7 +33,7 @@
     <tr *ngFor="let record of records">
       <td>{{record.dimensionCode}}</td>
       <td>{{record.dimensionRole}}</td>
-      <td *ngFor="let lang of record.localizedDimensionNames">{{lang.nameInThisLanguage}}</td>
+     <td>  {{ getSelectedLanguageFromNamesInAllLanguages(record.localizedDimensionNames, selectedLanguageLang)}}</td>
       <td>
         <text *ngIf="deleTedRecordMessage">{{deleTedRecordMessage}}</text>
         <br>

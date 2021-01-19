@@ -653,7 +653,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         });
         if (index !== self.indexOf(input)) {
           // tslint:disable-next-line:max-line-length
-          /* if indeks of current element in array is not equal indeks od its first occurence in array (indexOf returns first occurence) so it is duplicated*/
+          /* if index of current element in array is not equal index od its first occurence in array (indexOf returns first occurence) so it is duplicated*/
           const failMassage = `Wszystkie wymiary muszą być unikalne, Wymiar ${input} został dodany więcej niż jeden raz`;
           failerMessages.push(failMassage);
         }

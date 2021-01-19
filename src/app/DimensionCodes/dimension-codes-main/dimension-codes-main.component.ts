@@ -24,6 +24,7 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
   showUpdateForm = false;
   updateButtonInfo;
   materialId: number;
+  selectedLanguageLang: string;
   recordNumbers: number;
   langs: string[] = ['PL', 'CZE', 'EN']; // it will be obtained from database
 
@@ -34,6 +35,7 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
               private activedIdParam: ActivatedRoute) {
   }
   ngOnInit(): void {
+    this.selectedLanguageLang = 'PL';
     this.getRecords();
     this.materialId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
@@ -66,6 +68,14 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
     this.router.navigateByUrl('/products/types/update');
   }
 
-
+getSelectedLanguageFromNamesInAllLanguages(localizedNames: LocalizedName[], selectedLanguageLang: string): string {
+  const localizedNameInGivenLanguage: LocalizedName[] = [];
+  localizedNames.forEach((localizedName) => {
+    if (localizedName.languageCode === selectedLanguageLang) {
+      localizedNameInGivenLanguage.push(localizedName);
+    }
+  });
+  return localizedNameInGivenLanguage[0].nameInThisLanguage;
+}
 
 }
