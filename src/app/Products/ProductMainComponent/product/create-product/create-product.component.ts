@@ -151,9 +151,9 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
         urlOfThumbnailDrawing: this.minimalizedDrawingPath,
       };
       this.router.navigateByUrl(`orders/drawing?mode=${OrderOperationMode.CREATENEWPRODUCT}`);
-    } else if (this.operationMode === ProductModeEnum.UPDATE) {
+    }  else if (this.operationMode === ProductModeEnum.UPDATE && this.changeDrawingClicked === true) {
       this.backendService.createProductDto = {
-        dimensionsTextFieldInfo: this.productToUpdate.dimensionsTextFieldInfo,
+        dimensionsTextFieldInfo: null,
         productBottom: this.bottom.value,
         productTop: this.top.value,
         productType: this.type.value,
@@ -161,9 +161,10 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
         urlOfThumbnailDrawing: this.minimalizedDrawingPath,
       };
       this.router.navigateByUrl(`orders/drawing?productId=${this.selectedProductToUpdateId}&mode=${OrderOperationMode.UPDATEPRODUCT}`);
-    } else if (this.operationMode === ProductModeEnum.UPDATE && this.changeDrawingClicked === true) {
+    }
+    else if (this.operationMode === ProductModeEnum.UPDATE) {
       this.backendService.createProductDto = {
-        dimensionsTextFieldInfo: null,
+        dimensionsTextFieldInfo: this.productToUpdate.dimensionsTextFieldInfo,
         productBottom: this.bottom.value,
         productTop: this.top.value,
         productType: this.type.value,

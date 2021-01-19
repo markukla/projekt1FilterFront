@@ -32,6 +32,7 @@ import DimensionCode from '../../../DimensionCodes/DimensionCodesTypesAnClasses/
 import DimensionRoleEnum from '../../../DimensionCodes/DimensionCodesTypesAnClasses/dimensionRoleEnum';
 import CreateProductDto from '../../../Products/ProductTypesAndClasses/product.dto';
 import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
+import {navigateToUrlAfterTimout} from '../../../helpers/otherGeneralUseFunction/navigateToUrlAfterTimeOut';
 
 @Component({
   selector: 'app-order-drawing',
@@ -593,25 +594,98 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   saveProductInDatabas(): void {
+    const url = `/products`;
 
     const dimensionFieldInfoTable: DimensionTextFIeldInfo[] = this.getTextFieldsPositionsAndIdAndPushItToTable();
     const createProductDto: CreateProductDto = {
       ...this.createProductDto,
       dimensionsTextFieldInfo: dimensionFieldInfoTable
     };
-    this.productBackendService.addRecords(createProductDto).subscribe((product) => {
-      console.log('dodano nowy Product');
-      this.operationSuccessStatusMessage = 'dodano nowy Product';
-    }, (error) => {
-      const errorMessage = getBackendErrrorMesage(error);
-      if (errorMessage.includes('Already exist in database')) {
-        this.operationFailerStatusMessage = 'nie udało się dodać produktu, produkt o podanych parametrach już istnieje w bazie danych';
-      } else {
-        this.operationFailerStatusMessage = 'wystąpił bład, nie udało sie dodać produktu, spróbuj ponownie';
+    if (this.orderOperationMode === OrderOperationMode.CREATENEWPRODUCT && this.validateCreateProductDtoBeforeSavingInDatab(createProductDto) === true) {
+      this.productBackendService.addRecords(createProductDto).subscribe((product) => {
+        console.log('dodano nowy Product');
+        this.operationSuccessStatusMessage = 'dodano nowy Product';
+        navigateToUrlAfterTimout(url, this.router, 2000);
+      }, (error) => {
+        const errorMessage = getBackendErrrorMesage(error);
+        if (errorMessage.includes('Already exist in database')) {
+          this.operationFailerStatusMessage = 'nie udało się dodać produktu, produkt o podanych parametrach już istnieje w bazie danych';
+        } else {
+          this.operationFailerStatusMessage = 'wystąpił bład, nie udało sie dodać produktu, spróbuj ponownie';
+        }
+      });
+      // tslint:disable-next-line:max-line-length
+    } else if (this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT && this.validateCreateProductDtoBeforeSavingInDatab(createProductDto) === true) {
+      this.productBackendService.updateRecordById(this.selectedProductId, createProductDto).subscribe((product) => {
+        console.log('dodano nowy Product');
+        this.operationSuccessStatusMessage = 'dodano nowy Product';
+        navigateToUrlAfterTimout(url, this.router, 2000);
+      }, (error) => {
+        const errorMessage = getBackendErrrorMesage(error);
+        if (errorMessage.includes('Already exist in database')) {
+          this.operationFailerStatusMessage = 'nie udało aktulizować , inny produkt o podanych parametrach już istnieje w bazie danych;';
+        } else {
+          this.operationFailerStatusMessage = 'wystąpił bład, nie udało się zaktualizować produktu';
+        }
+      });
+    }
+  }
+
+  validateCreateProductDtoBeforeSavingInDatab(createProductDto: CreateProductDto): boolean {
+    const inputs = createProductDto.dimensionsTextFieldInfo;
+    let createProductDtoValid: boolean = true;
+    const failerMessages: string [] = [];
+    let allFolutsmessage: string = '';
+    if (inputs) {
+      const collectionOfFirtstIndexDiMensionsInCreateProductDto: string[] = [];
+      const collectionOfSecondtIndexDiMensionsInCreateProductDto: string [] = [];
+      /* map is used to obtain array of simple values from objects, cause indeksOf does not work for objects*/
+      inputs.map(x => x.dimensionId).forEach((input, index, self) => {
+        this.firstIndexDimensions.forEach((first) => {
+          if (input === first) {
+            collectionOfFirtstIndexDiMensionsInCreateProductDto.push(input);
+          }
+        });
+        this.secondIndexDimensions.forEach((second) => {
+          if (input === second) {
+            collectionOfSecondtIndexDiMensionsInCreateProductDto.push(input);
+          }
+        });
+        if (index !== self.indexOf(input)) {
+          // tslint:disable-next-line:max-line-length
+          /* if indeks of current element in array is not equal indeks od its first occurence in array (indexOf returns first occurence) so it is duplicated*/
+          const failMassage = `Wszystkie wymiary muszą być unikalne, Wymiar ${input} został dodany więcej niż jeden raz`;
+          failerMessages.push(failMassage);
+        }
+      });
+      if (collectionOfFirtstIndexDiMensionsInCreateProductDto.length === 0) {
+        createProductDtoValid = false;
+        const failMessage = 'Proszę dodać wymiar będący pierwszym wymiarem indeksu';
+        failerMessages.push(failMessage);
       }
-    });
-
-
+      if (collectionOfFirtstIndexDiMensionsInCreateProductDto.length > 1) {
+        createProductDtoValid = false;
+        const failMessage = 'Dodałeś więcej niż jeden wymiar będący pierwszym wymiarem indeksu. Możesz dodać tylko jeden ';
+        failerMessages.push(failMessage);
+      }
+      if (collectionOfSecondtIndexDiMensionsInCreateProductDto.length === 0) {
+        createProductDtoValid = false;
+        const failMessage = 'Proszę dodać wymiar będący drugim wymiarem do indeksu';
+        failerMessages.push(failMessage);
+      }
+      if (collectionOfSecondtIndexDiMensionsInCreateProductDto.length > 1) {
+        createProductDtoValid = false;
+        const failMessage = 'Dodałeś więcej niż jeden wymiar będący drugim wymiarem indeksu. Możesz dodać tylko jeden ';
+        failerMessages.push(failMessage);
+      }
+    }
+    if (failerMessages.length > 0) {
+      failerMessages.forEach((message) => {
+        allFolutsmessage = allFolutsmessage + ' ,' + message;
+      });
+      window.alert(allFolutsmessage);
+    }
+    return createProductDtoValid;
   }
 
   getTextFieldsPositionsAndIdAndPushItToTable(): DimensionTextFIeldInfo[] {

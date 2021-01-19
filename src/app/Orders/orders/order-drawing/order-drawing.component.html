@@ -17,6 +17,12 @@
       <button class="saveButton" (click)="getDrawingPdf();">Zapisz do pdf</button>
 
     </div>
+    <div *ngIf="operationFailerStatusMessage" class="alert-danger">
+      <p>{{operationFailerStatusMessage}}</p>
+    </div>
+    <div *ngIf="operationSuccessStatusMessage" class="alert-success">
+      <p>{{operationSuccessStatusMessage}}</p>
+    </div>
   </div>
   <div *ngIf="createOrUpdateProductMode() === true"  id="createFormContainer">
     <p> utwórz wymiar</p>
@@ -82,5 +88,11 @@
       </div>
     </form>
     <button class="saveButton" (click)="saveProductInDatabas()">Dodaj produkt </button>
+    <div *ngIf="operationFailerStatusMessage" class="alert-danger">
+      <p>{{operationFailerStatusMessage}}</p>
+    </div>
+    <div *ngIf="operationSuccessStatusMessage" class="alert-success">
+      <p>{{operationSuccessStatusMessage}}</p>
+    </div>
   </div>
 </div>
