@@ -3,7 +3,7 @@
 
 <div>
 
-  <a  [routerLink]="['/dimensionCodes/add']" routerLinkActive="active">
+  <a  (click)="createNewRecord();" routerLinkActive="active">
     {{ createNewMaterialDescription }}
   </a>
 </div>

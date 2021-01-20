@@ -5,6 +5,7 @@ import {catchError, map, tap} from 'rxjs/operators';
 import {Material} from '../MaterialsMainComponent/material';
 import {MaterialTableService} from './material-table.service';
 import {API_URL} from '../../Config/apiUrl';
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 
 @Injectable({
@@ -14,7 +15,7 @@ export class MaterialBackendService {
   rootURL = API_URL;
   endpointUrl = '/materials';
   constructor(private http: HttpClient,
-              private materialTableService: MaterialTableService) {
+              private materialTableService: GeneralTableService) {
   }
 
   getRecords(): Observable<HttpResponse<Material[]>> {

@@ -7,6 +7,10 @@ import {DimensionCodeTableService} from '../DimensionCodeServices/dimension-code
 import {DimensionCodeBackendService} from '../DimensionCodeServices/dimension-code-backend.service';
 import DimensionCode from '../DimensionCodesTypesAnClasses/diemensionCode.entity';
 import LocalizedName from '../DimensionCodesTypesAnClasses/localizedName';
+import {LanguageBackendService} from '../../Languages/languageServices/language-backend.service';
+import Language from '../../Languages/LanguageTypesAndClasses/languageEntity';
+import {CreateDimensionCodeComponent} from '../create-dimension-code/create-dimension-code.component';
+import OperationModeEnum from '../../util/OperationModeEnum';
 
 @Component({
   selector: 'app-dimension-codes-main',
@@ -26,16 +30,18 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
   materialId: number;
   selectedLanguageLang: string;
   recordNumbers: number;
-  langs: string[] = ['PL', 'CZE', 'EN']; // it will be obtained from database
+  languages: Language[]; // it will be obtained from database
 
 
   constructor(public tableService: DimensionCodeTableService,
               public backendService: DimensionCodeBackendService,
               private router: Router,
+              private languageBackendService: LanguageBackendService,
               private activedIdParam: ActivatedRoute) {
   }
-  ngOnInit(): void {
+ async ngOnInit(): Promise <void> {
     this.selectedLanguageLang = 'PL';
+    await this.getLanguagesFromDatabase();
     this.getRecords();
     this.materialId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
@@ -45,6 +51,10 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
     if (this.records) {
       this.recordNumbers = this.records.length;
     }
+  }
+  async getLanguagesFromDatabase(): Promise <void> {
+    const languages = await this.languageBackendService.getRecords().toPromise();
+    this.languages = languages.body;
   }
   getRecords(): void {
     this.backendService.getRecords().subscribe((records) => {
@@ -65,17 +75,26 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
 
   updateSelectedRecord(recordId: number): void {
     this.tableService.selectedId = recordId;
-    this.router.navigateByUrl('/products/types/update');
+    this.router.navigateByUrl(`/dimensionCodes/add?mode=${OperationModeEnum.UPDATE}&recordId=${recordId}`);
   }
 
 getSelectedLanguageFromNamesInAllLanguages(localizedNames: LocalizedName[], selectedLanguageLang: string): string {
-  const localizedNameInGivenLanguage: LocalizedName[] = [];
-  localizedNames.forEach((localizedName) => {
-    if (localizedName.languageCode === selectedLanguageLang) {
-      localizedNameInGivenLanguage.push(localizedName);
+
+    const localizedNameInGivenLanguage: LocalizedName[] = [];
+    let name = '';
+    if (localizedNames && localizedNames.length > 0) {
+      localizedNames.forEach((localizedName) => {
+        if (localizedName.languageCode === selectedLanguageLang) {
+          localizedNameInGivenLanguage.push(localizedName);
+        }
+      });
+      name = localizedNameInGivenLanguage[0].nameInThisLanguage;
     }
-  });
-  return localizedNameInGivenLanguage[0].nameInThisLanguage;
+
+    return name;
 }
 
+  createNewRecord(): void {
+    this.router.navigateByUrl(`/dimensionCodes/add?mode=${OperationModeEnum.CREATENEW}`);
+  }
 }

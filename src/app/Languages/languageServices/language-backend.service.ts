@@ -9,6 +9,7 @@ import {API_URL} from '../../Config/apiUrl';
 import Language from '../LanguageTypesAndClasses/languageEntity';
 import {LanguageTableService} from './language-table.service';
 import {LanguageDto} from '../LanguageTypesAndClasses/languageDto';
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,11 @@ export class LanguageBackendService {
   endpointUrl = '/languages';
 
   constructor(private http: HttpClient,
-              private tableService: LanguageTableService) {
+              private tableService: GeneralTableService) {
   }
 
-  getRecords(): Observable<HttpResponse<DimensionCode[]>> {
-    return this.http.get<DimensionCode[]>(this.rootURL + this.endpointUrl, {observe: 'response'});
+  getRecords(): Observable<HttpResponse<Language[]>> {
+    return this.http.get<Language[]>(this.rootURL + this.endpointUrl, {observe: 'response'});
   }
 
   // tslint:disable-next-line:typedef

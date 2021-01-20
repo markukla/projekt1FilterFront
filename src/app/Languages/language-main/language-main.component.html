@@ -3,7 +3,7 @@
 
 <div>
 
-  <a  [routerLink]="['/dimensionCodes/add']" routerLinkActive="active">
+  <a  (click)="createNewRecord()" routerLinkActive="active">
     {{ createNewMaterialDescription }}
   </a>
 </div>
@@ -13,27 +13,26 @@
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
-      <th [appSort]="records" data-order="desc" data-name="dimensionCode" scope="col">Kod Wymiaru <br></th>
-      <th [appSort]="records" data-order="desc" data-name="dimensionRole" scope="col">Rola wymiaru <br></th>
-      <th> Opis Wymiaru </th>
+      <th [appSort]="records" data-order="desc" data-name="languageCode" scope="col">{{this.languageCodeDescription}} <br></th>
+      <th [appSort]="records" data-order="desc" data-name="languageName" scope="col">{{this.languageNameDescription}}<br></th>
+      <th>{{this.languageActiveDescription}}<br></th>
       <th>ilość</th>
 
     </tr>
     <tr>
       <th>
-
-        <input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
+        <input class="tableSearchInput" [appSearch]="records" serchedColumn="languageCode" id="serchInCodes" placeholder="Wyszukaj" />
       </th>
-      <th><input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appSearch]="records" serchedColumn="languageName" id="serchInNames" placeholder="Wyszukaj" /></th>
     </tr>
 
     </thead>
     <tbody>
 
     <tr *ngFor="let record of records">
-      <td>{{record.dimensionCode}}</td>
-      <td>{{record.dimensionRole}}</td>
-      <td>  {{ getSelectedLanguageFromNamesInAllLanguages(record.localizedDimensionNames, selectedLanguageLang)}}</td>
+      <td>{{record.languageCode}}</td>
+      <td>{{record.languageName}}</td>
+      <td>  <input class="form-check-input" type = "checkbox" [checked]="record.active" ></td>
       <td>
         <text *ngIf="deleTedRecordMessage">{{deleTedRecordMessage}}</text>
         <br>

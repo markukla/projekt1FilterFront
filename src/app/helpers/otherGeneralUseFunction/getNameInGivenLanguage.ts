@@ -2,10 +2,15 @@ import LocalizedName from '../../DimensionCodes/DimensionCodesTypesAnClasses/loc
 
 export const getSelectedLanguageFromNamesInAllLanguages = (localizedNames: LocalizedName[], selectedLanguageLang: string): string => {
   const localizedNameInGivenLanguage: LocalizedName[] = [];
-  localizedNames.forEach((localizedName) => {
-    if (localizedName.languageCode === selectedLanguageLang) {
-      localizedNameInGivenLanguage.push(localizedName);
-    }
-  });
-  return localizedNameInGivenLanguage[0].nameInThisLanguage;
+  let name = '';
+  if (localizedNames && localizedNames.length > 0) {
+    localizedNames.forEach((localizedName) => {
+      if (localizedName.languageCode === selectedLanguageLang) {
+        localizedNameInGivenLanguage.push(localizedName);
+      }
+    });
+    name = localizedNameInGivenLanguage[0].nameInThisLanguage;
+  }
+
+  return name;
 };

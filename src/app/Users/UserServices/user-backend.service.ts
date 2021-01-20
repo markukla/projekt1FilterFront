@@ -13,6 +13,7 @@ import UpdatePrivilegedUserWithouTPasswordDto from '../users/userTypes/updatePri
 import CHangePasswordByAdminDto from '../users/userTypes/changePasswordDto';
 import BlockUserDto from '../users/userTypes/blockUseDto';
 import {API_URL} from '../../Config/apiUrl';
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class UserBackendService {
   rootURL = API_URL;
 
   constructor(private http: HttpClient,
-              private usersTableService: UsersTableService
+              private usersTableService: GeneralTableService
               ) {
   }
 

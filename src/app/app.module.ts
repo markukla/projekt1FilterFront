@@ -61,7 +61,6 @@ import { OrderSearchDirectiveDirective } from './helpers/directive/ForOrders/ord
 import { OrderDrawingComponent } from './Orders/orders/order-drawing/order-drawing.component';
 import { DimensionCodesMainComponent } from './DimensionCodes/dimension-codes-main/dimension-codes-main.component';
 import { CreateDimensionCodeComponent } from './DimensionCodes/create-dimension-code/create-dimension-code.component';
-import { UpdateDImensionCodeComponent } from './DimensionCodes/update-dimension-code/update-dimension-code.component';
 import { DimensionSearchDirective } from './helpers/directive/ForDimensionCode/dimension-search.directive';
 import { LanguageMainComponent } from './Languages/language-main/language-main.component';
 import { CreateOrUpdateLanguageComponent } from './Languages/create-or-update-language/create-or-update-language.component';
@@ -122,7 +121,6 @@ import { SearchDirective } from './helpers/directive/SearchDirective/search.dire
     OrderDrawingComponent,
     DimensionCodesMainComponent,
     CreateDimensionCodeComponent,
-    UpdateDImensionCodeComponent,
     DimensionSearchDirective,
     LanguageMainComponent,
     CreateOrUpdateLanguageComponent,
@@ -146,7 +144,6 @@ import { SearchDirective } from './helpers/directive/SearchDirective/search.dire
       { path: 'materials/update', component: UpdateMaterialComponent},
       {path: 'dimensionCodes', component: DimensionCodesMainComponent },
       { path: 'dimensionCodes/add', component: CreateDimensionCodeComponent},
-      { path: 'dimensionCodes/update', component: UpdateDImensionCodeComponent},
       { path: 'users', component: UsersComponent},
       { path: 'users/add', component: CreateNewUserComponent},
       { path: 'users/update', component: UpdateUserComponent},
@@ -169,7 +166,9 @@ import { SearchDirective } from './helpers/directive/SearchDirective/search.dire
       { path: 'products/addDrawing', component: CreateProductDrawingComponent},
       {path: 'login', component: LoginComponent },
       {path: 'drag', component: ContainerForDragableComponent },
-      {path: 'products/productDrawingBlueprint', component: ProductDrawingTemplateComponent }
+      {path: 'products/productDrawingBlueprint', component: ProductDrawingTemplateComponent },
+      {path: 'languages', component: LanguageMainComponent},
+      {path: 'languages/create', component: CreateOrUpdateLanguageComponent}
       ])
   ],
   providers: [

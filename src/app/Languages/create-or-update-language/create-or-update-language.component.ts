@@ -14,6 +14,7 @@ import {LanguageBackendService} from '../languageServices/language-backend.servi
 import {ValidateLanguageService} from '../languageServices/validate-language.service';
 import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
 import Language from '../LanguageTypesAndClasses/languageEntity';
+import OrderOperationMode from '../../Orders/OrdersTypesAndClasses/orderOperationMode';
 
 @Component({
   selector: 'app-create-or-update-language',
@@ -42,16 +43,16 @@ export class CreateOrUpdateLanguageComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.route.params.subscribe((params) => {
-      this.languageToUpdateId = params.get('languageId');
-      this.languageOperationMode = params.get('mode');
+    this.route.queryParamMap.subscribe(queryParams => {
+      this.languageOperationMode = queryParams.get('mode');
+      this.languageToUpdateId = queryParams.get('languageId');
     });
     this.languageForm = new FormGroup({
       // tslint:disable-next-line:max-line-length
       languageCode: new FormControl('', [Validators.nullValidator, Validators.required]),
       // tslint:disable-next-line:max-line-length
       languageName: new FormControl('', [Validators.nullValidator && Validators.required]),
-      active: new FormControl(false, [Validators.nullValidator && Validators.required])
+      active: new FormControl(false, [])
 
     }, {updateOn: 'change'});
     await this.initFormValuesForUpdateMode();
@@ -90,7 +91,7 @@ export class CreateOrUpdateLanguageComponent implements OnInit {
       languageName: this.languageName.value,
       active: this.active.value
     };
-    if (this.languageOperationMode === 'addNew') {
+    if (this.languageOperationMode === 'createNew') {
     this.backendService.addRecords(this.createLanguageDto).subscribe((language) => {
       this.showoperationStatusMessage = 'Dodano nowy rekord';
       this.cleanOperationMessage();
@@ -110,10 +111,11 @@ export class CreateOrUpdateLanguageComponent implements OnInit {
     }
     }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/products/types');
+    this.router.navigateByUrl('/languages');
   }
 
   cleanOperationMessage(): void {
+    this.languageForm.reset();
     setTimeout(() => {
       this.showoperationStatusMessage = null;
     }, 2000);

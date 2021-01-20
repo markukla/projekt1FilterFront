@@ -18,6 +18,7 @@ import {NavigationEvent} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-
 import {NgModel} from '@angular/forms';
 import {MaterialTableService} from '../MaterialServices/material-table.service';
 import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 @Component({
   selector: 'app-materials',
@@ -40,7 +41,7 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   recordNumbers: number;
 
 
-  constructor(public materialTableService: MaterialTableService,
+  constructor(public materialTableService: GeneralTableService,
               public materialBackendService: MaterialBackendService,
               private searChService: SearchService,
               private router: Router,

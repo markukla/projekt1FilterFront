@@ -8,6 +8,7 @@ import {UserBackendService} from '../UserServices/user-backend.service';
 import User from '../users/userTypes/user';
 import {UserHasAdminRole, UserHasEditorRoleButIsNotAdmin} from '../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
 import BlockUserDto from '../users/userTypes/blockUseDto';
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 @Component({
   selector: 'app-users',
@@ -30,7 +31,7 @@ export class UsersComponent implements OnInit, AfterContentChecked {
 
 
 
-  constructor(public userTableService: UsersTableService,
+  constructor(public userTableService: GeneralTableService,
               public userBackendService: UserBackendService,
               private router: Router,
               private activedIdParam: ActivatedRoute) {
@@ -79,9 +80,9 @@ else {
   }
   getRecords(): void {
     this.userBackendService.getAllPriviligedUsers().subscribe((users) => {
-      this.userTableService.tableRecords.length = 0;
-      this.userTableService.tableRecords = users.body;
-      this.allPriviligedUsers = this.userTableService.getTableRecords();
+      this.userTableService.records.length = 0;
+      this.userTableService.records = users.body;
+      this.allPriviligedUsers = this.userTableService.getRecords();
       this.updateAdminsTable();
       this.updateEditorsTable();
       console.log(`this admins= ${this.admins}`);

@@ -49,37 +49,13 @@
 
       </div>
     </div>
-    <form [formGroup]="languageForm">
-      <div class="row">
-      <div class="form-group col-md-6">
-        <label class="label" for="languageCode:">Kod Języka</label>
-        <input type="text" class="form-control" formControlName="languageCode" id="languageCode:"
-               placeholder="Kod Wymiaru">
-        <div *ngIf="lamguageCode.invalid && (lamguageCode.dirty || lamguageCode.touched)"
-             class="alert alert-danger">
 
-          <div class="validatorInfo" *ngIf="lamguageCode.errors.required">
-            To pole jest wymagane
-          </div>
-        </div>
+      <div *ngFor="let language of languages" class="row">
+        <p>{{'kod kraju -'+language.languageCode }}</p>
+        <label class="label" [for]="language.languageCode">Nazwa w danym języku</label>
+        <input type="text" class="form-control" [id]="language.languageCode" [value]="setValueForLanguageInputInUpdateMode(language.languageCode,this.recordToUpdate.localizedDimensionNames)" #nameInput>
 
       </div>
-        <div class="form-group col-md-6">
-          <label class="label" for="nameInThisLanguage">Nazwa</label>
-          <input type="text" class="form-control" formControlName="nameInThisLanguage" id="nameInThisLanguage"
-                 placeholder="Nazwa" >
-          <div *ngIf="nameInThisLanguage.invalid && (nameInThisLanguage.dirty || nameInThisLanguage.touched)"
-               class="alert alert-danger">
-
-            <div class="validatorInfo" *ngIf="nameInThisLanguage.errors.required">
-              To pole jest wymagane
-            </div>
-          </div>
-
-        </div>
-      </div>
-      <button type="button" [disabled]="!languageForm.valid" class="btn btn-danger" (click)="addLanguageToCreateDto()">Dodaj Język</button>
-    </form>
     <div class="addButon">
       <button type="submit" [disabled]="!form.valid" class="btn btn-danger">Zapisz</button>
     </div>
