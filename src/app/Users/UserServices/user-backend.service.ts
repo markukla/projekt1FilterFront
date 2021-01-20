@@ -12,13 +12,14 @@ import CreatePrivilegedUserDto from '../users/userTypes/createUserDto';
 import UpdatePrivilegedUserWithouTPasswordDto from '../users/userTypes/updatePriviligedUser';
 import CHangePasswordByAdminDto from '../users/userTypes/changePasswordDto';
 import BlockUserDto from '../users/userTypes/blockUseDto';
+import {API_URL} from '../../Config/apiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserBackendService {
 
-  rootURL = 'http://localhost:5000';
+  rootURL = API_URL;
 
   constructor(private http: HttpClient,
               private usersTableService: UsersTableService

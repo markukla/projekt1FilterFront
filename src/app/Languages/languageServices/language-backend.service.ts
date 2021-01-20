@@ -1,31 +1,34 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {MaterialTableService} from '../../../materials/MaterialServices/material-table.service';
+import {DimensionCodeTableService} from '../../DimensionCodes/DimensionCodeServices/dimension-code-table.service';
 import {Observable} from 'rxjs';
-import {Material} from '../../../materials/MaterialsMainComponent/material';
+import DimensionCode from '../../DimensionCodes/DimensionCodesTypesAnClasses/diemensionCode.entity';
+import CreateDimensionCodeDto from '../../DimensionCodes/DimensionCodesTypesAnClasses/createDimensionCode.dto';
 import {tap} from 'rxjs/operators';
-import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
-import {ProductTopTableService} from './product-top-table.service';
-import {API_URL} from '../../../Config/apiUrl';
+import {API_URL} from '../../Config/apiUrl';
+import Language from '../LanguageTypesAndClasses/languageEntity';
+import {LanguageTableService} from './language-table.service';
+import {LanguageDto} from '../LanguageTypesAndClasses/languageDto';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductTopBackendService {
+export class LanguageBackendService {
   rootURL = API_URL;
-  endpointUrl = '/productTops';
+  endpointUrl = '/languages';
+
   constructor(private http: HttpClient,
-              private tableService: ProductTopTableService) {
+              private tableService: LanguageTableService) {
   }
 
-  getRecords(): Observable<HttpResponse<ProductTop[]>> {
-    return this.http.get<ProductTop[]>(this.rootURL + this.endpointUrl, {observe: 'response'});
+  getRecords(): Observable<HttpResponse<DimensionCode[]>> {
+    return this.http.get<DimensionCode[]>(this.rootURL + this.endpointUrl, {observe: 'response'});
   }
 
   // tslint:disable-next-line:typedef
-  addRecords(record: ProductTop): Observable<HttpResponse<ProductTop>> {
+  addRecords(record: LanguageDto): Observable<HttpResponse<Language>> {
     // tslint:disable-next-line:max-line-length
-    return this.http.post<ProductTop>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
+    return this.http.post<Language>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
         this.tableService.addRecordToTable(record.body);
@@ -41,9 +44,9 @@ export class ProductTopBackendService {
       }));
   }
 
-  updateRecordById(id: string, updatedRecord: ProductTop): Observable<HttpResponse<ProductTop>> {
+  updateRecordById(id: string, updatedRecord: LanguageDto): Observable<HttpResponse<Language>> {
     const updateUrl = `${this.rootURL + this.endpointUrl}/${id}`;
-    return this.http.patch<ProductTop>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
+    return this.http.patch<Language>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
         this.tableService.updateTableRecord(Number(id), record.body);
@@ -54,21 +57,13 @@ export class ProductTopBackendService {
     const url = `${this.rootURL + this.endpointUrl}/codes/${code}`;
     return this.http.get<boolean>(url);
   }
-  findRecordByName(name: string): Observable<boolean> {
-    const url = `${this.rootURL + this.endpointUrl}/names/${name}`;
-    return this.http.get<boolean>(url);
-  }
-
   findRecordBycodeForUpdate(id: string, code: string): Observable<boolean> {
     const url = `${this.rootURL + this.endpointUrl}/${id}/codes/${code}`;
     return this.http.get<boolean>(url);
   }
-  findRecordByNameForUpdate(id: string, name: string): Observable<boolean> {
-    const url = `${this.rootURL + this.endpointUrl}/${id}/names/${name}`;
-    return this.http.get<boolean>(url);
-  }
-  findRecordById(recordToUpdateId: string): Observable<HttpResponse<ProductTop>> {
+
+  findRecordById(recordToUpdateId: string): Observable<HttpResponse<Language>> {
     const getUrl = `${this.rootURL + this.endpointUrl}/${recordToUpdateId}`;
-    return this.http.get<ProductTop>(getUrl, {observe: 'response'} );
+    return this.http.get<Language>(getUrl, {observe: 'response'});
   }
 }

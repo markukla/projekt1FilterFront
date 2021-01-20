@@ -17,6 +17,7 @@ import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/r
 import {NavigationEvent} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-view-model';
 import {NgModel} from '@angular/forms';
 import {MaterialTableService} from '../MaterialServices/material-table.service';
+import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
 
 @Component({
   selector: 'app-materials',
@@ -41,6 +42,7 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
 
   constructor(public materialTableService: MaterialTableService,
               public materialBackendService: MaterialBackendService,
+              private searChService: SearchService,
               private router: Router,
               private activedIdParam: ActivatedRoute) {
   }
@@ -115,6 +117,7 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
       this.materialTableService.records.length = 0;
       this.materialTableService.records = materials.body;
       this.materials = this.materialTableService.getRecords();
+      this.searChService.orginalArrayCopy = [...this.materialTableService.getRecords()];
     });
 
   }

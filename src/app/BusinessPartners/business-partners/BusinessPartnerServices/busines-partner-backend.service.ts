@@ -11,13 +11,14 @@ import BlockUserDto from '../../../Users/users/userTypes/blockUseDto';
 import CreateBusinessPartnerDto from '../../BusinessPartnerTypes/createBusinessPartnerDto';
 import UpdateBussinessPartnerWithoutPassword from '../../BusinessPartnerTypes/updateBusinessPartnerDto';
 import {BusinessPartnerTableService} from './business-partner-table.service';
+import {API_URL} from '../../../Config/apiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusinesPartnerBackendService {
 
-  rootURL = 'http://localhost:5000';
+  rootURL = API_URL;
 
   constructor(private http: HttpClient,
               private partnerTableService: BusinessPartnerTableService

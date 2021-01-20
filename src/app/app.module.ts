@@ -63,6 +63,10 @@ import { DimensionCodesMainComponent } from './DimensionCodes/dimension-codes-ma
 import { CreateDimensionCodeComponent } from './DimensionCodes/create-dimension-code/create-dimension-code.component';
 import { UpdateDImensionCodeComponent } from './DimensionCodes/update-dimension-code/update-dimension-code.component';
 import { DimensionSearchDirective } from './helpers/directive/ForDimensionCode/dimension-search.directive';
+import { LanguageMainComponent } from './Languages/language-main/language-main.component';
+import { CreateOrUpdateLanguageComponent } from './Languages/create-or-update-language/create-or-update-language.component';
+import { LanguageSearchDirective } from './helpers/directive/ForLanguages/language-search.directive';
+import { SearchDirective } from './helpers/directive/SearchDirective/search.directive';
 
 
 
@@ -119,7 +123,11 @@ import { DimensionSearchDirective } from './helpers/directive/ForDimensionCode/d
     DimensionCodesMainComponent,
     CreateDimensionCodeComponent,
     UpdateDImensionCodeComponent,
-    DimensionSearchDirective
+    DimensionSearchDirective,
+    LanguageMainComponent,
+    CreateOrUpdateLanguageComponent,
+    LanguageSearchDirective,
+    SearchDirective
     ],
   imports: [
     BrowserModule,

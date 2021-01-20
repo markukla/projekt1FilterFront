@@ -1,6 +1,3 @@
 import {AppConfig} from './app-config';
 
-export const HERO_DI_CONFIG: AppConfig = {
-  apiEndpoint: '',
-  title: 'Dependency Injection'
-};
+export const API_URL =  'http://localhost:5000';

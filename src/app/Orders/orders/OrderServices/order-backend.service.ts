@@ -14,12 +14,13 @@ import {OrderTableService} from './order-table.service';
 import {Material} from '../../../materials/MaterialsMainComponent/material';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 import NewestOrderNumber from '../../OrdersTypesAndClasses/newestOrderNumber';
+import {API_URL} from '../../../Config/apiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderBackendService {
-  rootURL = 'http://localhost:5000';
+  rootURL = API_URL ;
   endpointUrl = '/orders';
   selectedProduct: Product;
   selectedParnter: User;

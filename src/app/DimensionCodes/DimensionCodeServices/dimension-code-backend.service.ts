@@ -7,12 +7,13 @@ import {tap} from 'rxjs/operators';
 import {DimensionCodeTableService} from './dimension-code-table.service';
 import DimensionCode from '../DimensionCodesTypesAnClasses/diemensionCode.entity';
 import CreateDimensionCodeDto from '../DimensionCodesTypesAnClasses/createDimensionCode.dto';
+import {API_URL} from '../../Config/apiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DimensionCodeBackendService {
-  rootURL = 'http://localhost:5000';
+  rootURL = API_URL;
   endpointUrl = '/dimensionCodes';
 
   constructor(private http: HttpClient,

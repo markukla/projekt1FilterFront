@@ -6,12 +6,13 @@ import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
 import {tap} from 'rxjs/operators';
 import {ProductTypeTableService} from './product-type-table.service';
 import ProductType from '../../ProductTypesAndClasses/productType.entity';
+import {API_URL} from '../../../Config/apiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductTypeBackendService {
-  rootURL = 'http://localhost:5000';
+  rootURL = API_URL;
   endpointUrl = '/productTypes';
   constructor(private http: HttpClient,
               private tableService: ProductTypeTableService) {

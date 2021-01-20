@@ -7,12 +7,13 @@ import {tap} from 'rxjs/operators';
 import {Material} from '../../../materials/MaterialsMainComponent/material';
 import {ProductBottomTableService} from './product-bottom-table.service';
 import ProductBottom from '../../ProductTypesAndClasses/productBottom.entity';
+import {API_URL} from '../../../Config/apiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductBottomBackendService {
-  rootURL = 'http://localhost:5000';
+  rootURL = API_URL;
   endpointUrl = '/productBottoms';
   constructor(private http: HttpClient,
               private tableService: ProductBottomTableService) {

@@ -10,12 +10,13 @@ import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
 import {DrawingPaths} from '../../../ProductTypesAndClasses/drawingPaths';
 import ProductBottom from '../../../ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
+import {API_URL} from '../../../../Config/apiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductBackendService {
-  rootURL = 'http://localhost:5000';
+  rootURL = API_URL;
   endpointUrl = '/products';
   createProductDto: CreateProductDto;
   constructor(private http: HttpClient,

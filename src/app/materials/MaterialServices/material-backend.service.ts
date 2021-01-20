@@ -4,13 +4,14 @@ import {Observable, throwError} from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Material} from '../MaterialsMainComponent/material';
 import {MaterialTableService} from './material-table.service';
+import {API_URL} from '../../Config/apiUrl';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class MaterialBackendService {
-  rootURL = 'http://localhost:5000';
+  rootURL = API_URL;
   endpointUrl = '/materials';
   constructor(private http: HttpClient,
               private materialTableService: MaterialTableService) {

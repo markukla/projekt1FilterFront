@@ -1,23 +1,13 @@
-import {
-  AfterContentChecked,
-  AfterContentInit,
-  AfterViewChecked,
-  AfterViewInit,
-  Directive,
-  ElementRef, EventEmitter,
-  HostListener,
-  Input, OnInit, Output,
-  Renderer2
-} from '@angular/core';
-import {Sort} from '../../../util/sort';
-import {MaterialBackendService} from '../../../materials/MaterialServices/material-backend.service';
+import {Directive, ElementRef, HostListener, Input, Renderer2} from '@angular/core';
+import {UserBackendService} from '../../../Users/UserServices/user-backend.service';
+import {SearchService} from './search.service';
 
 @Directive({
-  selector: '[appSearchMaterial]'
+  selector: '[appSearch]'
 })
-export class MaterialSearchDirective implements AfterContentChecked {
+export class SearchDirective {
 
-  @Input('appSearchMaterial') searchedArray: Array<any>;
+  @Input('appSearch') searchedArray: Array<any>;
 
   orginalArrayCopy: Array<any> = [];
 
@@ -26,23 +16,17 @@ export class MaterialSearchDirective implements AfterContentChecked {
   // tslint:disable-next-line:max-line-length
   @Input() serchedColumn: string; /* insted of this input i could just declate atribute name in html(it creates completly new Atribute in html) than i can access to its value by target elements object */
   temporatyArray: Array<any> = [];
-  allowOrginalArrayCopyChange: boolean;
-
 
   constructor(private renderer: Renderer2,
               private targetElement: ElementRef,
-              private materialBackendService: MaterialBackendService) {
-    this.allowOrginalArrayCopyChange = true;
-  }
-
-  ngAfterContentChecked(): void {
+              private usersBackendService: UserBackendService,
+              private searchService: SearchService) {
   }
 
   @HostListener('input')
 // tslint:disable-next-line:typedef
   serchTable() {
-    this.materialBackendService.getRecords().subscribe((materials) => {
-      this.orginalArrayCopy = materials.body;
+      this.orginalArrayCopy = this.searchService.orginalArrayCopy;
       const elem = this.targetElement.nativeElement;
 
       // tslint:disable-next-line:max-line-length
@@ -65,9 +49,5 @@ export class MaterialSearchDirective implements AfterContentChecked {
       for (let i = 0; i < this.searchedArray.length; i++) {
         console.log(this.searchedArray[i]);
       }
-
-    });
   }
-
-
 }
