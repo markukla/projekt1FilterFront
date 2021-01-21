@@ -13,6 +13,8 @@ import OperationModeEnum from '../../util/OperationModeEnum';
 import {LanguageBackendService} from '../../Languages/languageServices/language-backend.service';
 import Language from '../../Languages/LanguageTypesAndClasses/languageEntity';
 import {LanguageFormService} from '../../LanguageForm/language-form.service';
+import BackendErrorResponse from '../../helpers/ErrorHandling/backendErrorResponse';
+import {BackendMessageService} from '../../helpers/ErrorHandling/backend-message.service';
 
 @Component({
   selector: 'app-create-dimension-code',
@@ -36,6 +38,15 @@ export class CreateDimensionCodeComponent implements OnInit {
   createdDimensinoCode: DimensionCode;
   recordToUpdate: DimensionCode;
   operatiomMode: string;
+  closeButtonDescription: string;
+  addNewDimensionCodeDescription: string;
+  dimensionCodeDescription: string;
+  thisFiledIsRequiredDescription: string;
+  codeCanNotBeShortedThan2CharactersDescription: string;
+  codeCanNotBeLongerThan2CharactersDescription: string;
+  SelectDimensionRoleDescription: string;
+  giveNameForAllLanguagesDescription: string;
+  saveButtonDescription: string;
   @Output()
   createdDimensionEmiter: EventEmitter<DimensionCode>;
    selectedRecordToupdateId: string;
@@ -47,6 +58,7 @@ export class CreateDimensionCodeComponent implements OnInit {
     private route: ActivatedRoute,
     private languageBackendService: LanguageBackendService,
     private router: Router,
+    private backendMessageService: BackendMessageService,
     private languageFormService: LanguageFormService) {
     console.log('creating component:CreateProductTypeComponent');
     this.createdDimensionEmiter = new EventEmitter<DimensionCode>();
@@ -105,28 +117,28 @@ export class CreateDimensionCodeComponent implements OnInit {
     };
     if(this.operatiomMode === OperationModeEnum.CREATENEW) {
       this.backendService.addRecords(this.createDimensionCodeDto).subscribe((material) => {
-        this.showoperationStatusMessage = 'Dodano nowy rekord';
+        this.showoperationStatusMessage = this.backendMessageService.returnSuccessMessageToUserForSuccessBackendResponse();
         this.createdDimensinoCode = material.body;
         this.createdDimensionEmiter.emit(this.createdDimensinoCode);
         this.cleanOperationMessage();
       }, error => {
-        this.showoperationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego rekordu';
+        this.showoperationStatusMessage = this.backendMessageService.returnErrorToUserBasingOnBackendErrorString(error);
         this.cleanOperationMessage();
       });
     } else if (this.operatiomMode === OperationModeEnum.UPDATE) {
       this.backendService.updateRecordById(this.selectedRecordToupdateId, this.createDimensionCodeDto).subscribe((material) => {
-        this.showoperationStatusMessage = 'Zaktualizowano rekord';
+        this.showoperationStatusMessage = this.backendMessageService.returnSuccessMessageToUserForSuccessBackendResponse();
         this.createdDimensinoCode = material.body;
         this.createdDimensionEmiter.emit(this.createdDimensinoCode);
         this.cleanOperationMessage();
       }, error => {
-        this.showoperationStatusMessage = 'Wystąpił bląd, nie udało się zaktulizować rekordu';
+        this.showoperationStatusMessage = this.backendMessageService.returnErrorToUserBasingOnBackendErrorString(error);
         this.cleanOperationMessage();
       });
     }
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/products/types');
+    this.router.navigateByUrl('/dimensionCodes');
   }
 
   cleanOperationMessage(): void {

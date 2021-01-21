@@ -9,6 +9,7 @@ import {ProductTypeTableService} from '../ProductTypeServices/product-type-table
 import {ProductTypeBackendService} from '../ProductTypeServices/product-type-backend.service';
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
+import {ProductTypeForTableCell} from '../../ProductTypesAndClasses/productTypeForTableCell';
 
 @Component({
   selector: 'app-product-type',
@@ -17,7 +18,7 @@ import {GeneralTableService} from '../../../util/GeneralTableService/general-tab
 })
 export class ProductTypeComponent implements OnInit, AfterContentChecked {
   @Input()
-  records: ProductType[];
+  records: ProductTypeForTableCell[];
   createNewMaterialDescription = 'Dodaj Nowy';
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;

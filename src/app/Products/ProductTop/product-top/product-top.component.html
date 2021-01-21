@@ -14,7 +14,7 @@
     <thead>
     <tr>
       <th [appSort]="records" data-order="desc" data-name="code" scope="col">Kod wykończenia góry <br></th>
-      <th [appSort]="records" data-order="desc" data-name="name" scope="col">Nazwa wykończenia góry</th>
+      <th [appSort]="records" data-order="desc" data-name="localizedNameInSelectedLanguage" scope="col">Nazwa wykończenia góry</th>
       <th>ilość</th>
 
     </tr>
@@ -23,7 +23,7 @@
 
         <input class="tableSearchInput" [appSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
       </th>
-      <th><input class="tableSearchInput" [appSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appSearch]="records" serchedColumn="localizedNameInSelectedLanguage" id="serchInNames" placeholder="Wyszukaj" /></th>
       <th>{{this.recordNumbers}}</th>
     </tr>
 
@@ -32,7 +32,7 @@
 
     <tr *ngFor="let record of records">
       <td>{{record.code}}</td>
-      <td>{{record.name}}</td>
+      <td>{{record.localizedNameInSelectedLanguage}}</td>
       <td>
         <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
         <br>

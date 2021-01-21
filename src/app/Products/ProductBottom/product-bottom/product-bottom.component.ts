@@ -9,6 +9,7 @@ import {ProductBottomTableService} from '../ProductBottomServices/product-bottom
 import {ProductBottomBackendService} from '../ProductBottomServices/product-bottom-backend.service';
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
+import {ProductBottomForTableCell} from '../../ProductTypesAndClasses/productBottomForTableCell';
 
 @Component({
   selector: 'app-product-bottom',
@@ -17,7 +18,7 @@ import {GeneralTableService} from '../../../util/GeneralTableService/general-tab
 })
 export class ProductBottomComponent implements OnInit, AfterContentChecked {
   @Input()
-  records: ProductBottom[];
+  records: ProductBottomForTableCell[];
   createNewMaterialDescription = 'Dodaj Nowy';
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;

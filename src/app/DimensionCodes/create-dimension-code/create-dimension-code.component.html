@@ -1,33 +1,30 @@
 <div class="createMaterial">
-  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
-  <h2>Dodaj nowy Kod wymiaru</h2>
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='closeButtonDescription'>x</button>
+  <h2>{{addNewDimensionCodeDescription}}</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="row">
 
       <div class="form-group col-md-6">
-        <label class="label" for="code">Kod Wymiaru</label>
-        <input type="text" class="form-control" formControlName="code" id="code"
-               placeholder="Kod Wymiaru">
+        <label class="label" for="code">{{dimensionCodeDescription}}</label>
+        <input type="text" class="form-control" formControlName="code" id="code">
         <div *ngIf="code.invalid && (code.dirty || code.touched)"
              class="alert alert-danger">
 
           <div class="validatorInfo" *ngIf="code.errors.required">
-            To pole jest wymagane
+            {{ thisFiledIsRequiredDescription}}
           </div>
-          <div class="validatorInfo" *ngIf="code.errors?.taken">
-            Podana kod jest już zajęty.
-          </div>
+
           <div class="validatorInfo" *ngIf="code.errors.minlength">
-            Kod nie może być krótszy niż 2 znaki
+            {{codeCanNotBeShortedThan2CharactersDescription}}
           </div>
           <div class="validatorInfo" *ngIf="code.errors.maxlength">
-            Kod nie może być dłuższy niż 2 znaki.
+            {{codeCanNotBeLongerThan2CharactersDescription}}.
           </div>
         </div>
 
       </div>
       <div class="form-group col-md-6">
-        <label class="label" for="role"> Wybierz Rolę Wymiaru</label>
+        <label class="label" for="role"> {{SelectDimensionRoleDescription}}</label>
         <select class="form-control" formControlName="role" id="role">
           <option [ngValue]="this.allDimensionRolesToSelect[0]">
             {{firstIndexDimensionRole}}
@@ -43,7 +40,7 @@
              class="alert alert-danger">
 
           <div class="validatorInfo" *ngIf="role.errors.required">
-            To pole jest wymagane
+            {{ thisFiledIsRequiredDescription}}
           </div>
         </div>
 
@@ -51,12 +48,12 @@
     </div>
 
       <div  class="col">
-        <p>Podaj nazwę dla wszystkich języków</p> <br>
+        <p>{{giveNameForAllLanguagesDescription}}</p> <br>
 <app-langage-form-component></app-langage-form-component>
 
       </div>
     <div class="addButon">
-      <button type="submit" [disabled]="!form.valid" class="btn btn-danger">Zapisz</button>
+      <button type="submit" [disabled]="!form.valid" class="btn btn-danger">{{saveButtonDescription}}</button>
     </div>
 
 

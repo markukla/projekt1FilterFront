@@ -8,6 +8,7 @@ import {ProductTopBackendService} from '../ProductTopServices/product-top-backen
 import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
 import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
+import {ProductTopForTableCell} from '../../ProductTypesAndClasses/productTopForTableCell';
 
 @Component({
   selector: 'app-product-top',
@@ -16,7 +17,7 @@ import {SearchService} from '../../../helpers/directive/SearchDirective/search.s
 })
 export class ProductTopComponent implements OnInit, AfterContentChecked {
   @Input()
-  records: ProductTop[];
+  records: ProductTopForTableCell[];
   @Input()
   orginalMaterialsCopy: Material[];
   createNewMaterialDescription = 'Dodaj Nowy';

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
-import {BackendErrorService} from '../ErrorHandling/backend-error.service';
+import {BackendMessageService} from '../ErrorHandling/backend-message.service';
 import {catchError} from 'rxjs/operators';
 
 @Injectable({
@@ -10,7 +10,7 @@ import {catchError} from 'rxjs/operators';
 })
 export class ErrorsInterceptorService implements HttpInterceptor{
 
-  constructor(private backendErrorService: BackendErrorService) { }
+  constructor(private backendErrorService: BackendMessageService) { }
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
    /* if (this.backendErrorService.backendError) {
       this.backendErrorService.setbackendError(null);if (this.backendErrorService.backendError) {
