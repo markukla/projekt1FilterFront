@@ -63,7 +63,7 @@ export class UpdateProductTypeComponent implements OnInit {
   console.log(`materialToUpdateId= ${this.recordToUpdateId}`);
   this.backendService.findRecordById(String(this.recordToUpdateId)).subscribe((record) => {
         this.recordToUpdate = record.body;
-        this.name.setValue(record.body.name);
+        this.name.setValue(record.body.localizedNames);
         this.code.setValue(record.body.code);
         this.bottomsForThisProductType.setValue(record.body.bottomsForThisProductType);
         this.topsForThisProductType.setValue((record.body.topsForThisProductType)); },

@@ -6,6 +6,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ProductTopTableService} from '../ProductTopServices/product-top-table.service';
 import {ProductTopBackendService} from '../ProductTopServices/product-top-backend.service';
 import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
+import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
+import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 
 @Component({
   selector: 'app-product-top',
@@ -28,10 +30,11 @@ export class ProductTopComponent implements OnInit, AfterContentChecked {
   recordNumbers: number;
 
 
-  constructor(public tableService: ProductTopTableService,
+  constructor(public tableService: GeneralTableService,
               public backendService: ProductTopBackendService,
               private router: Router,
-              private activedIdParam: ActivatedRoute) {
+              private activedIdParam: ActivatedRoute,
+              private searChService: SearchService) {
   }
   ngOnInit(): void {
     this.getRecords();
@@ -47,8 +50,13 @@ export class ProductTopComponent implements OnInit, AfterContentChecked {
   getRecords(): void {
     this.backendService.getRecords().subscribe((records) => {
       this.tableService.records.length = 0;
-      this.tableService.records = records.body;
+      this.tableService.records = [];
+      records.body.forEach((record) => {
+        const recorForTableCell = this.backendService.createProductTopForTableCellFromProductTop(record);
+        this.tableService.records.push(recorForTableCell);
+      });
       this.records = this.tableService.getRecords();
+      this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
     });
 
   }

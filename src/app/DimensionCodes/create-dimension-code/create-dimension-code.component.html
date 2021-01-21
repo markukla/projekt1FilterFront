@@ -50,10 +50,9 @@
       </div>
     </div>
 
-      <div *ngFor="let language of languages" class="row">
-        <p>{{'kod kraju -'+language.languageCode }}</p>
-        <label class="label" [for]="language.languageCode">Nazwa w danym języku</label>
-        <input type="text" class="form-control" [id]="language.languageCode" [value]="setValueForLanguageInputInUpdateMode(language.languageCode,this.recordToUpdate.localizedDimensionNames)" #nameInput>
+      <div  class="col">
+        <p>Podaj nazwę dla wszystkich języków</p> <br>
+<app-langage-form-component></app-langage-form-component>
 
       </div>
     <div class="addButon">

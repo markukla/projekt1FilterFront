@@ -16,19 +16,19 @@
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
-      <th>Typ produktu <br></th>
-      <th >Wykończenie góry</th>
-      <th >Wykończenie dna</th>
+      <th [appSort]="records" data-order="desc" data-name="productTypeCodePlusName" scope="col">Typ produktu <br></th>
+      <th [appSort]="records" data-order="desc" data-name="productTopCodePlusName" scope="col">Wykończenie góry</th>
+      <th [appSort]="records" data-order="desc" data-name="productBottomCodePlusNAme" scope="col">Wykończenie dna</th>
       <th>ilość</th>
 
     </tr>
     <tr>
       <th>
 
-        <input class="tableSearchInput"  id="serchInType" placeholder="Wyszukaj" />
+        <input class="tableSearchInput"  id="serchInType" placeholder="Wyszukaj" [appSearch]="records" data-order="desc" data-name="productTypeCodePlusName" scope="col"> />
       </th>
-      <th><input class="tableSearchInput"  id="serchInTops" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput"  id="serchInBottoms" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  id="serchInTops" placeholder="Wyszukaj"  [appSearch]="records" data-order="desc" data-name="productTopCodePlusName" scope="col"> /></th>
+      <th><input class="tableSearchInput"  id="serchInBottoms" placeholder="Wyszukaj" [appSearch]="records" data-order="desc" data-name="productBottomCodePlusNAme" scope="col">/></th>
       <th>{{this.recordNumbers}}</th>
     </tr>
 
@@ -36,9 +36,9 @@
     <tbody>
 
     <tr *ngFor="let record of records">
-      <td>{{record.productType.code+'-'+record.productType.name}}</td>
-      <td>{{record.productTop.code+'-'+record.productTop.name}}</td>
-      <td>{{record.productBottom.code+'-'+record.productBottom.name}}</td>
+      <td>{{record.productTypeCodePlusName}}</td>
+      <td>{{record.productTopCodePlusName}}</td>
+      <td>{{record.productBottomCodePlusNAme}}</td>
       <td>
         <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
         <br>

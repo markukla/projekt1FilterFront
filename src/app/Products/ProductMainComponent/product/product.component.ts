@@ -8,6 +8,9 @@ import {ProductTableService} from './ProductServices/product-table.service';
 import {ProductBackendService} from './ProductServices/product-backend.service';
 import OrderOperationMode from '../../../Orders/OrdersTypesAndClasses/orderOperationMode';
 import ProductModeEnum from '../../ProductTypesAndClasses/productMode';
+import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
+import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
+import {ProductForTableCell} from '../../ProductTypesAndClasses/productForTableCell';
 
 @Component({
   selector: 'app-product',
@@ -17,7 +20,7 @@ import ProductModeEnum from '../../ProductTypesAndClasses/productMode';
 export class ProductComponent implements OnInit, AfterContentChecked {
 
   @Input()
-  records: Product[];
+  records: ProductForTableCell[];
   createNewMaterialDescription = 'Dodaj Nowy';
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;
@@ -28,11 +31,11 @@ export class ProductComponent implements OnInit, AfterContentChecked {
   materialId: number;
   recordNumbers: number;
 
-
-  constructor(public tableService: ProductTableService,
+  constructor(public tableService: GeneralTableService,
               public backendService: ProductBackendService,
               private router: Router,
-              private activedIdParam: ActivatedRoute) {
+              private activedIdParam: ActivatedRoute,
+              private searChService: SearchService) {
   }
   ngOnInit(): void {
     this.getRecords();
@@ -48,8 +51,13 @@ export class ProductComponent implements OnInit, AfterContentChecked {
   getRecords(): void {
     this.backendService.getRecords().subscribe((records) => {
       this.tableService.records.length = 0;
-      this.tableService.records = records.body;
+      this.tableService.records = [];
+      records.body.forEach((record) => {
+        const recorForTableCell = this.backendService.createProductForTableCellFromProductTop(record);
+        this.tableService.records.push(recorForTableCell);
+      });
       this.records = this.tableService.getRecords();
+      this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
     });
 
   }

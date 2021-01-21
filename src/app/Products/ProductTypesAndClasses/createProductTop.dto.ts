@@ -1,6 +1,7 @@
+import LocalizedName from '../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
 
 class CreateProductTopDto{
-  name: string;
+  localizedNames: LocalizedName [];
   code: string;
 }
 export default CreateProductTopDto;

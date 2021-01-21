@@ -21,9 +21,9 @@
     <tr>
       <th>
 
-        <input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
+        <input class="tableSearchInput" [appSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
       </th>
-      <th><input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
       <th>{{this.recordNumbers}}</th>
     </tr>
 
@@ -32,7 +32,7 @@
 
     <tr *ngFor="let record of records">
       <td>{{record.code}}</td>
-      <td>{{record.name}}</td>
+      <td>{{record.localizedNames}}</td>
       <td>
         <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
         <br>

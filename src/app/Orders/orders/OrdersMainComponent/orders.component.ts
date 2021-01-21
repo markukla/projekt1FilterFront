@@ -9,6 +9,8 @@ import OrderOperationMode from '../../OrdersTypesAndClasses/orderOperationMode';
 import {BusinessPartnerTableService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/business-partner-table.service';
 import Order from '../../OrdersTypesAndClasses/orderEntity';
 import {BusinesPartnerBackendService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/busines-partner-backend.service';
+import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
+import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 
 @Component({
   selector: 'app-orders',
@@ -32,11 +34,12 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   ordersOfBusinessPartner: Order[];
 
 
-  constructor(public tableService: OrderTableService,
+  constructor(public tableService: GeneralTableService,
               public businessPartnerbackendService: BusinesPartnerBackendService,
               public backendService: OrderBackendService,
               private router: Router,
               private route: ActivatedRoute,
+              private searChService: SearchService,
               private activedIdParam: ActivatedRoute,
               private authenticationService: AuthenticationService
   ) {
@@ -64,10 +67,11 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
       this.businessPartnerbackendService.findRecordById(this.partnerIdForOrdersShow).subscribe((partner) => {
         this.ordersOfBusinessPartner = partner.body.ordersOfPartner;
         this.ordersOfBusinessPartner.forEach((record) => {
-            this.tableService.records.push(this.tableService.createOrderTableCellFromOrderEntity(record));
+            this.tableService.records.push(this.backendService.createOrderTableCellFromOrderEntity(record));
           }
         );
         this.records = this.tableService.getRecords();
+        this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
       });
     }
     else if (this.authenticationService.userRole === RoleEnum.PARTNER) {
@@ -75,20 +79,22 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
       this.backendService.getCurrentOrdersForPartners(partnerCode).subscribe((records) => {
         this.tableService.records.length = 0;
         records.body.forEach((record) => {
-            this.tableService.records.push(this.tableService.createOrderTableCellFromOrderEntity(record));
+            this.tableService.records.push(this.backendService.createOrderTableCellFromOrderEntity(record));
           }
         );
         this.records = this.tableService.getRecords();
+        this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
       });
     } else if (this.authenticationService.userRole === RoleEnum.ADMIN || this.authenticationService.userRole === RoleEnum.EDITOR) {
       console.log('in get orders for privilligedUsers ');
       this.backendService.getCurrentOrdersForPrivilligedUsers().subscribe((records) => {
         this.tableService.records.length = 0;
         records.body.forEach((record) => {
-            this.tableService.records.push(this.tableService.createOrderTableCellFromOrderEntity(record));
+            this.tableService.records.push(this.backendService.createOrderTableCellFromOrderEntity(record));
           }
         );
         this.records = this.tableService.getRecords();
+        this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
       });
     }
   }

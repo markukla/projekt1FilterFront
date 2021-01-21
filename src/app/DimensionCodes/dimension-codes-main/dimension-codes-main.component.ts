@@ -11,6 +11,8 @@ import {LanguageBackendService} from '../../Languages/languageServices/language-
 import Language from '../../Languages/LanguageTypesAndClasses/languageEntity';
 import {CreateDimensionCodeComponent} from '../create-dimension-code/create-dimension-code.component';
 import OperationModeEnum from '../../util/OperationModeEnum';
+import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 @Component({
   selector: 'app-dimension-codes-main',
@@ -33,11 +35,12 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
   languages: Language[]; // it will be obtained from database
 
 
-  constructor(public tableService: DimensionCodeTableService,
+  constructor(public tableService: GeneralTableService,
               public backendService: DimensionCodeBackendService,
               private router: Router,
               private languageBackendService: LanguageBackendService,
-              private activedIdParam: ActivatedRoute) {
+              private activedIdParam: ActivatedRoute,
+              private searChService: SearchService) {
   }
  async ngOnInit(): Promise <void> {
     this.selectedLanguageLang = 'PL';
@@ -61,6 +64,7 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
       this.tableService.records.length = 0;
       this.tableService.records = records.body;
       this.records = this.tableService.getRecords();
+      this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
     });
 
   }

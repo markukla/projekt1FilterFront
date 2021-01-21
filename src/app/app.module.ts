@@ -66,6 +66,7 @@ import { LanguageMainComponent } from './Languages/language-main/language-main.c
 import { CreateOrUpdateLanguageComponent } from './Languages/create-or-update-language/create-or-update-language.component';
 import { LanguageSearchDirective } from './helpers/directive/ForLanguages/language-search.directive';
 import { SearchDirective } from './helpers/directive/SearchDirective/search.directive';
+import { LangageFormComponentComponent } from './LanguageForm/langage-form-component/langage-form-component.component';
 
 
 
@@ -125,7 +126,8 @@ import { SearchDirective } from './helpers/directive/SearchDirective/search.dire
     LanguageMainComponent,
     CreateOrUpdateLanguageComponent,
     LanguageSearchDirective,
-    SearchDirective
+    SearchDirective,
+    LangageFormComponentComponent
     ],
   imports: [
     BrowserModule,

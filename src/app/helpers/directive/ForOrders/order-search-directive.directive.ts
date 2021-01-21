@@ -88,14 +88,14 @@ export class OrderSearchDirectiveDirective implements OnInit, AfterContentChecke
     if (this.authenticationService.userRole === RoleEnum.PARTNER) {
       this.backendService.getCurrentOrdersForPartners(this.authenticationService.user.businesPartnerCompanyName).subscribe((orders) => {
         orders.body.forEach((order) => {
-          this.orginalArrayCopy.push(this.tableService.createOrderTableCellFromOrderEntity(order));
+          this.orginalArrayCopy.push(this.backendService.createOrderTableCellFromOrderEntity(order));
         });
       });
     }
     else {
       this.backendService.getCurrentOrdersForPrivilligedUsers().subscribe((orders) => {
         orders.body.forEach((order) => {
-          this.orginalArrayCopy.push(this.tableService.createOrderTableCellFromOrderEntity(order));
+          this.orginalArrayCopy.push(this.backendService.createOrderTableCellFromOrderEntity(order));
         });
       });
     }
@@ -106,7 +106,7 @@ export class OrderSearchDirectiveDirective implements OnInit, AfterContentChecke
   createOrdersForTableCellFromOrders(orders: Order[]): OrderforTableCell[] {
 const orderForTableCel: OrderforTableCell[] = [];
 orders.forEach((order) => {
-  orderForTableCel.push(this.tableService.createOrderTableCellFromOrderEntity(order));
+  orderForTableCel.push(this.backendService.createOrderTableCellFromOrderEntity(order));
 });
 return orderForTableCel;
   }

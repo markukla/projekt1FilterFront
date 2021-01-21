@@ -39,24 +39,4 @@ export class OrderTableService {
       }
     });
   }
-  createOrderTableCellFromOrderEntity(order: Order): OrderforTableCell {
-    const dateString = new Date(order.date).toLocaleDateString();
-    const orderTableCell: OrderforTableCell = {
-      businessPartnerCode: order.businessPartner.code,
-      businessPartnerFulname: order.businessPartner.fulName,
-      businessPartnerEmail: order.businessPartner.email,
-      date: new Date(order.date),
-      dateString,
-      id: order.id,
-      index: order.index,
-      orderName: order.orderName,
-      orderNumber: order.orderName,
-      orderTotalNumber: order.orderTotalNumber,
-      orderVersionNumber: order.orderVersionNumber,
-      orderVersionRegisterId: order.orderVersionRegister.id,
-      businessPartnerCompanyName: order.businessPartner.businesPartnerCompanyName,
-      commentToOrderString: order.commentToOrder,
-    };
-    return orderTableCell;
-  }
 }

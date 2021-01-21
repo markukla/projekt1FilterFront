@@ -11,6 +11,14 @@ import {DrawingPaths} from '../../../ProductTypesAndClasses/drawingPaths';
 import ProductBottom from '../../../ProductTypesAndClasses/productBottom.entity';
 import ProductTop from '../../../ProductTypesAndClasses/productTop.entity';
 import {API_URL} from '../../../../Config/apiUrl';
+import {ProductTopForTableCell} from '../../../ProductTypesAndClasses/productTopForTableCell';
+import {getSelectedLanguageFromNamesInAllLanguages} from '../../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {GeneralTableService} from '../../../../util/GeneralTableService/general-table.service';
+import {ProductTopBackendService} from '../../../ProductTop/ProductTopServices/product-top-backend.service';
+import {ProductTypeBackendService} from '../../../ProductType/ProductTypeServices/product-type-backend.service';
+import {ProductBottomBackendService} from '../../../ProductBottom/ProductBottomServices/product-bottom-backend.service';
+import {ProductForTableCell} from '../../../ProductTypesAndClasses/productForTableCell';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +28,11 @@ export class ProductBackendService {
   endpointUrl = '/products';
   createProductDto: CreateProductDto;
   constructor(private http: HttpClient,
-              private tableService: ProductTableService) {
+              private tableService: GeneralTableService,
+              private productTopBackednService: ProductTopBackendService,
+              private productTypeBackednService: ProductTypeBackendService,
+              private productBottommBackednService: ProductBottomBackendService,
+              private authenticationService: AuthenticationService) {
   }
 
   getRecords(): Observable<HttpResponse<Product[]>> {
@@ -33,7 +45,7 @@ export class ProductBackendService {
     return this.http.post<Product>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.addRecordToTable(record.body);
+        this.tableService.addRecordToTable(this.createProductForTableCellFromProductTop(record.body));
       }));
   }
   getProductByTypeTopBottom(record: CreateProductDto): Observable<HttpResponse<Product>> {
@@ -56,7 +68,7 @@ export class ProductBackendService {
     return this.http.patch<Product>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.updateTableRecord(Number(id), record.body);
+        this.tableService.updateTableRecord(Number(id), this.createProductForTableCellFromProductTop(record.body));
       }));
   }
   uploadDrawing(file: any): Observable<DrawingPaths> {
@@ -88,5 +100,24 @@ export class ProductBackendService {
   getDrawingFromBakendEnpoint(urltoDrawingFromPublic: string): Observable<any> {
     const getUrl = this.rootURL + urltoDrawingFromPublic;
     return this.http.get<any>(getUrl);
+  }
+  createProductForTableCellFromProductTop(product: Product): ProductForTableCell {
+    // tslint:disable-next-line:max-line-length
+    const productTopName = this.productTopBackednService.createProductTopForTableCellFromProductTop(product.productTop).localizedNameInSelectedLanguage;
+    const productBottomName = this.productBottommBackednService.createProductBottomForTableCellFromProductTop(product.productBottom).localizedNameInSelectedLanguage;
+    const productTypeName = this.productTypeBackednService.createProductTypeForTableCellFromProductTop(product.productType).localizedNameInSelectedLanguage;
+    const productForTableCell: ProductForTableCell = {
+      ...product,
+      productBottomCode: product.productBottom.code,
+      productBottomNameInSelectedLanguage: productBottomName,
+      productTopCode: product.productBottom.code,
+      productTopNameInSelectedLanguage: productTopName,
+      productTypeCode: product.productType.code,
+      productTypeNameInSelectedLanguage: productTypeName,
+      productBottomCodePlusNAme: product.productBottom.code + ' - ' + productBottomName,
+      productTopCodePlusName: product.productTop.code + ' - ' + productTopName,
+      productTypeCodePlusName: product.productType.code + ' - ' + productTypeName,
+    };
+    return productForTableCell;
   }
 }

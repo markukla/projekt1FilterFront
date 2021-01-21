@@ -7,6 +7,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import ProductBottom from '../../ProductTypesAndClasses/productBottom.entity';
 import {ProductBottomTableService} from '../ProductBottomServices/product-bottom-table.service';
 import {ProductBottomBackendService} from '../ProductBottomServices/product-bottom-backend.service';
+import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
+import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 
 @Component({
   selector: 'app-product-bottom',
@@ -26,10 +28,11 @@ export class ProductBottomComponent implements OnInit, AfterContentChecked {
   recordNumbers: number;
 
 
-  constructor(public tableService: ProductBottomTableService,
+  constructor(public tableService: GeneralTableService,
               public backendService: ProductBottomBackendService,
               private router: Router,
-              private activedIdParam: ActivatedRoute) {
+              private activedIdParam: ActivatedRoute,
+              private searChService: SearchService) {
   }
   ngOnInit(): void {
     this.getRecords();
@@ -45,8 +48,13 @@ export class ProductBottomComponent implements OnInit, AfterContentChecked {
   getRecords(): void {
     this.backendService.getRecords().subscribe((records) => {
       this.tableService.records.length = 0;
-      this.tableService.records = records.body;
+      this.tableService.records = [];
+      records.body.forEach((record) => {
+        const recorForTableCell = this.backendService.createProductBottomForTableCellFromProductTop(record);
+        this.tableService.records.push(recorForTableCell);
+      });
       this.records = this.tableService.getRecords();
+      this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
     });
 
   }

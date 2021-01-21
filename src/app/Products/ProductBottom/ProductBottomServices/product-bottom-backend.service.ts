@@ -8,6 +8,11 @@ import {Material} from '../../../materials/MaterialsMainComponent/material';
 import {ProductBottomTableService} from './product-bottom-table.service';
 import ProductBottom from '../../ProductTypesAndClasses/productBottom.entity';
 import {API_URL} from '../../../Config/apiUrl';
+import {ProductTopForTableCell} from '../../ProductTypesAndClasses/productTopForTableCell';
+import {getSelectedLanguageFromNamesInAllLanguages} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {ProductBottomForTableCell} from '../../ProductTypesAndClasses/productBottomForTableCell';
+import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +21,8 @@ export class ProductBottomBackendService {
   rootURL = API_URL;
   endpointUrl = '/productBottoms';
   constructor(private http: HttpClient,
-              private tableService: ProductBottomTableService) {
+              private tableService: GeneralTableService,
+              private authenticationService: AuthenticationService) {
   }
 
   getRecords(): Observable<HttpResponse<ProductBottom[]>> {
@@ -29,7 +35,7 @@ export class ProductBottomBackendService {
     return this.http.post<ProductBottom>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.addRecordToTable(record.body);
+        this.tableService.addRecordToTable(this.createProductBottomForTableCellFromProductTop(record.body));
       }));
   }
 
@@ -47,7 +53,7 @@ export class ProductBottomBackendService {
     return this.http.patch<ProductBottom>(updateUrl, material, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.updateTableRecord(Number(id), record.body);
+        this.tableService.updateTableRecord(Number(id), this.createProductBottomForTableCellFromProductTop(record.body));
       }));
   }
 
@@ -72,5 +78,15 @@ export class ProductBottomBackendService {
   findRecordById(recordToUpdateId: string): Observable<HttpResponse<ProductBottom>> {
     const getUrl = `${this.rootURL + this.endpointUrl}/${recordToUpdateId}`;
     return this.http.get<ProductBottom>(getUrl, {observe: 'response'} );
+  }
+
+  createProductBottomForTableCellFromProductTop(productBottom: ProductBottom): ProductBottomForTableCell {
+    // tslint:disable-next-line:max-line-length
+    const localizedNameInSelectedLanguage = getSelectedLanguageFromNamesInAllLanguages(productBottom.localizedNames, this.authenticationService.selectedLanguageCode);
+    const productTopForTableCell: ProductTopForTableCell = {
+      ...productBottom,
+      localizedNameInSelectedLanguage,
+    };
+    return productTopForTableCell;
   }
 }

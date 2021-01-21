@@ -15,6 +15,7 @@ import {Material} from '../../../materials/MaterialsMainComponent/material';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 import NewestOrderNumber from '../../OrdersTypesAndClasses/newestOrderNumber';
 import {API_URL} from '../../../Config/apiUrl';
+import OrderforTableCell from '../../OrdersTypesAndClasses/orderforTableCell';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +48,7 @@ export class OrderBackendService {
     return this.http.post<Order>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.addRecordToTable(this.tableService.createOrderTableCellFromOrderEntity(record.body));
+        this.tableService.addRecordToTable(this.createOrderTableCellFromOrderEntity(record.body));
       }));
   }
 
@@ -65,7 +66,7 @@ export class OrderBackendService {
     return this.http.post<Order>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.updateTableRecord(Number(id), this.tableService.createOrderTableCellFromOrderEntity(record.body));
+        this.tableService.updateTableRecord(Number(id), this.createOrderTableCellFromOrderEntity(record.body));
       }));
   }
   findRecordById(id: string): Observable<HttpResponse<Order>>{
@@ -97,5 +98,26 @@ export class OrderBackendService {
     };
     return createOrderDto;
   }
+  createOrderTableCellFromOrderEntity(order: Order): OrderforTableCell {
+    const dateString = new Date(order.date).toLocaleDateString();
+    const orderTableCell: OrderforTableCell = {
+      businessPartnerCode: order.businessPartner.code,
+      businessPartnerFulname: order.businessPartner.fulName,
+      businessPartnerEmail: order.businessPartner.email,
+      date: new Date(order.date),
+      dateString,
+      id: order.id,
+      index: order.index,
+      orderName: order.orderName,
+      orderNumber: order.orderName,
+      orderTotalNumber: order.orderTotalNumber,
+      orderVersionNumber: order.orderVersionNumber,
+      orderVersionRegisterId: order.orderVersionRegister.id,
+      businessPartnerCompanyName: order.businessPartner.businesPartnerCompanyName,
+      commentToOrderString: order.commentToOrder,
+    };
+    return orderTableCell;
+  }
+
 
 }

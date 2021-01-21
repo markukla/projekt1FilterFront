@@ -6,7 +6,7 @@ import DimensionTextFIeldInfo from './dimensionTextFIeldInfo';
 
 class Product{
     public id?: number;
-   productType: ProductType;
+    productType: ProductType;
     productBottom: ProductBottom;
     productTop: ProductTop;
     urlOfOrginalDrawing: string;

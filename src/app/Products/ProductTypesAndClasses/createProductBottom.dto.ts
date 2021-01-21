@@ -1,6 +1,8 @@
+import LocalizedName from '../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
 
-class CreateProductBottomDto{
-    name: string;
-    code: string;
+class CreateProductBottomDto {
+  localizedNames: LocalizedName [];
+  code: string;
 }
+
 export default CreateProductBottomDto;

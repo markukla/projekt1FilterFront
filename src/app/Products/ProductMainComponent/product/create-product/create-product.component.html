@@ -47,7 +47,7 @@
         <select class="form-control" formControlName="type" id="type" #selectType>
           <option [ngValue]="null" disabled>Wybierz Typ produktu</option>
           <option class="selectTypeValues" [id]="'type'+type.id"  *ngFor="let type of allTypesToSelect" [ngValue]="type">
-            {{ type.code + ' - ' + type.name
+            {{ type.code + ' - ' + type.localizedNames
             }}
             <!-- type.names-->
           </option>

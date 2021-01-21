@@ -14,7 +14,7 @@
     <thead>
     <tr>
       <th [appSort]="records" data-order="desc" data-name="dimensionCode" scope="col">Kod Wymiaru <br></th>
-      <th [appSort]="records" data-order="desc" data-name="dimensionRole" scope="col">Rola wymiaru <br></th>
+      <th [appSort]="records" data-order="desc" data-name="dimensionCode" scope="col">Rola wymiaru <br></th>
       <th> Opis Wymiaru </th>
       <th>ilość</th>
 
@@ -22,9 +22,9 @@
     <tr>
       <th>
 
-        <input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="code" id="serchInCodes" placeholder="Wyszukaj" />
+        <input class="tableSearchInput" [appSearch]="records" serchedColumn="dimensionCode" id="serchInCodes" placeholder="Wyszukaj" />
       </th>
-      <th><input class="tableSearchInput" [appProductTypeSearch]="records" serchedColumn="name" id="serchInNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appSearch]="records" serchedColumn="dimensionRole" id="serchInNames" placeholder="Wyszukaj" /></th>
     </tr>
 
     </thead>

@@ -7,6 +7,11 @@ import {tap} from 'rxjs/operators';
 import {ProductTypeTableService} from './product-type-table.service';
 import ProductType from '../../ProductTypesAndClasses/productType.entity';
 import {API_URL} from '../../../Config/apiUrl';
+import {ProductTopForTableCell} from '../../ProductTypesAndClasses/productTopForTableCell';
+import {getSelectedLanguageFromNamesInAllLanguages} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {ProductTypeForTableCell} from '../../ProductTypesAndClasses/productTypeForTableCell';
+import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +20,8 @@ export class ProductTypeBackendService {
   rootURL = API_URL;
   endpointUrl = '/productTypes';
   constructor(private http: HttpClient,
-              private tableService: ProductTypeTableService) {
+              private tableService: GeneralTableService,
+              private authenticationService: AuthenticationService) {
   }
 
   getRecords(): Observable<HttpResponse<ProductType[]>> {
@@ -28,7 +34,7 @@ export class ProductTypeBackendService {
     return this.http.post<ProductType>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.addRecordToTable(record.body);
+        this.tableService.addRecordToTable(this.createProductTypeForTableCellFromProductTop(record.body));
       }));
   }
 
@@ -46,7 +52,7 @@ export class ProductTypeBackendService {
     return this.http.patch<ProductType>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.updateTableRecord(Number(id), record.body);
+        this.tableService.updateTableRecord(Number(id), this.createProductTypeForTableCellFromProductTop(record.body));
       }));
   }
 
@@ -71,4 +77,15 @@ export class ProductTypeBackendService {
     const getUrl = `${this.rootURL + this.endpointUrl}/${recordToUpdateId}`;
     return this.http.get<ProductType>(getUrl, {observe: 'response'} );
   }
+
+  createProductTypeForTableCellFromProductTop(productType: ProductType): ProductTopForTableCell {
+    // tslint:disable-next-line:max-line-length
+    const localizedNameInSelectedLanguage = getSelectedLanguageFromNamesInAllLanguages(productType.localizedNames, this.authenticationService.selectedLanguageCode);
+    const productTypeForTableCell: ProductTypeForTableCell = {
+      ...productType,
+      localizedNameInSelectedLanguage,
+    };
+    return productTypeForTableCell;
+  }
 }
+

@@ -28,13 +28,13 @@
       <th>Ilość</th>
     </tr>
     <tr>
-      <th><input class="tableSearchInput" [appOrderSearchDirective]="records" serchedColumn="orderTotalNumber" id="serchInNumbers" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="businessPartnerCompanyName" id="serchInPartners" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="businessPartnerFulname" id="serchInPartnerNames" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="businessPartnerEmail" id="serchInEmails" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput" [appOrderSearchDirective]="records" serchedColumn="index" id="serchInIndex" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="orderName" id="serchInOrderNames" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput"  [appOrderSearchDirective]="records" serchedColumn="dateString" id="serchInDates" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appSearch]="records" serchedColumn="orderTotalNumber" id="serchInNumbers" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appSearch]="records" serchedColumn="businessPartnerCompanyName" id="serchInPartners" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appSearch]="records" serchedColumn="businessPartnerFulname" id="serchInPartnerNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appSearch]="records" serchedColumn="businessPartnerEmail" id="serchInEmails" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appSearch]="records" serchedColumn="index" id="serchInIndex" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appSearch]="records" serchedColumn="orderName" id="serchInOrderNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput"  [appSearch]="records" serchedColumn="dateString" id="serchInDates" placeholder="Wyszukaj" /></th>
       <th>{{this.recordNumbers}}</th>
     </tr>
     </thead>

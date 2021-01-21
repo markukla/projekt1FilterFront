@@ -7,6 +7,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import ProductType from '../../ProductTypesAndClasses/productType.entity';
 import {ProductTypeTableService} from '../ProductTypeServices/product-type-table.service';
 import {ProductTypeBackendService} from '../ProductTypeServices/product-type-backend.service';
+import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
+import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 
 @Component({
   selector: 'app-product-type',
@@ -26,11 +28,11 @@ export class ProductTypeComponent implements OnInit, AfterContentChecked {
   materialId: number;
   recordNumbers: number;
 
-
-  constructor(public tableService: ProductTypeTableService,
+  constructor(public tableService: GeneralTableService,
               public backendService: ProductTypeBackendService,
               private router: Router,
-              private activedIdParam: ActivatedRoute) {
+              private activedIdParam: ActivatedRoute,
+              private searChService: SearchService) {
   }
   ngOnInit(): void {
     this.getRecords();
@@ -46,10 +48,14 @@ export class ProductTypeComponent implements OnInit, AfterContentChecked {
   getRecords(): void {
     this.backendService.getRecords().subscribe((records) => {
       this.tableService.records.length = 0;
-      this.tableService.records = records.body;
+      this.tableService.records = [];
+      records.body.forEach((record) => {
+        const recorForTableCell = this.backendService.createProductTypeForTableCellFromProductTop(record);
+        this.tableService.records.push(recorForTableCell);
+      });
       this.records = this.tableService.getRecords();
+      this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
     });
-
   }
 
   deleteSelectedRecord(materialId: number): void {

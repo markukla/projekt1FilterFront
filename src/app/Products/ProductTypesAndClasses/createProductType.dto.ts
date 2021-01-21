@@ -1,10 +1,12 @@
 import ProductTop from './productTop.entity';
 import ProductBottom from './productBottom.entity';
+import LocalizedName from '../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
 
-class CreateProductTypeDto{
-  name: string;
+class CreateProductTypeDto {
+  localizedNames: LocalizedName [];
   code: string;
-    topsForThisProductType: ProductTop[];  // insteed of using whole objects we nan use id of each product type eg [{"id"=1},{"id=2"}]
-    bottomsForThisProductType: ProductBottom[];
+  topsForThisProductType: ProductTop[];  // insteed of using whole objects we nan use id of each product type eg [{"id"=1},{"id=2"}]
+  bottomsForThisProductType: ProductBottom[];
 }
+
 export default CreateProductTypeDto;

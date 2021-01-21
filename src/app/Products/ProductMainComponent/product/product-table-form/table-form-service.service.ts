@@ -150,13 +150,13 @@ export class TableFormServiceService {
       this.materialName = '';
     }
     if (createOrderDto && createOrderDto.product) {
-      this.productTypeName = createOrderDto.product.productType.name;
+      this.productTypeName = createOrderDto.product.productType.localizedNames;
       this.productTypeCode = createOrderDto.product.productType.code;
       this.productBottomCode = createOrderDto.product.productBottom.code;
       this.productTopCode = createOrderDto.product.productTop.code;
     }
     else if (createProductDto) {
-      this.productTypeName = createProductDto.productType.name;
+      this.productTypeName = createProductDto.productType.localizedNames;
       this.productTypeCode = createProductDto.productType.code;
       this.productBottomCode = createProductDto.productBottom.code;
       this.productTopCode = createProductDto.productTop.code;

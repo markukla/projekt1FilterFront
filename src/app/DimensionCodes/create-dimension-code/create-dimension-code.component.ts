@@ -12,6 +12,7 @@ import DimensionCode from '../DimensionCodesTypesAnClasses/diemensionCode.entity
 import OperationModeEnum from '../../util/OperationModeEnum';
 import {LanguageBackendService} from '../../Languages/languageServices/language-backend.service';
 import Language from '../../Languages/LanguageTypesAndClasses/languageEntity';
+import {LanguageFormService} from '../../LanguageForm/language-form.service';
 
 @Component({
   selector: 'app-create-dimension-code',
@@ -25,6 +26,7 @@ export class CreateDimensionCodeComponent implements OnInit {
   allBotomsToselect: ProductBottom[];
   allTopsToSelect: ProductTop[];
   form: FormGroup;
+  // tslint:disable-next-line:max-line-length
   allDimensionRolesToSelect: DimensionRoleEnum[] = [DimensionRoleEnum.FIRSTINDEXDIMENSION, DimensionRoleEnum.SECONDINDEXDIMENSION, DimensionRoleEnum.NOINDEXDIMENSION];
   firstIndexDimensionRole = 'Pierwszy wymiar Indeksu';
   secondIndexDimensionRole = 'Drugi wymiar indeksu';
@@ -38,14 +40,14 @@ export class CreateDimensionCodeComponent implements OnInit {
   createdDimensionEmiter: EventEmitter<DimensionCode>;
    selectedRecordToupdateId: string;
    languages: Language[];
-  @ViewChildren('nameInput', {read: ElementRef}) languageNames: ElementRef[];
   constructor(
     private backendService: DimensionCodeBackendService,
     public validationService: ValidateDiemensionCodeService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private languageBackendService: LanguageBackendService,
-    private router: Router) {
+    private router: Router,
+    private languageFormService: LanguageFormService) {
     console.log('creating component:CreateProductTypeComponent');
     this.createdDimensionEmiter = new EventEmitter<DimensionCode>();
   }
@@ -72,9 +74,11 @@ export class CreateDimensionCodeComponent implements OnInit {
   async getInitDataFromBackend(): Promise<void> {
    const foundLanguages =  await this.languageBackendService.getRecords().toPromise();
    this.languages = foundLanguages.body;
+   this.languageFormService.languages = this.languages;
    if (this.operatiomMode === OperationModeEnum.UPDATE) {
      const foundRecord =  await this.backendService.findRecordById(this.selectedRecordToupdateId).toPromise();
      this.recordToUpdate = foundRecord.body;
+     this.languageFormService.namesInAllLanguages = this.recordToUpdate.localizedDimensionNames;
      this.role.setValue(this.recordToUpdate.dimensionRole);
      this.code.setValue(this.recordToUpdate.dimensionCode);
     }
@@ -87,7 +91,7 @@ export class CreateDimensionCodeComponent implements OnInit {
   }
   onSubmit(): void {
     const localizedDimensionNames: LocalizedName[] = [];
-    this.languageNames.forEach((languageInput) => {
+    this.languageFormService.languageNames.forEach((languageInput) => {
       const localizedDimensionName: LocalizedName = {
         languageCode: languageInput.nativeElement.id,
         nameInThisLanguage: languageInput.nativeElement.value
@@ -95,7 +99,7 @@ export class CreateDimensionCodeComponent implements OnInit {
       localizedDimensionNames.push(localizedDimensionName);
     });
     this.createDimensionCodeDto = {
-      localizedDimensionNames: localizedDimensionNames,
+      localizedDimensionNames,
       dimensionCode: this.code.value,
       dimensionRole: this.role.value,
     };
@@ -131,15 +135,4 @@ export class CreateDimensionCodeComponent implements OnInit {
     }, 2000);
   }
 
-  setValueForLanguageInputInUpdateMode(inputIdEqualContryCode: string, localizedNames: LocalizedName[]):string {
-let name = '';
-if (localizedNames && this.operatiomMode === OperationModeEnum.UPDATE) {
-localizedNames.forEach((lozalizedName) => {
-  if (lozalizedName.languageCode === inputIdEqualContryCode) {
-    name = lozalizedName.nameInThisLanguage;
-  }
-});
-}
-return name;
-  }
 }
