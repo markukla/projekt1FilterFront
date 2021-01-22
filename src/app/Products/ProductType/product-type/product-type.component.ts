@@ -10,6 +10,7 @@ import {ProductTypeBackendService} from '../ProductTypeServices/product-type-bac
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 import {ProductTypeForTableCell} from '../../ProductTypesAndClasses/productTypeForTableCell';
+import OperationModeEnum from '../../../util/OperationModeEnum';
 
 @Component({
   selector: 'app-product-type',
@@ -66,11 +67,16 @@ export class ProductTypeComponent implements OnInit, AfterContentChecked {
       this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
     });
   }
-
-  updateSelectedRecord(materialId: number): void {
-    this.tableService.selectedId = materialId;
-    this.router.navigateByUrl('/products/types/update');
+  updateSelectedRecord(recordId: number): void {
+    this.tableService.selectedId = recordId;
+    this.router.navigateByUrl(`/products/types/add?mode=${OperationModeEnum.UPDATE}&recordId=${recordId}`);
   }
+
+
+  createNewRecord(): void {
+    this.router.navigateByUrl(`/products/types/add?mode=${OperationModeEnum.CREATENEW}`);
+  }
+
 
 
 }

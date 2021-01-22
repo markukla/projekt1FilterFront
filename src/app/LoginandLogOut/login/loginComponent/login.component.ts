@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationBackendService} from '../../AuthenticationServices/authentication.backend.service';
 import {AuthenticationService} from '../../AuthenticationServices/authentication.service';
 import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
+import {LanguageBackendService} from '../../../Languages/languageServices/language-backend.service';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit, AfterContentChecked{
   constructor(
     private loginBackendService: AuthenticationBackendService,
     private loginService: AuthenticationService,
+    private languageBackendService: LanguageBackendService,
     public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -68,7 +70,9 @@ export class LoginComponent implements OnInit, AfterContentChecked{
   closeAndGoBack(): void {
   }
 
-  ngOnInit(): void {
+ async ngOnInit(): Promise<void> {
+  const languages = await this.languageBackendService.getRecords().toPromise();
+  this.loginService.languages = languages.body;
   }
 
   ngAfterContentChecked(): void {

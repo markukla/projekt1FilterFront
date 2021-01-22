@@ -47,7 +47,7 @@
         <select class="form-control" formControlName="type" id="type" #selectType>
           <option [ngValue]="null" disabled>Wybierz Typ produktu</option>
           <option class="selectTypeValues" [id]="'type'+type.id"  *ngFor="let type of allTypesToSelect" [ngValue]="type">
-            {{ type.code + ' - ' + type.localizedNames
+            {{ type.code + ' - ' + getNameInSelectedLanguage(type.localizedNames)
             }}
             <!-- type.names-->
           </option>
@@ -65,7 +65,7 @@
         <select class="form-control" formControlName="top" id="top" #selectTop (click)="selectTopClicked = true">
           <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
           <option class="selectTopValues" [id]="'top'+top.id" *ngFor="let top of allTopsToSelect" [ngValue]="top">
-            {{ top.code + ' - ' + top.name }}
+            {{ top.code + ' - ' + getNameInSelectedLanguage(top.localizedNames) }}
           </option>
         </select>
         <div *ngIf="top.invalid && (top.dirty || top.touched)"
@@ -81,7 +81,7 @@
         <select class="form-control" formControlName="bottom" id="bottom" #selectBottom (click)="this.selectBottomClicked = true;">
           <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
           <option class="selectBottomValues" [id]="'bottom'+bottom.id" *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
-            {{ bottom.code + ' - ' + bottom.name }}
+            {{ bottom.code + ' - ' + getNameInSelectedLanguage(bottom.localizedNames) }}
           </option>
         </select>
         <div *ngIf="bottom.invalid && (bottom.dirty || bottom.touched)"

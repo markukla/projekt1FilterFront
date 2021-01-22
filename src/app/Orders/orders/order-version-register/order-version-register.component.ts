@@ -8,6 +8,7 @@ import {VersionRegisterTableService} from '../OrderServices/version-register-tab
 import OrderVersionRegister from '../../OrdersTypesAndClasses/orderVersionRegister';
 import Order from '../../OrdersTypesAndClasses/orderEntity';
 import {Sort} from '../../../util/sort';
+import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 
 @Component({
   selector: 'app-order-version-register',
@@ -33,7 +34,7 @@ export class OrderVersionRegisterComponent implements OnInit, AfterContentChecke
 
 
   constructor(
-    public orderTableService: OrderTableService,
+    public orderTableService: GeneralTableService,
     public orderRegisterTableService: VersionRegisterTableService,
     public backendService: OrderBackendService,
     private router: Router,
@@ -64,7 +65,7 @@ export class OrderVersionRegisterComponent implements OnInit, AfterContentChecke
           this.orderVersionRegister = register.body;
           this.ordersInRegister = this.orderVersionRegister.ordersInthisRegister;
           this.ordersInRegister.forEach((order) => {
-              this.records.push(this.orderTableService.createOrderTableCellFromOrderEntity(order));
+              this.records.push(this.backendService.createOrderTableCellFromOrderEntity(order));
               const sort = new Sort();
               this.records.sort(sort.startSort('date', 'desc', 'date'));
             }

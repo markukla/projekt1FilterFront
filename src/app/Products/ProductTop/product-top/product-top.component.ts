@@ -9,6 +9,7 @@ import ProductTop from '../../ProductTypesAndClasses/productTop.entity';
 import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 import {ProductTopForTableCell} from '../../ProductTypesAndClasses/productTopForTableCell';
+import OperationModeEnum from '../../../util/OperationModeEnum';
 
 @Component({
   selector: 'app-product-top',
@@ -69,10 +70,14 @@ export class ProductTopComponent implements OnInit, AfterContentChecked {
       this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
     });
   }
-
-  updateSelectedRecord(materialId: number): void {
-    this.tableService.selectedId = materialId;
-    this.router.navigateByUrl('/products/tops/update');
+  updateSelectedRecord(recordId: number): void {
+    this.tableService.selectedId = recordId;
+    this.router.navigateByUrl(`/products/tops/add?mode=${OperationModeEnum.UPDATE}&recordId=${recordId}`);
   }
+
+  createNewRecord(): void {
+    this.router.navigateByUrl(`/products/tops/add?mode=${OperationModeEnum.CREATENEW}`);
+  }
+
 
 }

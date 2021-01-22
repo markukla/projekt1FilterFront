@@ -32,6 +32,8 @@ import {CreateOrderDto} from '../../OrdersTypesAndClasses/orderDto';
 import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 import {TableFormServiceService} from '../../../Products/ProductMainComponent/product/product-table-form/table-form-service.service';
 import OrderDetails from '../../OrdersTypesAndClasses/orderDetail';
+import LocalizedName from '../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
+import {getSelectedLanguageFromNamesInAllLanguages} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
 
 @Component({
   selector: 'app-create-order',
@@ -603,5 +605,8 @@ listenToChangeProductEvent(event: any): void {
         this.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
       }
     }
+  }
+  getNameInSelectedLanguage(localizedNames: LocalizedName[]): string {
+    return getSelectedLanguageFromNamesInAllLanguages(localizedNames, this.authenticationService.selectedLanguageCode);
   }
 }

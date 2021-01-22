@@ -10,6 +10,7 @@ import {ProductBottomBackendService} from '../ProductBottomServices/product-bott
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 import {ProductBottomForTableCell} from '../../ProductTypesAndClasses/productBottomForTableCell';
+import OperationModeEnum from '../../../util/OperationModeEnum';
 
 @Component({
   selector: 'app-product-bottom',
@@ -68,9 +69,14 @@ export class ProductBottomComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  updateSelectedRecord(materialId: number): void {
-    this.tableService.selectedId = materialId;
-    this.router.navigateByUrl('/products/bottoms/update');
+  updateSelectedRecord(recordId: number): void {
+    this.tableService.selectedId = recordId;
+    this.router.navigateByUrl(`/products/bottoms/add?mode=${OperationModeEnum.UPDATE}&recordId=${recordId}`);
+  }
+
+
+  createNewRecord(): void {
+    this.router.navigateByUrl(`/products/bottoms/add?mode=${OperationModeEnum.CREATENEW}`);
   }
 
 

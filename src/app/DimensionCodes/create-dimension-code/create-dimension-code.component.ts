@@ -15,6 +15,7 @@ import Language from '../../Languages/LanguageTypesAndClasses/languageEntity';
 import {LanguageFormService} from '../../LanguageForm/language-form.service';
 import BackendErrorResponse from '../../helpers/ErrorHandling/backendErrorResponse';
 import {BackendMessageService} from '../../helpers/ErrorHandling/backend-message.service';
+import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-create-dimension-code',
@@ -59,11 +60,13 @@ export class CreateDimensionCodeComponent implements OnInit {
     private languageBackendService: LanguageBackendService,
     private router: Router,
     private backendMessageService: BackendMessageService,
-    private languageFormService: LanguageFormService) {
+    private languageFormService: LanguageFormService,
+    private authenticationService: AuthenticationService) {
     console.log('creating component:CreateProductTypeComponent');
     this.createdDimensionEmiter = new EventEmitter<DimensionCode>();
   }
   async ngOnInit(): Promise<void> {
+    Object.keys(this).forEach(e => console.log(`key= ${e}, value= ${this[e]} `));
     this.createdDimensionEmiter = new EventEmitter<DimensionCode>();
     this.route.queryParamMap.subscribe((queryParams) => {
       this.operatiomMode = (queryParams.get('mode'));
@@ -83,9 +86,12 @@ export class CreateDimensionCodeComponent implements OnInit {
   get  role() {
     return this.form.get('role');
   }
+  // tslint:disable-next-line:typedef
+  get code() {
+    return this.form.get('code');
+  }
   async getInitDataFromBackend(): Promise<void> {
-   const foundLanguages =  await this.languageBackendService.getRecords().toPromise();
-   this.languages = foundLanguages.body;
+   this.languages = this.authenticationService.languages;
    this.languageFormService.languages = this.languages;
    if (this.operatiomMode === OperationModeEnum.UPDATE) {
      const foundRecord =  await this.backendService.findRecordById(this.selectedRecordToupdateId).toPromise();
@@ -96,11 +102,6 @@ export class CreateDimensionCodeComponent implements OnInit {
     }
   }
 
-
-  // tslint:disable-next-line:typedef
-  get code() {
-    return this.form.get('code');
-  }
   onSubmit(): void {
     const localizedDimensionNames: LocalizedName[] = [];
     this.languageFormService.languageNames.forEach((languageInput) => {

@@ -37,13 +37,10 @@ import { CreateBusinesPartnerComponent } from './BusinessPartners/business-partn
 import { UpdateBusinessPartnerComponent } from './BusinessPartners/business-partners/UpdateBusinessPartner/update-business-partner/update-business-partner.component';
 import { PartersSearchDirective } from './helpers/directive/ForPartners/parters-search.directive';
 import { CreateProductTopComponent } from './Products/ProductTop/create-product-top/create-product-top.component';
-import { UpdateProductTopComponent } from './Products/ProductTop/update-product-top/update-product-top.component';
 import { ProductTopSearchDirective } from './helpers/directive/ForProductTop/product-top-search.directive';
 import { ProductBottomSearchDirective } from './helpers/directive/ForProductBottom/product-bottom-search.directive';
 import { CreateProductBottomComponent } from './Products/ProductBottom/create-product-bottom/create-product-bottom.component';
-import { UpdateProductBottomComponent } from './Products/ProductBottom/update-product-bottom/update-product-bottom.component';
 import { CreateProductTypeComponent } from './Products/ProductType/create-product-type/create-product-type.component';
-import { UpdateProductTypeComponent } from './Products/ProductType/update-product-type/update-product-type.component';
 import { ProductTypeSearchDirective } from './helpers/directive/ForProductType/product-type-search.directive';
 import { TopsForProductTypeComponent } from './Products/ProductType/tops-for-product-type/tops-for-product-type.component';
 import { BottomsForProductTypeComponent } from './Products/ProductType/bottoms-for-product-type/bottoms-for-product-type.component';
@@ -98,13 +95,10 @@ import { LangageFormComponentComponent } from './LanguageForm/langage-form-compo
     UpdateBusinessPartnerComponent,
     PartersSearchDirective,
     CreateProductTopComponent,
-    UpdateProductTopComponent,
     ProductTopSearchDirective,
     ProductBottomSearchDirective,
     CreateProductBottomComponent,
-    UpdateProductBottomComponent,
     CreateProductTypeComponent,
-    UpdateProductTypeComponent,
     ProductTypeSearchDirective,
     TopsForProductTypeComponent,
     BottomsForProductTypeComponent,
@@ -158,13 +152,10 @@ import { LangageFormComponentComponent } from './LanguageForm/langage-form-compo
       { path: 'products/add', component: CreateProductComponent},
       { path: 'products/types', component: ProductTypeComponent},
       { path: 'products/types/add', component: CreateProductTypeComponent},
-      { path: 'products/types/update', component: UpdateProductTypeComponent},
       { path: 'products/bottoms', component: ProductBottomComponent},
       { path: 'products/bottoms/add', component: CreateProductBottomComponent},
-      { path: 'products/bottoms/update', component: UpdateProductBottomComponent},
       { path: 'products/tops', component: ProductTopComponent},
       { path: 'products/tops/add', component: CreateProductTopComponent},
-      { path: 'products/tops/update', component: UpdateProductTopComponent},
       { path: 'products/addDrawing', component: CreateProductDrawingComponent},
       {path: 'login', component: LoginComponent },
       {path: 'drag', component: ContainerForDragableComponent },

@@ -12,6 +12,7 @@ import {ProductForTableCell} from '../../ProductTypesAndClasses/productForTableC
 import {ProductTopForTableCell} from '../../ProductTypesAndClasses/productTopForTableCell';
 import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
 import {getSelectedLanguageFromNamesInAllLanguages} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import CreateProductTopDto from '../../ProductTypesAndClasses/createProductTop.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class ProductTopBackendService {
   }
 
   // tslint:disable-next-line:typedef
-  addRecords(record: ProductTop): Observable<HttpResponse<ProductTop>> {
+  addRecords(record: CreateProductTopDto): Observable<HttpResponse<ProductTop>> {
     // tslint:disable-next-line:max-line-length
     return this.http.post<ProductTop>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
@@ -48,7 +49,7 @@ export class ProductTopBackendService {
       }));
   }
 
-  updateRecordById(id: string, updatedRecord: ProductTop): Observable<HttpResponse<ProductTop>> {
+  updateRecordById(id: string, updatedRecord: CreateProductTopDto): Observable<HttpResponse<ProductTop>> {
     const updateUrl = `${this.rootURL + this.endpointUrl}/${id}`;
     return this.http.patch<ProductTop>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable

@@ -3,7 +3,8 @@
 
 <div>
 
-  <a  [routerLink]="['/products/tops/add']" routerLinkActive="active">
+
+  <a  (click)="createNewRecord()">
     {{ createNewMaterialDescription }}
   </a>
 </div>

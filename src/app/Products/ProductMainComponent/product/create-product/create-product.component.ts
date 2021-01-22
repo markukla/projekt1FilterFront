@@ -12,6 +12,9 @@ import {getBackendErrrorMesage} from '../../../../helpers/errorHandlingFucntion/
 import OrderOperationMode from '../../../../Orders/OrdersTypesAndClasses/orderOperationMode';
 import ProductModeEnum from '../../../ProductTypesAndClasses/productMode';
 import Product from '../../../ProductTypesAndClasses/product.entity';
+import LocalizedName from '../../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
+import {getSelectedLanguageFromNamesInAllLanguages} from '../../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-create-product',
@@ -43,6 +46,7 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
   @ViewChild('selectTop', {read: ElementRef}) selectTopElement: ElementRef;
   @ViewChild('selectBottom', {read: ElementRef}) selectBottomElement: ElementRef;
 
+
   constructor(
     private backendService: ProductBackendService,
     public validationService: ProductValidatorService,
@@ -50,7 +54,8 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private element: ElementRef,
-    private router: Router) {
+    private router: Router,
+    private authenticationService: AuthenticationService) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -299,5 +304,8 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
         return false;
       }
     }
+  }
+  getNameInSelectedLanguage(localizedNames: LocalizedName[]): string {
+    return getSelectedLanguageFromNamesInAllLanguages(localizedNames, this.authenticationService.selectedLanguageCode);
   }
 }

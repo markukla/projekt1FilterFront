@@ -3,6 +3,7 @@ import LoggedUser from '../authenticationTypesAndClasses/logedUser';
 import User from '../../Users/users/userTypes/user';
 import TokenData from '../authenticationTypesAndClasses/tokenData';
 import RoleEnum from '../../Users/users/userTypes/roleEnum';
+import Language from '../../Languages/LanguageTypesAndClasses/languageEntity';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class AuthenticationService {
   tokenString: string;
   userRole: RoleEnum;
   selectedLanguageCode = 'PL';
+  languages: Language [];
 
   setLogedUserUserAndToken(loggedUser: LoggedUser): void {
     this.loggedUser = loggedUser;

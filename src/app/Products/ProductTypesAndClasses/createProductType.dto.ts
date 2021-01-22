@@ -5,8 +5,8 @@ import LocalizedName from '../../DimensionCodes/DimensionCodesTypesAnClasses/loc
 class CreateProductTypeDto {
   localizedNames: LocalizedName [];
   code: string;
-  topsForThisProductType: ProductTop[];  // insteed of using whole objects we nan use id of each product type eg [{"id"=1},{"id=2"}]
-  bottomsForThisProductType: ProductBottom[];
+  topsForThisProductType: ProductTop[]| any[];  // insteed of using whole objects we nan use id of each product type eg [{"id"=1},{"id=2"}]
+  bottomsForThisProductType: ProductBottom[]| any[];
 }
 
 export default CreateProductTypeDto;

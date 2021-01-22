@@ -5,6 +5,8 @@ import WorkingSideEnum from '../../../../Orders/OrdersTypesAndClasses/workingSid
 import OrderOperationMode from '../../../../Orders/OrdersTypesAndClasses/orderOperationMode';
 import {allFirstIndexDimensionCodes, allSecondIndexDimensionCodes} from '../../../ProductTypesAndClasses/alreadyExistingDimensionList';
 import CreateProductDto from '../../../ProductTypesAndClasses/product.dto';
+import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {getSelectedLanguageFromNamesInAllLanguages} from '../../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +30,7 @@ export class TableFormServiceService {
   firstIndexDimension: string;
   secondIndexDimension: string;
 
-  constructor() {
+  constructor(private authenticationService: AuthenticationService) {
     this.initTableForm();
   }
 
@@ -150,13 +152,15 @@ export class TableFormServiceService {
       this.materialName = '';
     }
     if (createOrderDto && createOrderDto.product) {
-      this.productTypeName = createOrderDto.product.productType.localizedNames;
+      // tslint:disable-next-line:max-line-length
+      this.productTypeName = getSelectedLanguageFromNamesInAllLanguages(createOrderDto.product.productType.localizedNames, this.authenticationService.selectedLanguageCode);
       this.productTypeCode = createOrderDto.product.productType.code;
       this.productBottomCode = createOrderDto.product.productBottom.code;
       this.productTopCode = createOrderDto.product.productTop.code;
     }
     else if (createProductDto) {
-      this.productTypeName = createProductDto.productType.localizedNames;
+      // tslint:disable-next-line:max-line-length
+      this.productTypeName = getSelectedLanguageFromNamesInAllLanguages(createProductDto.productType.localizedNames, this.authenticationService.selectedLanguageCode);
       this.productTypeCode = createProductDto.productType.code;
       this.productBottomCode = createProductDto.productBottom.code;
       this.productTopCode = createProductDto.productTop.code;

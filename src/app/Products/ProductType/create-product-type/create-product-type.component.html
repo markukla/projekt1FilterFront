@@ -3,22 +3,7 @@
   <h2>Dodaj nowy typ produktu</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="row">
-      <div class="form-group col-md-6">
-        <label class="label" for="name" >Nazwa typu produktu</label>
-        <input type="text" class="form-control" formControlName="name" id="name"
-               placeholder="Nazwa typu produktu">
-        <div  *ngIf="name.invalid && (name.dirty || name.touched)"
-              class="alert alert-danger">
 
-          <div class="validatorInfo" *ngIf="name.errors.required">
-            To pole jest wymagane.
-          </div>
-
-          <div class="has-text-danger" *ngIf="name.errors?.taken">  <!--error name is name of error in async validatod:ValidateMaterialCodeUniqueService-->
-            Podana nazwa jest już zajęta
-          </div>
-
-        </div>
         <div class="form-group col-md-6">
           <label class="label" for="code">Kod typu produktu</label>
           <input type="text" class="form-control" formControlName="code" id="code"
@@ -41,43 +26,35 @@
           </div>
 
         </div>
-        <div class="form-group col-md-6">
-          <label class="label" for="topsForThisProductType" >Wybierz wykończenia góry</label>
-          <select multiple class="form-control" formControlName="topsForThisProductType" id="topsForThisProductType">
-            <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
-            <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
-              {{ top.code +'-'+top.name }}
-            </option>
-          </select>
-          <div  *ngIf="topsForThisProductType.invalid && (topsForThisProductType.dirty || topsForThisProductType.touched)"
-                class="alert alert-danger">
+    </div>
+      <div  class="row-cols-1">
+        <p>{{giveNameForAllLanguagesDescription}}</p> <br>
+        <app-langage-form-component></app-langage-form-component>
 
-            <div class="validatorInfo" *ngIf="topsForThisProductType.errors.required">
-              Wybranie opcji z listy jest wymagane.
-            </div>
-          </div>
       </div>
+      <div class="row">
         <div class="form-group col-md-6">
-          <label class="label" for="bottomsForThisProductType" >Wybierz wykończenia dna</label>
-          <select multiple class="form-control" formControlName="bottomsForThisProductType" id="bottomsForThisProductType">
-            <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
-            <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
-              {{ bottom.code +'-'+bottom.name }}
-            </option>
-          </select>
-          <div  *ngIf="bottomsForThisProductType.invalid && (bottomsForThisProductType.dirty || bottomsForThisProductType.touched)"
-                class="alert alert-danger">
+          <p>Wybierz wykończenia góry</p>
+          <div *ngFor="let top of allTopsToSelect">
 
-            <div class="validatorInfo" *ngIf="bottomsForThisProductType.errors.required">
-              Wybranie opcji z listy jest wymagane.
-            </div>
+            <label [for]="'topInput'+top.id"  > {{ top.code +'-' + getNameInSelectedLanguage(top.localizedNames) }}</label>
+            <input  type = "checkbox" [checked]="setCheckedpropertyOfTopsCheckBoxForUpdateMode(topsCheckbox.id)" [id]="'topInput'+top.id" #topsCheckbox>
           </div>
         </div>
-    </div>
+      <div class="form-group col-md-6">
+        <p>Wybierz wykończenia dna</p>
+        <div *ngFor="let bottom of allBotomsToselect">
+
+          <label [for]="'bottomInput'+bottom .id"  > {{ bottom .code +'-' + getNameInSelectedLanguage(bottom.localizedNames) }}</label>
+          <input type = "checkbox" [checked]="setCheckedpropertyOfBotttomCheckBoxForUpdateMode(bottomCheckbox.id)" [id]="'bottomInput'+bottom .id" #bottomCheckbox>
+        </div>
+      </div>
+
+      </div>
     <div class="addButon">
       <button type="submit" [disabled]="!form.valid" class="btn btn-danger">Zapisz</button>
     </div>
-    </div>
+
   </form>
 
   <div *ngIf="showoperationStatusMessage">
