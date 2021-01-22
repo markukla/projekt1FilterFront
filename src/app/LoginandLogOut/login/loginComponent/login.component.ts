@@ -7,6 +7,7 @@ import {AuthenticationBackendService} from '../../AuthenticationServices/authent
 import {AuthenticationService} from '../../AuthenticationServices/authentication.service';
 import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
 import {LanguageBackendService} from '../../../Languages/languageServices/language-backend.service';
+import Language from '../../../Languages/LanguageTypesAndClasses/languageEntity';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,8 @@ export class LoginComponent implements OnInit, AfterContentChecked{
   operationMessage: string;
   showoperationMessage: boolean;
   materialCreated: boolean;
+   languages: Language [];
+   activeLanguages: Language[];
 
   constructor(
     private loginBackendService: AuthenticationBackendService,
@@ -43,8 +46,7 @@ export class LoginComponent implements OnInit, AfterContentChecked{
 
   // tslint:disable-next-line:typedef
   get password() {
-    return this.loginForm.get('password' +
-      '');
+    return this.loginForm.get('password');
   }
 
 
@@ -72,9 +74,16 @@ export class LoginComponent implements OnInit, AfterContentChecked{
 
  async ngOnInit(): Promise<void> {
   const languages = await this.languageBackendService.getRecords().toPromise();
+  this.languages = languages.body;
+  this.activeLanguages = this.languages.filter(language =>
+    language.active === true );
   this.loginService.languages = languages.body;
   }
 
   ngAfterContentChecked(): void {
+  }
+
+  setSelectedLanguageCode(languageCode: string) {
+    this.loginService.selectedLanguageCode = languageCode;
   }
 }

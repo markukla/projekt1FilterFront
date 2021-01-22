@@ -1,5 +1,9 @@
 <div class="createMaterial">
   <h2>Login</h2>
+  <div  class="row-cols-1" *ngFor ="let language of activeLanguages">
+    <button (click)="setSelectedLanguageCode(language.languageCode)" [id]="language.languageCode">{{language.languageCode}}</button>
+  </div>
+
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="form-group col-md-6">

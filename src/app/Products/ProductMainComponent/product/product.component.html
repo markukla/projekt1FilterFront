@@ -25,10 +25,9 @@
     <tr>
       <th>
 
-        <input class="tableSearchInput"  id="serchInType" placeholder="Wyszukaj" [appSearch]="records" data-order="desc" data-name="productTypeCodePlusName" scope="col"> />
-      </th>
-      <th><input class="tableSearchInput"  id="serchInTops" placeholder="Wyszukaj"  [appSearch]="records" data-order="desc" data-name="productTopCodePlusName" scope="col"> /></th>
-      <th><input class="tableSearchInput"  id="serchInBottoms" placeholder="Wyszukaj" [appSearch]="records" data-order="desc" data-name="productBottomCodePlusNAme" scope="col">/></th>
+        <input class="tableSearchInput"  id="serchInType" placeholder="Wyszukaj" [appSearch]="records" serchedColumn="productTypeCodePlusName" /> </th>
+      <th><input class="tableSearchInput"  id="serchInTops" placeholder="Wyszukaj"  [appSearch]="records" serchedColumn="productTopCodePlusName"/> </th>
+      <th><input class="tableSearchInput"  id="serchInBottoms" placeholder="Wyszukaj" [appSearch]="records" serchedColumn="productBottomCodePlusNAme"/></th>
       <th>{{this.recordNumbers}}</th>
     </tr>
 

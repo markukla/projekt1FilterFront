@@ -1,6 +1,8 @@
 
 <div>
-<app-header></app-header>
+  <div *ngIf="showHeader() === true">
+    <app-header ></app-header>
+  </div>
 
   <!--rooter outlet choode appropriate component basing on routes confugured in rooter module-->
 <router-outlet></router-outlet>

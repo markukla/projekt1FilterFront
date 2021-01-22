@@ -64,6 +64,8 @@ import { CreateOrUpdateLanguageComponent } from './Languages/create-or-update-la
 import { LanguageSearchDirective } from './helpers/directive/ForLanguages/language-search.directive';
 import { SearchDirective } from './helpers/directive/SearchDirective/search.directive';
 import { LangageFormComponentComponent } from './LanguageForm/langage-form-component/langage-form-component.component';
+import { VocabularyMainComponentComponent } from './Vocablulaty/vocabulary-main-component/vocabulary-main-component.component';
+import { CreateOrUpdateVocabularyComponent } from './Vocablulaty/create-or-update-vocabulary/create-or-update-vocabulary.component';
 
 
 
@@ -121,7 +123,9 @@ import { LangageFormComponentComponent } from './LanguageForm/langage-form-compo
     CreateOrUpdateLanguageComponent,
     LanguageSearchDirective,
     SearchDirective,
-    LangageFormComponentComponent
+    LangageFormComponentComponent,
+    VocabularyMainComponentComponent,
+    CreateOrUpdateVocabularyComponent
     ],
   imports: [
     BrowserModule,

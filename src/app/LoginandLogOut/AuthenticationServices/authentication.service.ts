@@ -18,7 +18,7 @@ export class AuthenticationService {
   tokenData: TokenData;
   tokenString: string;
   userRole: RoleEnum;
-  selectedLanguageCode = 'PL';
+  selectedLanguageCode: string;
   languages: Language [];
 
   setLogedUserUserAndToken(loggedUser: LoggedUser): void {
