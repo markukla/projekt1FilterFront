@@ -38,7 +38,7 @@
           <div *ngFor="let top of allTopsToSelect">
 
             <label [for]="'topInput'+top.id"  > {{ top.code +'-' + getNameInSelectedLanguage(top.localizedNames) }}</label>
-            <input  type = "checkbox" [checked]="setCheckedpropertyOfTopsCheckBoxForUpdateMode(topsCheckbox.id)" [id]="'topInput'+top.id" #topsCheckbox>
+            <input  type = "checkbox" [id]="'topInput'+top.id" #topsCheckbox [checked]="setCheckedpropertyOfTopsCheckBoxForUpdateMode(topsCheckbox.id)">
           </div>
         </div>
       <div class="form-group col-md-6">
@@ -46,7 +46,7 @@
         <div *ngFor="let bottom of allBotomsToselect">
 
           <label [for]="'bottomInput'+bottom .id"  > {{ bottom .code +'-' + getNameInSelectedLanguage(bottom.localizedNames) }}</label>
-          <input type = "checkbox" [checked]="setCheckedpropertyOfBotttomCheckBoxForUpdateMode(bottomCheckbox.id)" [id]="'bottomInput'+bottom .id" #bottomCheckbox>
+          <input type = "checkbox" [id]="'bottomInput'+bottom.id" #bottomCheckbox [checked]="setCheckedpropertyOfBotttomCheckBoxForUpdateMode(bottomCheckbox.id)">
         </div>
       </div>
 

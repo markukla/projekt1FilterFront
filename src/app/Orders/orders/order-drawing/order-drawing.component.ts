@@ -338,7 +338,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     // tslint:disable-next-line:max-line-length
     if (this.orderOperationMode && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWPRODUCT) {
       // tslint:disable-next-line:max-line-length
-      if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT) {
+      if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT || this.orderOperationMode === OrderOperationMode.CREATENEWPRODUCT) {
         this.createDimensionInputsBasingOnProductData();
       } else {
         this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();

@@ -1,4 +1,14 @@
-import {Component, ElementRef, OnInit, ViewChildren} from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {ProductTopBackendService} from '../../ProductTop/ProductTopServices/product-top-backend.service';
 import {ValidateProductTopService} from '../../ProductTop/ProductTopServices/validate-product-top.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -170,34 +180,64 @@ export class CreateProductTypeComponent implements OnInit {
 }
 
   setCheckedpropertyOfTopsCheckBoxForUpdateMode(checkBoxId: string): boolean {
+    let checked: boolean = false;
+    let checBoxWithSameIdLikeInDatabaseExists: boolean;
     if (this.recordToUpdate && this.recordToUpdate.topsForThisProductType) {
-    this.recordToUpdate.topsForThisProductType.forEach((top) => {
-      const idToCompareWithCheckboxId = `topInput'${top .id}`;
-      if (checkBoxId === idToCompareWithCheckboxId ) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-    }
-    else {
-      return false;
-    }
-  }
-
-  setCheckedpropertyOfBotttomCheckBoxForUpdateMode(checkBoxId: string): boolean {
-    if (this.recordToUpdate && this.recordToUpdate.bottomsForThisProductType) {
-      this.recordToUpdate.bottomsForThisProductType.forEach((bottom) => {
-        const idToCompareWithCheckboxId = `bottomInput'${bottom .id}`;
+      this.recordToUpdate.topsForThisProductType.forEach((top) => {
+        const idToCompareWithCheckboxId = `topInput${top.id}`;
         if (checkBoxId === idToCompareWithCheckboxId ) {
-          return true;
-        } else {
-          return false;
+          checBoxWithSameIdLikeInDatabaseExists = true;
         }
       });
     }
+    if (checBoxWithSameIdLikeInDatabaseExists === true) {
+      checked = true;
+    }
     else {
-      return false;
+      checked = false;
+    }
+    return checked;
+  }
+
+  setCheckedpropertyOfBotttomCheckBoxForUpdateMode(checkBoxId: string): boolean {
+    let checked: boolean = false;
+    let checBoxWithSameIdLikeInDatabaseExists: boolean;
+    if (this.recordToUpdate && this.recordToUpdate.bottomsForThisProductType) {
+      this.recordToUpdate.bottomsForThisProductType.forEach((bottom) => {
+        const idToCompareWithCheckboxId = `bottomInput${bottom.id}`;
+        if (checkBoxId === idToCompareWithCheckboxId ) {
+          checBoxWithSameIdLikeInDatabaseExists = true;
+        }
+      });
+    }
+    if (checBoxWithSameIdLikeInDatabaseExists === true) {
+      checked = true;
+    }
+    else {
+      checked = false;
+    }
+    return checked;
+  }
+  setCheckBoxInitPropertiesForUpdateMode(): void {
+    if (this.topscheckBox && this.topscheckBox.length > 0) {
+    this.topscheckBox.forEach((topCheckbox) => {
+      if (this.setCheckedpropertyOfTopsCheckBoxForUpdateMode(topCheckbox.nativeElement.id) === true) {
+        topCheckbox.nativeElement.checked = true;
+      }
+      else {
+        topCheckbox.nativeElement.checked = false;
+      }
+    });
+    }
+    if (this.bottomCheckBox && this.bottomCheckBox.length > 0) {
+      this.bottomCheckBox.forEach((bottomCheckBox) => {
+        if (this.setCheckedpropertyOfBotttomCheckBoxForUpdateMode(bottomCheckBox.nativeElement.id) === true) {
+          bottomCheckBox.nativeElement.checked = true;
+        }
+        else {
+          bottomCheckBox.nativeElement.checked = false;
+        }
+      });
     }
   }
 }
