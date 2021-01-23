@@ -1,1 +1,44 @@
-<p>create-or-update-vocabulary works!</p>
+<div class="createMaterial">
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
+  <h2>Dodaj Nową frazę</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label class="label" for="code">Nazwa zmiennej w aplikacji</label>
+        <input type="text" class="form-control" formControlName="code" id="code">
+        <div *ngIf="code.invalid && (code.dirty || code.touched)"
+             class="alert alert-danger">
+
+          <div class="validatorInfo" *ngIf="code.errors.required">
+            To pole jest wymagane
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div  class="col">
+      <p>Podaj nazwy w poszczególnych językach</p>
+      <p>{{giveNameForAllLanguagesDescription}}</p> <br>
+      <app-langage-form-component></app-langage-form-component>
+
+    </div>
+    <div class="addButon">
+      <button type="submit" [disabled]="!form.valid" class="btn btn-danger">{{saveButtonDescription}}</button>
+    </div>
+
+
+  </form>
+
+  <div *ngIf="showoperationStatusMessage">
+    <textarea>{{showoperationStatusMessage}}</textarea>
+  </div>
+</div>
+
+
+
+
+
+
+
+

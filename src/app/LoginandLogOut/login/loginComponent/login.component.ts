@@ -8,6 +8,8 @@ import {AuthenticationService} from '../../AuthenticationServices/authentication
 import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
 import {LanguageBackendService} from '../../../Languages/languageServices/language-backend.service';
 import Language from '../../../Languages/LanguageTypesAndClasses/languageEntity';
+import {VocabularyBackendServiceService} from '../../../Vocablulaty/VocabularyServices/vocabulary-backend-service.service';
+import {Vocabulary} from '../../../Vocablulaty/VocabularyTypesAndClasses/VocabularyEntity';
 
 @Component({
   selector: 'app-login',
@@ -21,9 +23,11 @@ export class LoginComponent implements OnInit, AfterContentChecked{
   materialCreated: boolean;
    languages: Language [];
    activeLanguages: Language[];
+   vocabularies: Vocabulary[];
 
   constructor(
     private loginBackendService: AuthenticationBackendService,
+    private vocabularyBackendService: VocabularyBackendServiceService,
     private loginService: AuthenticationService,
     private languageBackendService: LanguageBackendService,
     public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
@@ -74,16 +78,18 @@ export class LoginComponent implements OnInit, AfterContentChecked{
 
  async ngOnInit(): Promise<void> {
   const languages = await this.languageBackendService.getRecords().toPromise();
+  const vocabularies = await this.vocabularyBackendService.getRecords().toPromise();
   this.languages = languages.body;
   this.activeLanguages = this.languages.filter(language =>
     language.active === true );
   this.loginService.languages = languages.body;
+  this.loginService.vocabularies = vocabularies.body;
   }
 
   ngAfterContentChecked(): void {
   }
 
-  setSelectedLanguageCode(languageCode: string) {
+  setSelectedLanguageCode(languageCode: string): void {
     this.loginService.selectedLanguageCode = languageCode;
   }
 }

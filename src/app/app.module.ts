@@ -163,9 +163,11 @@ import { CreateOrUpdateVocabularyComponent } from './Vocablulaty/create-or-updat
       { path: 'products/addDrawing', component: CreateProductDrawingComponent},
       {path: 'login', component: LoginComponent },
       {path: 'drag', component: ContainerForDragableComponent },
-      {path: 'products/productDrawingBlueprint', component: ProductDrawingTemplateComponent },
+      {path: 'products/productDrawingBlueprint', component: ProductDrawingTemplateComponent},
       {path: 'languages', component: LanguageMainComponent},
-      {path: 'languages/create', component: CreateOrUpdateLanguageComponent}
+      {path: 'languages/create', component: CreateOrUpdateLanguageComponent},
+      {path: 'vocabularies', component: VocabularyMainComponentComponent},
+      {path: 'vocabularies/add', component: CreateOrUpdateVocabularyComponent}
       ])
   ],
   providers: [

@@ -1,1 +1,56 @@
-<p>vocabulary-main-component works!</p>
+
+<!--sss-->
+
+<div>
+
+
+  <a  (click)="createNewRecord()">
+    {{ createNewMaterialDescription }}
+  </a>
+</div>
+
+<div class="materialComponent">
+
+  <table class="table table-striped border mt-1">
+    <thead>
+    <tr>
+      <th [appSort]="records" data-order="desc" data-name="variableName" scope="col">Nazwa zmiennej w aplikacji <br></th>
+      <th [appSort]="records" data-order="desc" data-name="localizedNameInSelectedLanguage" scope="col">Nazwa w wybranym języku</th>
+      <th>ilość</th>
+
+    </tr>
+    <tr>
+      <th>
+
+        <input class="tableSearchInput" [appSearch]="records" serchedColumn="variableName" id="serchInCodes" placeholder="Wyszukaj" />
+      </th>
+      <th><input class="tableSearchInput" [appSearch]="records" serchedColumn="localizedNameInSelectedLanguage" id="serchInNames" placeholder="Wyszukaj" /></th>
+      <th>{{this.recordNumbers}}</th>
+    </tr>
+
+    </thead>
+    <tbody>
+
+    <tr *ngFor="let record of records">
+      <td>{{record.variableName}}</td>
+      <td>{{record.localizedNameInSelectedLanguage}}</td>
+      <td>
+        <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
+        <br>
+        <button (click)="this.deleteSelectedRecord(record.id)" [title]="deleteButtonInfo" >x</button>
+        <button (click)="updateSelectedRecord(record.id);" [title]="updateButtonInfo">u</button>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+
