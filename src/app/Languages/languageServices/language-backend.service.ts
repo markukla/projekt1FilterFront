@@ -10,6 +10,7 @@ import Language from '../LanguageTypesAndClasses/languageEntity';
 import {LanguageTableService} from './language-table.service';
 import {LanguageDto} from '../LanguageTypesAndClasses/languageDto';
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
+import {DrawingPaths} from '../../Products/ProductTypesAndClasses/drawingPaths';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,10 @@ export class LanguageBackendService {
 
   getRecords(): Observable<HttpResponse<Language[]>> {
     return this.http.get<Language[]>(this.rootURL + this.endpointUrl, {observe: 'response'});
+  }
+  uploadDrawing(file: any): Observable<DrawingPaths> {
+    const url = `${this.rootURL}/uploadDrawing`;
+    return this.http.post<DrawingPaths>(url, file);
   }
 
   // tslint:disable-next-line:typedef
