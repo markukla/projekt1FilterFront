@@ -5,6 +5,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BusinesPartnerBackendService} from '../../BusinessPartnerServices/busines-partner-backend.service';
 import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/business-partner-validator.service';
+import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-create-busines-partner',
@@ -14,8 +15,8 @@ import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/bus
 export class CreateBusinesPartnerComponent implements OnInit {
 
   operationStatusMessage: string;
-
   constructor(
+    private authenticationService: AuthenticationService,
     private bakcendService: BusinesPartnerBackendService,
     public validatorService: BusinessPartnerValidatorService,
     private formBuilder: FormBuilder,
@@ -86,7 +87,7 @@ export class CreateBusinesPartnerComponent implements OnInit {
     });
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/businessPartners');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   ngOnInit(): void {

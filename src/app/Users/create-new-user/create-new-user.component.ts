@@ -5,6 +5,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserBackendService} from '../UserServices/user-backend.service';
 import {UserValidatorService} from '../UserServices/user-validator.service';
+import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-create-new-user',
@@ -16,6 +17,7 @@ export class CreateNewUserComponent implements OnInit {
   operationStatusMessage: string;
 
   constructor(
+    private authenticationService: AuthenticationService,
     private userBackendService: UserBackendService,
     public userValidatorService: UserValidatorService,
     private formBuilder: FormBuilder,
@@ -77,7 +79,7 @@ export class CreateNewUserComponent implements OnInit {
     });
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/users');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   ngOnInit(): void {

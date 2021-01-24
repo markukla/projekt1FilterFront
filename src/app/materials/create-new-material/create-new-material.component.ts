@@ -7,6 +7,7 @@ import {MaterialTableService} from '../MaterialServices/material-table.service';
 import {ValidateMaterialCodeUniqueService} from '../MaterialServices/validate-material-code-unique.service';
 import BackendErrorResponse from '../../helpers/ErrorHandling/backendErrorResponse';
 import {HttpErrorResponse} from '@angular/common/http';
+import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-create-new-material',
@@ -17,7 +18,7 @@ export class CreateNewMaterialComponent implements OnInit{
   operationMessage: string;
   showoperationStatusMessage: string;
 
-  constructor(
+  constructor( private authenticationService: AuthenticationService,
               private materialbackendService: MaterialBackendService,
               public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
               private formBuilder: FormBuilder,
@@ -50,7 +51,7 @@ export class CreateNewMaterialComponent implements OnInit{
     });
  }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/users');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   ngOnInit(): void {

@@ -798,4 +798,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       return false;
     }
   }
+
+  navigateBack(): void {
+   this.router.navigateByUrl(this.authenticationService._previousUrl);
+  }
 }

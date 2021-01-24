@@ -7,6 +7,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import HttpException from '../../helpers/ErrorHandling/httpException';
 import {getBackendErrrorMesage} from '../../helpers/errorHandlingFucntion/handleBackendError';
 import {Router} from '@angular/router';
+import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-update-material',
@@ -24,7 +25,8 @@ export class UpdateMaterialComponent implements OnInit {
 
   constructor(private materialTableService: MaterialTableService,
               private materialBackendService: MaterialBackendService,
-              private router: Router) {
+              private router: Router,
+              private authenticationService: AuthenticationService) {
   }
 
   ngOnInit(): void {
@@ -79,7 +81,7 @@ export class UpdateMaterialComponent implements OnInit {
     }, 1500);
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/materials');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 }
 

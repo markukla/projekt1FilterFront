@@ -5,6 +5,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UsersTableService} from '../UserServices/users-table.service';
 import {UserHasAdminRole} from '../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
+import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-update-user',
@@ -16,6 +17,7 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked {
   selectedId = String(this.userTableService.selectedId);
 
   constructor(
+    private authenticationService: AuthenticationService,
     private userBackendService: UserBackendService,
     private userTableService: UsersTableService,
     public userValidatorService: UserValidatorService,
@@ -84,7 +86,7 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked {
   }
 
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/users');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   ngOnInit(): void {
@@ -94,7 +96,7 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked {
   cleanOperationMessageAndGoBack(): void {
     setTimeout(() => {
       this.operationStatusMessage = null;
-      this.router.navigateByUrl('/users');
+      this.router.navigateByUrl(this.authenticationService._previousUrl);
     }, 2000);
   }
 

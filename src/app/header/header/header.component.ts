@@ -1,7 +1,8 @@
 import {AfterContentChecked, AfterViewChecked, Component, OnInit} from '@angular/core';
 import RoleEnum from '../../Users/users/userTypes/roleEnum';
 import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
-import {NavigationStart, Router, RouterEvent} from '@angular/router';
+import {NavigationEnd, NavigationStart, Router, RouterEvent} from '@angular/router';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,8 @@ export class HeaderComponent implements AfterContentChecked, AfterViewChecked, O
   admin: RoleEnum;
   editor: RoleEnum;
   partner: RoleEnum;
-
+  private previousUrl: string;
+  private currentUrl: string;
   constructor(private authenticationService: AuthenticationService,
               private router: Router) {
     this.resetLoggedUserInAuthenticationService();
@@ -21,8 +23,6 @@ export class HeaderComponent implements AfterContentChecked, AfterViewChecked, O
     this.partner = RoleEnum.PARTNER;
     this.admin = RoleEnum.ADMIN;
   }
-
-
   ngAfterContentChecked(): void {
     this.loggedUserRole = this.authenticationService.userRole;
   }
@@ -39,5 +39,13 @@ export class HeaderComponent implements AfterContentChecked, AfterViewChecked, O
   }
 
   ngOnInit(): void {
+  }
+  showHeaderIfNoDrawing(): boolean {
+    if (this.authenticationService._currentUrl.includes('orders/drawing')){
+      return false;
+    }
+    else {
+      return true;
+    }
   }
 }

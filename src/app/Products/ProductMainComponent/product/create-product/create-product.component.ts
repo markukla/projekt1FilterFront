@@ -211,7 +211,7 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
   }
 
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/vocabularies');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   cleanOperationMessage(): void {

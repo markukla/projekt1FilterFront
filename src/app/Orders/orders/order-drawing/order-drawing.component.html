@@ -13,6 +13,7 @@
     </div>
 
     <button *ngIf="createOrUpdateProductMode() === false;" class="saveButton" (click)="onSubmit()">Zatwierdź</button>
+    <button *ngIf="createOrUpdateProductMode() === false;" (click)="navigateBack()"> Wstecz</button>
     <div *ngIf=" checkIfShowDrawingMode();">
       <button class="saveButton" (click)="getDrawingPdf();">Zapisz do pdf</button>
 
@@ -88,6 +89,7 @@
       </div>
     </form>
     <button class="saveButton" (click)="saveProductInDatabas()">Dodaj produkt </button>
+    <button  (click)="navigateBack()"> Wstecz </button>
     <div *ngIf="operationFailerStatusMessage" class="alert-danger">
       <p>{{operationFailerStatusMessage}}</p>
     </div>

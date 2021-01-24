@@ -122,7 +122,7 @@ export class CreateProductBottomComponent implements OnInit {
     }
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/products/bottoms');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   cleanOperationMessage(): void {

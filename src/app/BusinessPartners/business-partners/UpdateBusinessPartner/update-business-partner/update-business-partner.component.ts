@@ -8,6 +8,7 @@ import {UserHasAdminRole} from '../../../../helpers/otherGeneralUseFunction/chec
 import {BusinesPartnerBackendService} from '../../BusinessPartnerServices/busines-partner-backend.service';
 import {BusinessPartnerTableService} from '../../BusinessPartnerServices/business-partner-table.service';
 import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/business-partner-validator.service';
+import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-update-business-partner',
@@ -20,6 +21,7 @@ export class UpdateBusinessPartnerComponent implements OnInit, AfterContentCheck
   selectedId = String(this.tableService.selectedId);
 
   constructor(
+    private authenticationService: AuthenticationService,
     private backendService: BusinesPartnerBackendService,
     private tableService: BusinessPartnerTableService,
     public validatorService: BusinessPartnerValidatorService,
@@ -100,7 +102,7 @@ export class UpdateBusinessPartnerComponent implements OnInit, AfterContentCheck
   }
 
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/businessPartners');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   ngOnInit(): void {
@@ -110,7 +112,7 @@ export class UpdateBusinessPartnerComponent implements OnInit, AfterContentCheck
   cleanOperationMessageAndGoBack(): void {
     setTimeout(() => {
       this.operationStatusMessage = null;
-      this.router.navigateByUrl('/businessPartners');
+      this.router.navigateByUrl(this.authenticationService._previousUrl);
     }, 2000);
   }
 

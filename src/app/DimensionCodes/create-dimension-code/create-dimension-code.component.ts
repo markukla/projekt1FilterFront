@@ -139,7 +139,7 @@ export class CreateDimensionCodeComponent implements OnInit {
     }
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/dimensionCodes');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   cleanOperationMessage(): void {

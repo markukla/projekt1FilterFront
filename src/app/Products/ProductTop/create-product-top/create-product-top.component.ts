@@ -115,7 +115,7 @@ export class CreateProductTopComponent implements OnInit {
     }
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/products/tops');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   cleanOperationMessage(): void {
