@@ -16,19 +16,19 @@ import {Vocabulary} from '../../../Vocablulaty/VocabularyTypesAndClasses/Vocabul
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit, AfterContentChecked{
+export class LoginComponent implements OnInit, AfterContentChecked {
 
   operationMessage: string;
   showoperationMessage: boolean;
   materialCreated: boolean;
-   languages: Language [];
-   activeLanguages: Language[];
-   vocabularies: Vocabulary[];
+  languages: Language [];
+  activeLanguages: Language[];
+  vocabularies: Vocabulary[];
 
   constructor(
     private loginBackendService: AuthenticationBackendService,
     private vocabularyBackendService: VocabularyBackendServiceService,
-    private loginService: AuthenticationService,
+    public loginService: AuthenticationService,
     private languageBackendService: LanguageBackendService,
     public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
     private formBuilder: FormBuilder,
@@ -64,26 +64,34 @@ export class LoginComponent implements OnInit, AfterContentChecked{
       const backendErrorMessage = getBackendErrrorMesage(error);
       if (backendErrorMessage.includes('wrong email or password')) {
         this.operationMessage = `Nieprawidłowy email lub hasło`;
-      }
-      else if (backendErrorMessage.includes('your account is inactive')) {
+      } else if (backendErrorMessage.includes('your account is inactive')) {
         this.operationMessage = `Twoje konto jest nieaktywne, skontaktuj się z administratorem.`;
-      }
-      else {
+      } else {
         this.operationMessage = `Wystąpił błąd. Spróbuj ponownie`;
       }
     });
   }
+
   closeAndGoBack(): void {
   }
 
- async ngOnInit(): Promise<void> {
-  const languages = await this.languageBackendService.getRecords().toPromise();
-  const vocabularies = await this.vocabularyBackendService.getRecords().toPromise();
-  this.languages = languages.body;
-  this.activeLanguages = this.languages.filter(language =>
-    language.active === true );
-  this.loginService.languages = languages.body;
-  this.loginService.vocabularies = vocabularies.body;
+  async ngOnInit(): Promise<void> {
+    const languages = await this.languageBackendService.getRecords().toPromise();
+    const vocabularies = await this.vocabularyBackendService.getRecords().toPromise();
+    this.languages = languages.body;
+    this.activeLanguages = this.languages.filter(language =>
+      language.active === true);
+    this.loginService.languages = languages.body;
+    this.loginService.vocabularies = vocabularies.body;
+    try {
+      if (this.loginService.loggedUser) {
+        const logoutResponse = await this.loginBackendService.logout().toPromise();
+        console.log(logoutResponse.messageToUser);
+      }
+    } catch (error) {
+      console.log(` error= ${error}`);
+    }
+    this.loginService.setLogedUserUserAndToken(null);
   }
 
   ngAfterContentChecked(): void {

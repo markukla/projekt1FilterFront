@@ -3,6 +3,10 @@
   <div  class="row-cols-1" *ngFor ="let language of activeLanguages">
     <button (click)="setSelectedLanguageCode(language.languageCode)" [id]="language.languageCode">{{language.languageCode}}</button>
   </div>
+  <div class="validatorInfo" *ngIf="!this.loginService.selectedLanguageCode">
+   Wybranie wersji językowej jest wymagane
+  </div>
+
 
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div class="row">
@@ -37,7 +41,7 @@
       </div>
     </div>
     <div class="addButon">
-      <button type="submit" [disabled]="!loginForm.valid" class="btn btn-danger">Zaloguj</button>
+      <button type="submit" [disabled]="!loginForm.valid || !this.loginService.selectedLanguageCode" class="btn btn-danger">Zaloguj</button>
     </div>
   </form>
 

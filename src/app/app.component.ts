@@ -14,12 +14,4 @@ export class AppComponent implements OnInit{
   ngOnInit(): void {
     this.route = window.location.href;
   }
-  showHeader(): boolean{
-    if (this.route.includes('drawing')) {
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
 }

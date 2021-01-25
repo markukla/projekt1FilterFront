@@ -46,10 +46,8 @@ import { TopsForProductTypeComponent } from './Products/ProductType/tops-for-pro
 import { BottomsForProductTypeComponent } from './Products/ProductType/bottoms-for-product-type/bottoms-for-product-type.component';
 import { CreateProductComponent } from './Products/ProductMainComponent/product/create-product/create-product.component';
 import { ProductSearchDirective } from './helpers/directive/ForProducts/product-search.directive';
-import { CreateProductDrawingComponent } from './Products/ProductMainComponent/product/create-product-drawing/create-product-drawing.component';
 import { ContainerForDragableComponent } from './Products/ProductMainComponent/product/DragAndDropTest/container-for-dragable/container-for-dragable.component';
 import {ResizableDraggableComponent} from './Products/ProductMainComponent/product/DragAndDropTest/resizable-draggable/resizable-draggable.component';
-import { ProductDrawingTemplateComponent } from './Products/ProductMainComponent/product/product-drawing-template/product-drawing-template.component';
 import { ProductTableFormComponent } from './Products/ProductMainComponent/product/product-table-form/product-table-form.component';
 import { CreateOrderComponent } from './Orders/orders/create-order/create-order.component';
 import { UpdateOrderComponent } from './Orders/orders/update-order/update-order.component';
@@ -66,6 +64,7 @@ import { SearchDirective } from './helpers/directive/SearchDirective/search.dire
 import { LangageFormComponentComponent } from './LanguageForm/langage-form-component/langage-form-component.component';
 import { VocabularyMainComponentComponent } from './Vocablulaty/vocabulary-main-component/vocabulary-main-component.component';
 import { CreateOrUpdateVocabularyComponent } from './Vocablulaty/create-or-update-vocabulary/create-or-update-vocabulary.component';
+import { ChangePasswordForLoggedUserComponent } from './change-password-component/change-password-for-logged-user.component';
 
 
 
@@ -106,10 +105,8 @@ import { CreateOrUpdateVocabularyComponent } from './Vocablulaty/create-or-updat
     BottomsForProductTypeComponent,
     CreateProductComponent,
     ProductSearchDirective,
-    CreateProductDrawingComponent,
     ContainerForDragableComponent,
     ResizableDraggableComponent,
-    ProductDrawingTemplateComponent,
     ProductTableFormComponent,
     CreateOrderComponent,
     UpdateOrderComponent,
@@ -125,7 +122,8 @@ import { CreateOrUpdateVocabularyComponent } from './Vocablulaty/create-or-updat
     SearchDirective,
     LangageFormComponentComponent,
     VocabularyMainComponentComponent,
-    CreateOrUpdateVocabularyComponent
+    CreateOrUpdateVocabularyComponent,
+    ChangePasswordForLoggedUserComponent
     ],
   imports: [
     BrowserModule,
@@ -160,14 +158,13 @@ import { CreateOrUpdateVocabularyComponent } from './Vocablulaty/create-or-updat
       { path: 'products/bottoms/add', component: CreateProductBottomComponent},
       { path: 'products/tops', component: ProductTopComponent},
       { path: 'products/tops/add', component: CreateProductTopComponent},
-      { path: 'products/addDrawing', component: CreateProductDrawingComponent},
       {path: 'login', component: LoginComponent },
       {path: 'drag', component: ContainerForDragableComponent },
-      {path: 'products/productDrawingBlueprint', component: ProductDrawingTemplateComponent},
       {path: 'languages', component: LanguageMainComponent},
       {path: 'languages/create', component: CreateOrUpdateLanguageComponent},
       {path: 'vocabularies', component: VocabularyMainComponentComponent},
-      {path: 'vocabularies/add', component: CreateOrUpdateVocabularyComponent}
+      {path: 'vocabularies/add', component: CreateOrUpdateVocabularyComponent},
+      {path: 'changePasswordByLoggedUser', component: ChangePasswordForLoggedUserComponent},
       ])
   ],
   providers: [

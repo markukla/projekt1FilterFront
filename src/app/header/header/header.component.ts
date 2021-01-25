@@ -16,9 +16,9 @@ export class HeaderComponent implements AfterContentChecked, AfterViewChecked, O
   partner: RoleEnum;
   private previousUrl: string;
   private currentUrl: string;
-  constructor(private authenticationService: AuthenticationService,
+  constructor(public authenticationService: AuthenticationService,
               private router: Router) {
-    this.resetLoggedUserInAuthenticationService();
+   // this.resetLoggedUserInAuthenticationService();
     this.editor = RoleEnum.EDITOR;
     this.partner = RoleEnum.PARTNER;
     this.admin = RoleEnum.ADMIN;
@@ -41,11 +41,13 @@ export class HeaderComponent implements AfterContentChecked, AfterViewChecked, O
   ngOnInit(): void {
   }
   showHeaderIfNoDrawing(): boolean {
-    if (this.authenticationService._currentUrl.includes('orders/drawing')){
-      return false;
-    }
-    else {
-      return true;
+    if (this.authenticationService && this.authenticationService._currentUrl) {
+      if (this.authenticationService._currentUrl.includes('orders/drawing')){
+        return false;
+      }
+      else {
+        return true;
+      }
     }
   }
 }

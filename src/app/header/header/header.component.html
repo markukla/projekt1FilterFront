@@ -1,30 +1,33 @@
 <div *ngIf="showHeaderIfNoDrawing()===true">
-<div *ngIf="this.loggedUserRole && this.loggedUserRole === this.admin">
+<div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.admin">
   <span>
-    <a [routerLink]="['/orders']" routerLinkActive="active"> Orders</a>
-  <a [routerLink]="['/businessPartners']" routerLinkActive="active"> Partners</a>
-  <a [routerLink]="['/materials']" routerLinkActive="active"> Materials</a>
-  <a [routerLink]="['/products']" routerLinkActive="active"> Products</a>
-     <a [routerLink]="['/users']" routerLinkActive="active"> Users</a>
-    <a [routerLink]="['/login']" routerLinkActive="active"> Login</a>
+    <a [routerLink]="['/orders']" routerLinkActive="active"> Zamówienia</a>
+  <a [routerLink]="['/businessPartners']" routerLinkActive="active"> Partnerzy</a>
+  <a [routerLink]="['/materials']" routerLinkActive="active"> Materialy</a>
+  <a [routerLink]="['/products']" routerLinkActive="active"> Produkty</a>
+     <a [routerLink]="['/users']" routerLinkActive="active"> Użytkownicy</a>
     <a [routerLink]="['/dimensionCodes']" routerLinkActive="active"> Kody Wymiarów</a>
     <a [routerLink]="['/languages']" routerLinkActive="active"> Języki </a>
      <a [routerLink]="['/vocabularies']" routerLinkActive="active"> Słownik</a>
+     <a [routerLink]="['/changePasswordByLoggedUser']" routerLinkActive="active"> Zmień swoje hasło</a>
+     <a [routerLink]="['/login']" routerLinkActive="active"> Wyloguj</a>
   </span>
 
 </div>
-<div *ngIf="this.loggedUserRole && this.loggedUserRole === this.editor">
+<div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.editor">
   <span>
-     <a [routerLink]="['/orders']" routerLinkActive="active"> Orders</a>
-    <a [routerLink]="['/businessPartners']" routerLinkActive="active"> Partners</a>
-    <a [routerLink]="['/login']" routerLinkActive="active"> Login</a>
+     <a [routerLink]="['/orders']" routerLinkActive="active"> Zamówienia</a>
+    <a [routerLink]="['/businessPartners']" routerLinkActive="active"> Partnerzy</a>
+    <a [routerLink]="['/changePasswordByLoggedUser']" routerLinkActive="active"> Zmień swoje hasło</a>
+    <a [routerLink]="['/login']" routerLinkActive="active"> Wyloguj</a>
   </span>
 
 </div>
-<div *ngIf="this.loggedUserRole && this.loggedUserRole === this.partner">
+<div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.partner">
   <span>
-     <a [routerLink]="['/orders']" routerLinkActive="active"> Orders</a>
-    <a [routerLink]="['/login']" routerLinkActive="active"> Login</a>
+     <a [routerLink]="['/orders']" routerLinkActive="active"> Zamówienia</a>
+    <a [routerLink]="['/changePasswordByLoggedUser']" routerLinkActive="active"> Zmień swoje hasło</a>
+    <a [routerLink]="['/login']" routerLinkActive="active"> Wyloguj</a>
   </span>
 
 
