@@ -1,13 +1,20 @@
-#mainContainer {
+.mainContainerClass {
+
+  position: absolute;
+
+  border: 5px solid #FFFF00;
+  top: 300px;
+  left: 300px;
+  z-index: 10;
+
+  padding: 10px;
 
 }
-#drawingContainer {
+.drawingContainerClass {
   /* background-image: url('W702L_V_prawie_ostateczna.png');*/
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  width: 800px;
-  height: 600px;
+  position: absolute;
+  z-index: 20;
+
 
 }
 /**/

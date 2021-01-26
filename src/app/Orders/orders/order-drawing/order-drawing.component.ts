@@ -33,6 +33,7 @@ import DimensionRoleEnum from '../../../DimensionCodes/DimensionCodesTypesAnClas
 import CreateProductDto from '../../../Products/ProductTypesAndClasses/product.dto';
 import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
 import {navigateToUrlAfterTimout} from '../../../helpers/otherGeneralUseFunction/navigateToUrlAfterTimeOut';
+import {API_URL} from '../../../Config/apiUrl';
 
 @Component({
   selector: 'app-order-drawing',
@@ -44,7 +45,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   bgImageVariable: string;
   LValue = '';
   DVaLe = '';
-  rootUrl = 'http://localhost:5000';
+  rootUrl = API_URL;
   orderOperationMode: OrderOperationMode;
   createOrderDto: CreateOrderDto;
   createProductDto: CreateProductDto;
@@ -81,7 +82,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
   @ViewChildren('.inputDivHorizontal', {read: HTMLElement}) inputDivs: HTMLElement[];
-
+  @ViewChild('mainContainer', {read: ElementRef}) mainContainer: ElementRef;
+  @ViewChild('drawingAndTableContainer', {read: ElementRef}) drawingAndTableContainer: ElementRef;
   constructor(
     private orderBackendService: OrderBackendService,
     private orderTableService: OrderTableService,
@@ -285,8 +287,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     if (dimensionInfo.dimensionTexFieldHeight) {
       input.style.height = dimensionInfo.dimensionTexFieldHeight;
     }
-    input.style.left = dimensionInfo.dimensionTexfieldXposition;
-    input.style.top = dimensionInfo.dimensionTexfieldYposition;
+    input.style.left = `${Number(this.drawing.nativeElement.style.left.split('px')[0]) - Number(dimensionInfo.dimensionTexfieldXposition)}px`;
+    input.style.top = `${Number(this.drawing.nativeElement.style.top.split('px')[0]) - Number(dimensionInfo.dimensionTexfieldYposition)}px`;
     input.className = dimensionInfo.dimensionInputClass;
     input.id = dimensionInfo.dimensionId;
     input.style.position = 'absolute';
@@ -311,7 +313,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         // tslint:disable-next-line:max-line-length
         this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
       } else if (this.orderTableService.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
-        // this.location.back(); how to go back ? !!!!
+        this.router.navigateByUrl(this.authenticationService._previousUrl);
       } else if (this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM && this.selectedOrderId) {
         // tslint:disable-next-line:max-line-length
         this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
@@ -562,10 +564,14 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
           const textFieldWidth = input.style.width;
           const textFieldHeight = input.getBoundingClientRect().height;
           console.log(textFieldHeight);
-          input.style.left = pageX - shiftX + 'px';
-          input.style.top = pageY - shiftY + 'px';
 
+          const mainCOntainerBoundaryX = Number(this.mainContainer.nativeElement.getBoundingClientRect().left);
+          const mainContainerBoundaryY = Number(this.mainContainer.nativeElement.getBoundingClientRect().top);
+          input.style.left = pageX - mainCOntainerBoundaryX - shiftX + 'px';
+          input.style.top = pageY - mainContainerBoundaryY - shiftY + 'px';
           /*
+          input.style.left = pageX - shiftX + 'px';
+          input.style.top = pageY - ;
           widght=60, height=20 widght-height= 40, widght-height/2 = 20 which is correction value
            textField.style.left = pageX - shiftX - 20  + 'px';
           textField.style.top = pageY - shiftY + 20 + 'px';*/
@@ -604,10 +610,13 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     };
     if (this.orderOperationMode === OrderOperationMode.CREATENEWPRODUCT && this.validateCreateProductDtoBeforeSavingInDatab(createProductDto) === true) {
       this.productBackendService.addRecords(createProductDto).subscribe((product) => {
+        const productFromBackend = product.body;
+        console.log(productFromBackend.productTop.localizedNames.length);
         console.log('dodano nowy Product');
         this.operationSuccessStatusMessage = 'dodano nowy Product';
-        navigateToUrlAfterTimout(url, this.router, 2000);
+        // navigateToUrlAfterTimout(url, this.router, 2000);
       }, (error) => {
+        console.log(error);
         const errorMessage = getBackendErrrorMesage(error);
         if (errorMessage.includes('Already exist in database')) {
           this.operationFailerStatusMessage = 'nie udało się dodać produktu, produkt o podanych parametrach już istnieje w bazie danych';
@@ -618,10 +627,12 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       // tslint:disable-next-line:max-line-length
     } else if (this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT && this.validateCreateProductDtoBeforeSavingInDatab(createProductDto) === true) {
       this.productBackendService.updateRecordById(this.selectedProductId, createProductDto).subscribe((product) => {
+
         console.log('dodano nowy Product');
         this.operationSuccessStatusMessage = 'dodano nowy Product';
         navigateToUrlAfterTimout(url, this.router, 2000);
       }, (error) => {
+        console.log(error);
         const errorMessage = getBackendErrrorMesage(error);
         if (errorMessage.includes('Already exist in database')) {
           this.operationFailerStatusMessage = 'nie udało aktulizować , inny produkt o podanych parametrach już istnieje w bazie danych;';
@@ -696,10 +707,12 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.dimensionInputHorizontal');
     for (let i = 0; i < inputDivs.length; i++) {
       /* const inputDivRelativeToContainerXPosition = inputDivs[i].style.left/this.drawing */
+      const dimensionXPositionInRelationtoDrawingDiv = this.drawing.nativeElement.getBoundingClientRect().left - inputDivs[i].getBoundingClientRect().left;
+      const dimensionYPositionInRelationToDrawingDiv = this.drawing.nativeElement.getBoundingClientRect().top - inputDivs[i].getBoundingClientRect().top;
       const dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
         dimensionId: inputDivs[i].id,
-        dimensionTexfieldXposition: `${inputDivs[i].style.left}`,
-        dimensionTexfieldYposition: `${inputDivs[i].style.top}`,
+        dimensionTexfieldXposition: String(dimensionXPositionInRelationtoDrawingDiv),
+        dimensionTexfieldYposition: String(dimensionYPositionInRelationToDrawingDiv),
         dimensionTexFieldHeight: `${inputDivs[i].style.height}`,
         dimensionTexFieldWidth: `${inputDivs[i].style.width}`,
         dimensionInputClass: inputDivs[i].className,
@@ -800,6 +813,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   navigateBack(): void {
-   this.router.navigateByUrl(this.authenticationService._previousUrl);
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 }

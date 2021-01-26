@@ -104,7 +104,9 @@ export class ProductBackendService {
   createProductForTableCellFromProductTop(product: Product): ProductForTableCell {
     // tslint:disable-next-line:max-line-length
     const productTopName = this.productTopBackednService.createProductTopForTableCellFromProductTop(product.productTop).localizedNameInSelectedLanguage;
+    // tslint:disable-next-line:max-line-length
     const productBottomName = this.productBottommBackednService.createProductBottomForTableCellFromProductTop(product.productBottom).localizedNameInSelectedLanguage;
+    // tslint:disable-next-line:max-line-length
     const productTypeName = this.productTypeBackednService.createProductTypeForTableCellFromProductTop(product.productType).localizedNameInSelectedLanguage;
     const productForTableCell: ProductForTableCell = {
       ...product,
