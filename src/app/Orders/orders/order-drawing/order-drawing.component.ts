@@ -274,6 +274,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     if (this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT) {
       this.rotateTextField(input);
       this.makeInputDivDragable(input);
+      this.renderer.setProperty(input, 'value', dimensionInfo.dimensionId);
+      this.renderer.setProperty(input, 'disable', 'true');
     }
   }
 
@@ -293,7 +295,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     input.id = dimensionInfo.dimensionId;
     input.style.position = 'absolute';
     input.style.zIndex = '1000';
-    input.style.resize = 'none';
     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING || this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM) {
       input.style.border = 'none';
     }
@@ -482,17 +483,18 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   onSubmitForInputCreating(): void {
     this.setIdValue();
     const input = this.renderer.createElement('textarea');
+    input.style.position = 'absolute';
+    input.style.zIndex = 1000;
     this.renderer.setProperty(input, 'value', this.idValue);
     this.renderer.setProperty(input, 'id', this.idValue);
     // this.renderer.setProperty(input, 'type', 'number');
     console.log(`inputId= ${input.id}`);
     input.className = 'dimensionInputHorizontal';
-    input.style.overflow = 'auto';
-    input.style.resize = 'both';
     /* const drawing = document.getElementById('drawingContainer'); */
-    this.renderer.appendChild(this.drawing.nativeElement, input);
     this.makeInputDivDragable(input);
     this.rotateTextField(input);
+    this.renderer.appendChild(this.drawing.nativeElement, input);
+
 
 
   }
@@ -503,6 +505,15 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
       console.log(this.angle);
       textField.style.transform = `rotate(${this.angle}deg)`;
+      console.log(`textField.getBoundingClientRect().left = ${textField.getBoundingClientRect().left}`);
+      console.log(`tetField.style.left = ${textField.style.left}`);
+      console.log(`textField.getBoundingClientRect().right = ${textField.getBoundingClientRect().right}`);
+      console.log(`textField.getBoundingClientRect().top = ${textField.getBoundingClientRect().top}`);
+      console.log(`tetField.style.top = ${textField.style.top}`);
+      console.log(`textField.getBoundingClientRect().bottom = ${textField.getBoundingClientRect().bottom}`);
+      console.log(`textField.getBoundingClientRect().width = ${textField.getBoundingClientRect().width}`);
+      console.log(`textField.getBoundingClientRect().height = ${textField.getBoundingClientRect().height}`);
+
       if (this.angle === -90) {
         this.angle = 90;
       } else if (this.angle === 90) {
@@ -511,7 +522,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         this.angle = -90;
       }
       /*  it is always horizontal, because rotation means that horizontal dimension become also vertical*/
-      textField.style.resize = 'horizontal';
+     // textField.style.resize = 'horizontal';
     });
   }
 
@@ -542,33 +553,28 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         // event.clientX and event.clientY are mouse pointer coordinates
         //  textField.getBoundingClientRect().left distance from left corner to html.element
         const transform = input.style.transform;
-        const inputWidth = input.style.width;
-        const inputWidthNumber = Number(inputWidth.split('px')[0]);
-        const inputHeight = input.style.height;
-        const inputHeightNumber = Number(inputHeight.split('px')[0]);
-        const widthMinusHeightDevidedBy2 = (inputWidthNumber - inputHeightNumber) / 2;
+        const inputWidth = input.getBoundingClientRect().width;
+        const inputHeight = input.getBoundingClientRect().height;
+        const widthMinusHeightDevidedBy2 = (inputWidth - inputHeight) / 2 ;
         let shiftX: number;
         let shiftY: number;
         if (!transform || transform === '') {
           shiftX = event.clientX - input.getBoundingClientRect().left;
           shiftY = event.clientY - input.getBoundingClientRect().top;
         } else if (transform && (transform === 'rotate(-90deg)' || transform === 'rotate(90deg)')) {
-          shiftX = event.clientX - input.getBoundingClientRect().left + widthMinusHeightDevidedBy2;
-          shiftY = event.clientY - input.getBoundingClientRect().top - widthMinusHeightDevidedBy2;
+          shiftX = event.clientX - widthMinusHeightDevidedBy2 - input.getBoundingClientRect().left;
+          shiftY = event.clientY + widthMinusHeightDevidedBy2 - input.getBoundingClientRect().top;
         }
 
         input.style.position = 'absolute';
         input.style.zIndex = '1000';
         this.renderer.appendChild(this.drawing.nativeElement, input);
         const moveAt = (pageX, pageY) => {
-          const textFieldWidth = input.style.width;
-          const textFieldHeight = input.getBoundingClientRect().height;
-          console.log(textFieldHeight);
 
-          const mainCOntainerBoundaryX = Number(this.mainContainer.nativeElement.getBoundingClientRect().left);
-          const mainContainerBoundaryY = Number(this.mainContainer.nativeElement.getBoundingClientRect().top);
-          input.style.left = pageX - mainCOntainerBoundaryX - shiftX + 'px';
-          input.style.top = pageY - mainContainerBoundaryY - shiftY + 'px';
+          const drawingCOntainerBoundaryX = this.drawing.nativeElement.getBoundingClientRect().left;
+          const drawingContainerBoundaryY = this.drawing.nativeElement.getBoundingClientRect().top;
+          input.style.left = pageX  - drawingCOntainerBoundaryX - shiftX + 'px';
+          input.style.top = pageY  - drawingContainerBoundaryY - shiftY + 'px';
           /*
           input.style.left = pageX - shiftX + 'px';
           input.style.top = pageY - ;

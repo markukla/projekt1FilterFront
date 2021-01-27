@@ -1,12 +1,12 @@
 <div id="mainCointener" class="mainContainerClass" #mainContainer>
-  <div id="drawingAndTableContainer" #drawingAndTableContainer>
-    <div id="drawingContainer" #drawingContainer class="drawingContainerClass">
+  <div id="drawingAndTableContainer" #drawingAndTableContainer class="drawingAndTableContainer">
+    <div id="drawingContainer" #drawingContainer class="drawingContainer">
       <!--[style.background-image]="'url('+bgImageVariable+')'-->
       <img [src]="bgImageVariable" alt="">
 
     </div>
 
-    <div >
+    <div class="tableFormContainer" >
       <form [formGroup]="tableForm">
         <app-product-table-form ></app-product-table-form>
       </form>
@@ -25,7 +25,7 @@
       <p>{{operationSuccessStatusMessage}}</p>
     </div>
   </div>
-  <div *ngIf="createOrUpdateProductMode() === true"  id="createFormContainer">
+  <div *ngIf="createOrUpdateProductMode() === true"  id="createInputFormContainer" class="createInputFormContainer">
     <p> utwórz wymiar</p>
     <form [formGroup]="dimensionRoleForm">
       <div class="form-group">
