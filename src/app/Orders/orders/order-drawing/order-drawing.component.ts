@@ -280,6 +280,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo: DimensionTextFIeldInfo, input: HTMLElement): void {
+
     if (dimensionInfo.transform) {
       input.style.transform = dimensionInfo.transform;
     }
@@ -289,8 +290,11 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     if (dimensionInfo.dimensionTexFieldHeight) {
       input.style.height = dimensionInfo.dimensionTexFieldHeight;
     }
-    input.style.left = `${Number(this.drawing.nativeElement.style.left.split('px')[0]) - Number(dimensionInfo.dimensionTexfieldXposition)}px`;
-    input.style.top = `${Number(this.drawing.nativeElement.style.top.split('px')[0]) - Number(dimensionInfo.dimensionTexfieldYposition)}px`;
+    // tslint:disable-next-line:max-line-length
+    const dimensionXInRelationToDiv = Number(dimensionInfo.dimensionTexfieldXposition) * this.drawing.nativeElement.getBoundingClientRect().width;
+    const dimensionYInRelationToDiv = Number(dimensionInfo.dimensionTexfieldYposition) * this.drawing.nativeElement.getBoundingClientRect().height;
+    input.style.left = `${Number(this.drawing.nativeElement.style.left.split('px')[0]) - dimensionXInRelationToDiv}px`;
+    input.style.top = `${Number(this.drawing.nativeElement.style.top.split('px')[0]) - dimensionYInRelationToDiv}px`;
     input.className = dimensionInfo.dimensionInputClass;
     input.id = dimensionInfo.dimensionId;
     input.style.position = 'absolute';
@@ -710,15 +714,20 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
     const dimensionsTextFieldInfoTable: DimensionTextFIeldInfo[] = [];
     // tslint:disable-next-line:max-line-length
+    console.log(`width= ${this.drawing.nativeElement.style.width}`);
     const inputDivs: HTMLElement[] = this.host.nativeElement.querySelectorAll('.dimensionInputHorizontal');
     for (let i = 0; i < inputDivs.length; i++) {
       /* const inputDivRelativeToContainerXPosition = inputDivs[i].style.left/this.drawing */
+      // tslint:disable-next-line:max-line-length
       const dimensionXPositionInRelationtoDrawingDiv = this.drawing.nativeElement.getBoundingClientRect().left - inputDivs[i].getBoundingClientRect().left;
+      const dimensionXRelativeShiftToDivWith = dimensionXPositionInRelationtoDrawingDiv / this.drawing.nativeElement.getBoundingClientRect().width;
+      // tslint:disable-next-line:max-line-length
       const dimensionYPositionInRelationToDrawingDiv = this.drawing.nativeElement.getBoundingClientRect().top - inputDivs[i].getBoundingClientRect().top;
+      const dimensionYRelativeShiftToDivHeight = dimensionYPositionInRelationToDrawingDiv / this.drawing.nativeElement.getBoundingClientRect().height;
       const dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
         dimensionId: inputDivs[i].id,
-        dimensionTexfieldXposition: String(dimensionXPositionInRelationtoDrawingDiv),
-        dimensionTexfieldYposition: String(dimensionYPositionInRelationToDrawingDiv),
+        dimensionTexfieldXposition: String(dimensionXRelativeShiftToDivWith),
+        dimensionTexfieldYposition: String(dimensionYRelativeShiftToDivHeight),
         dimensionTexFieldHeight: `${inputDivs[i].style.height}`,
         dimensionTexFieldWidth: `${inputDivs[i].style.width}`,
         dimensionInputClass: inputDivs[i].className,
