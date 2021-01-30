@@ -15,6 +15,7 @@ import {ValidateLanguageService} from '../languageServices/validate-language.ser
 import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
 import Language from '../LanguageTypesAndClasses/languageEntity';
 import OrderOperationMode from '../../Orders/OrdersTypesAndClasses/orderOperationMode';
+import {getBackendErrrorMesage} from '../../helpers/errorHandlingFucntion/handleBackendError';
 
 @Component({
   selector: 'app-create-or-update-language',
@@ -32,6 +33,10 @@ export class CreateOrUpdateLanguageComponent implements OnInit {
   languageToUpdateId: string;
   languageToUpdate: Language;
   languageOperationMode: string;
+  uploadSuccessStatus = false;
+  flagDrawing: string;
+  uploadOperationMessage: string;
+  upladDrawingForm: FormGroup;
 
   constructor(
     private backendService: LanguageBackendService,
@@ -55,7 +60,15 @@ export class CreateOrUpdateLanguageComponent implements OnInit {
       active: new FormControl(false, [])
 
     }, {updateOn: 'change'});
+    this.upladDrawingForm = new FormGroup({
+      file: new FormControl('', Validators.required),
+      fileSource: new FormControl('', [Validators.required])
+    });
     await this.initFormValuesForUpdateMode();
+  }
+  // tslint:disable-next-line:typedef
+  get file() {
+    return this.upladDrawingForm.get('file');
   }
 
 // tslint:disable-next-line:typedef
@@ -83,24 +96,52 @@ export class CreateOrUpdateLanguageComponent implements OnInit {
     }
   }
 
+  onUpload(): void {
+    this.uploadSuccessStatus = false;
+    const formData = new FormData();
+    formData.append('file', this.upladDrawingForm.get('fileSource').value);
+    this.backendService.uploadDrawing(formData).subscribe((urls) => {
+      this.flagDrawing = urls.urlOfOrginalDrawing;
+      this.uploadOperationMessage = 'dodano rysunek';
+      this.uploadSuccessStatus = true;
+    }, error => {
+      this.uploadSuccessStatus = false;
+      const errorMessage = getBackendErrrorMesage(error);
+      if (errorMessage.includes('.png files are allowed')) {
+        this.uploadOperationMessage = 'nie udało sie dodać rysunku, tylko format .png jest dozwolony';
+      } else {
+        this.uploadOperationMessage = 'wystąpił błąd nie udało się dodać rysunku, spróbuj pownownie';
+      }
+    });
+
+  }
+  onFileChange(event): void {
+    if (event.target.files.length > 0) {
+      this.uploadOperationMessage = null;
+      const file = event.target.files[0];
+      this.upladDrawingForm.patchValue({
+        fileSource: file
+      });
+    }
+  }
 
   // tslint:disable-next-line:typedef
   onSubmit(): void {
     this.createLanguageDto = {
       languageCode: this.lamguageCode.value,
       languageName: this.languageName.value,
-      active: this.active.value
+      active: this.active.value,
+      flagUrl: this.flagDrawing
     };
     if (this.languageOperationMode === 'createNew') {
-    this.backendService.addRecords(this.createLanguageDto).subscribe((language) => {
-      this.showoperationStatusMessage = 'Dodano nowy rekord';
-      this.cleanOperationMessage();
-    }, error => {
-      this.showoperationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego rekordu';
-      this.cleanOperationMessage();
-    });
-    }
-    else if ( this.languageOperationMode === 'update') {
+      this.backendService.addRecords(this.createLanguageDto).subscribe((language) => {
+        this.showoperationStatusMessage = 'Dodano nowy rekord';
+        this.cleanOperationMessage();
+      }, error => {
+        this.showoperationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego rekordu';
+        this.cleanOperationMessage();
+      });
+    } else if (this.languageOperationMode === 'update') {
       this.backendService.updateRecordById(this.languageToUpdateId, this.createLanguageDto).subscribe((language) => {
         this.showoperationStatusMessage = 'Zaktualizowano rekord';
         this.cleanOperationMessage();
@@ -109,7 +150,8 @@ export class CreateOrUpdateLanguageComponent implements OnInit {
         this.cleanOperationMessage();
       });
     }
-    }
+  }
+
   closeAndGoBack(): void {
     this.router.navigateByUrl('/languages');
   }

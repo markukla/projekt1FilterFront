@@ -16,6 +16,7 @@
       <th [appSort]="records" data-order="desc" data-name="languageCode" scope="col">{{this.languageCodeDescription}} <br></th>
       <th [appSort]="records" data-order="desc" data-name="languageName" scope="col">{{this.languageNameDescription}}<br></th>
       <th>{{this.languageActiveDescription}}<br></th>
+      <th>flaga</th>
       <th>ilość</th>
 
     </tr>
@@ -33,6 +34,7 @@
       <td>{{record.languageCode}}</td>
       <td>{{record.languageName}}</td>
       <td>  <input class="form-check-input" type = "checkbox" [checked]="record.active" ></td>
+      <td> <img class="flagImage" [src]="getFlagUrl(record)"> </td>
       <td>
         <text *ngIf="deleTedRecordMessage">{{deleTedRecordMessage}}</text>
         <br>

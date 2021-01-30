@@ -42,3 +42,9 @@
   position: relative;
   width: max-content;
 }
+.languageFlagsSpan {
+  border: 1px solid #FFFF00;
+  position: absolute;
+  width: 100%;
+  display:block;
+}

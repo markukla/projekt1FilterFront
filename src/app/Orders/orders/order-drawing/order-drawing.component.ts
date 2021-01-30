@@ -80,6 +80,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   dimensionRoleNoIndexDimensionDescription = 'Wymiar nie wchodzący do indeksu';
   dimensionRoleNoIndex: DimensionRoleEnum = DimensionRoleEnum.NOINDEXDIMENSION;
   dragable = true;
+  createDimensionClicked = false;
 
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
   @ViewChildren('.inputDivHorizontal', {read: HTMLElement}) inputDivs: HTMLElement[];
@@ -269,24 +270,27 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   createDimensionInputOnDrawingBasingOnDimensionInfo(dimensionInfo: DimensionTextFIeldInfo, inputTag: string): void {
     const input = this.renderer.createElement(inputTag);
-    // input.type = 'number';
     this.setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo, input);
-    this.renderer.appendChild(this.drawing.nativeElement, input);
     if (this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT) {
       this.rotateTextField(input);
       this.makeInputDivDragable(input);
       this.renderer.setProperty(input, 'value', dimensionInfo.dimensionId);
       this.renderer.setProperty(input, 'disable', 'true');
     }
+    this.renderer.appendChild(this.drawing.nativeElement, input);
   }
 
   setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo: DimensionTextFIeldInfo, input: HTMLElement): void {
     // tslint:disable-next-line:max-line-length
+    if (dimensionInfo) {
+
+
     const dimensionXInRelationToDiv = Number(dimensionInfo.dimensionTexfieldXposition) * this.drawing.nativeElement.getBoundingClientRect().width;
+    // tslint:disable-next-line:max-line-length
     const dimensionYInRelationToDiv = Number(dimensionInfo.dimensionTexfieldYposition) * this.drawing.nativeElement.getBoundingClientRect().height;
-   /*  input.style.left = `${Number(this.drawing.nativeElement.getB) - dimensionXInRelationToDiv}px`;
-    input.style.top = `${Number(this.drawing.nativeElement.style.top.split('px')[0]) - dimensionYInRelationToDiv}px`; */
-    input.className = dimensionInfo.dimensionInputClass;
+    input.id = dimensionInfo.dimensionId;
+    input.style.position = 'absolute';
+    input.style.zIndex = '1000';
     input.style.left = `${Number(dimensionXInRelationToDiv)}px`;
     input.style.top = `${Number(dimensionYInRelationToDiv)}px`;
     if (dimensionInfo.transform) {
@@ -298,11 +302,14 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     if (dimensionInfo.dimensionTexFieldHeight) {
       input.style.height = dimensionInfo.dimensionTexFieldHeight;
     }
-    input.id = dimensionInfo.dimensionId;
-    input.style.position = 'absolute';
-    input.style.zIndex = '1000';
+
     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING || this.orderOperationMode === OrderOperationMode.SHOWDRAWINGCONFIRM) {
       input.style.border = 'none';
+    }
+    input.className = dimensionInfo.dimensionInputClass;
+    }
+    else {
+      console.error('can not set input position because no dimension info value');
     }
   }
 
@@ -355,10 +362,10 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   ngAfterViewInit(): void {
-    this.enableOrDisableDraggingInputsEvent();
+     this.enableOrDisableDraggingInputsEvent();
     /* in this method i create all drawing which does not require data from database but already have it stored in service*/
     // tslint:disable-next-line:max-line-length
-    if (this.orderOperationMode && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWPRODUCT) {
+    if(this.orderOperationMode && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWPRODUCT) {
       // tslint:disable-next-line:max-line-length
       if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT || this.orderOperationMode === OrderOperationMode.CREATENEWPRODUCT) {
         this.createDimensionInputsBasingOnProductData();
@@ -381,11 +388,21 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       console.error('in afterViev checked drawing modyfication');
       // tslint:disable-next-line:max-line-length
       if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
-        this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();
+        if (this.createOrderDto) {
+         const allInputs = this.host.nativeElement.querySelectorAll('.dimensionInputHorizontal');
+         if (allInputs.length === 0){
+           this.createDimensionInputsForUpdateAndShowDrawingBasingOnProductDataAndOrderData();
+         }
+        }
       }
       // tslint:disable-next-line:max-line-length
       if (this.createProductDto && this.orderOperationMode === OrderOperationMode.SHOWPRODUCT) {
-        this.createDimensionInputsBasingOnProductData();
+        if (this.createProductDto) {
+          const allInputs = this.host.nativeElement.querySelectorAll('.dimensionInputHorizontal');
+          if (allInputs.length === 0){
+            this.createDimensionInputsBasingOnProductData();
+          }
+        }
       }
     }
   }
@@ -514,6 +531,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     this.makeInputDivDragable(input);
     this.rotateTextField(input);
     this.renderer.appendChild(this.drawing.nativeElement, input);
+    this.createDimensionClicked = false;
 
 
 
@@ -838,5 +856,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   navigateBack(): void {
     this.router.navigateByUrl(this.authenticationService._previousUrl);
+  }
+  printDrawing(): void {
+    window.print();
   }
 }

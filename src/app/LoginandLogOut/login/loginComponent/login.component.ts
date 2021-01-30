@@ -10,6 +10,7 @@ import {LanguageBackendService} from '../../../Languages/languageServices/langua
 import Language from '../../../Languages/LanguageTypesAndClasses/languageEntity';
 import {VocabularyBackendServiceService} from '../../../Vocablulaty/VocabularyServices/vocabulary-backend-service.service';
 import {Vocabulary} from '../../../Vocablulaty/VocabularyTypesAndClasses/VocabularyEntity';
+import {API_URL} from '../../../Config/apiUrl';
 
 @Component({
   selector: 'app-login',
@@ -99,5 +100,10 @@ export class LoginComponent implements OnInit, AfterContentChecked {
 
   setSelectedLanguageCode(languageCode: string): void {
     this.loginService.selectedLanguageCode = languageCode;
+  }
+  getFlagUrl(language: Language): string {
+    const flagUlr = API_URL + language.flagUrl;
+    return flagUlr;
+
   }
 }

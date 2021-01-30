@@ -2,7 +2,7 @@
   <div id="drawingAndTableContainer" #drawingAndTableContainer class="drawingAndTableContainer">
     <div id="drawingContainer" #drawingContainer class="drawingContainer">
       <!--[style.background-image]="'url('+bgImageVariable+')'-->
-      <img [src]="bgImageVariable" alt="">
+      <img id="drawingImage" [src]="bgImageVariable" alt="">
 
     </div>
 
@@ -12,15 +12,16 @@
       </form>
     </div>
   </div>
-  <div class="saveButtons">
-    <button *ngIf="createOrUpdateProductMode() === false;" class="saveButton" (click)="onSubmit()">Zatwierdź</button>
-    <button *ngIf="createOrUpdateProductMode() === false;" (click)="navigateBack()"> Wstecz</button>
-    <div *ngIf=" checkIfShowDrawingMode();">
-      <button class="saveButton" (click)="getDrawingPdf();">Zapisz do pdf</button>
-    </div>
-  </div>
-  <div *ngIf="createOrUpdateProductMode() === true" id="createInputFormContainer" class="createInputFormContainer">
-    <p> utwórz wymiar</p>
+  <div *ngIf="createDimensionClicked=== true" id="createInputFormContainer" class="createInputFormContainer">
+    <p> Wypełnij formularz aby utworzyć wymiar</p>
+    <p> Po utworzeniu: złap i przytrzymaj lewym przyciskiem aby przeciągnąc <br>
+    Aby obrócić lub zmienić rozmiar: <br>
+      1) naciśnij prawym przyciskiem na rysunku poza wymiarem <br>
+      2) aby obrócić naciśnij dwukrotnie lewym przyciskiem na wymiar <br>
+      3) aby zmienić rozmiar użyj aktywnego naroznika <br>
+      4) po edycjj wymiaru naciśnij prawym przyciskiem poza wymiarem żeby ponownie uaktywnić tryb przeciągania <br>
+      5) aby usunąc wymiar najedź na niego kursorem i naciśnij prawym przyciskiem myszy.
+    </p>
     <form [formGroup]="dimensionRoleForm">
       <div class="form-group">
         <p>Wybierz role wymiaru:</p>
@@ -88,14 +89,7 @@
         <button type="submit" [disabled]="!createDimensionsForm.valid" class="btn btn-danger">Utwórz</button>
       </div>
     </form>
-    <button class="saveButton" (click)="saveProductInDatabas()">Dodaj produkt</button>
-    <button (click)="navigateBack()"> Wstecz</button>
-    <div *ngIf="operationFailerStatusMessage" class="alert-danger">
-      <p>{{operationFailerStatusMessage}}</p>
-    </div>
-    <div *ngIf="operationSuccessStatusMessage" class="alert-success">
-      <p>{{operationSuccessStatusMessage}}</p>
-    </div>
+    <button class="closeButton" (click)="this.createDimensionClicked = false">x</button>
   </div>
 
   <div *ngIf="operationFailerStatusMessage" class="alert-danger">
@@ -103,6 +97,18 @@
   </div>
   <div *ngIf="operationSuccessStatusMessage" class="alert-success">
     <p>{{operationSuccessStatusMessage}}</p>
+  </div>
+
+
+  <div class="saveButtons">
+    <button *ngIf="createOrUpdateProductMode() === false;" class="saveButton" (click)="onSubmit()">Zatwierdź</button>
+    <button (click)="navigateBack()"> Wstecz </button>
+    <button *ngIf="createOrUpdateProductMode() === true;" class="saveButton" (click)="saveProductInDatabas()">Dodaj produkt</button>
+    <button type="button" *ngIf="createOrUpdateProductMode() === true;" (click)="this.createDimensionClicked = true" >Utwórz wymiar</button>
+    <button (click)="printDrawing();"> Drukuj</button>
+    <div *ngIf=" checkIfShowDrawingMode();">
+      <button class="saveButton" (click)="getDrawingPdf();">Zapisz do pdf</button>
+    </div>
   </div>
 </div>
 

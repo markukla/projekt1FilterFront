@@ -1,6 +1,38 @@
 <div class="createMaterial">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
   <h2>Dodaj Nowy język</h2>
+  <form  enctype="multipart/form-data" [formGroup]="upladDrawingForm" (ngSubmit)="onUpload()">
+
+    <div class="col">
+      <div class="form-group col-md-6">
+        <label class="label" for="uploadDrawing">Wybierz rysunek do udostpnienia</label>
+        <input type="file" name="file" id="uploadDrawing" formControlName="file" (change)="onFileChange($event)">
+
+        <div *ngIf="file.invalid"
+             class="alert alert-danger">
+
+          <div class="validatorInfo" *ngIf="file.errors.required">
+            Wybranie rysunku jest wymagane.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="uploadDrawingButton">
+      <button type="submit" [disabled]="!upladDrawingForm.valid" class="btn btn-danger">Udostępnij</button>
+    </div>
+    <div class="alert-danger" *ngIf="!uploadSuccessStatus">
+      <p>Udostępnienie rysunku jest wymagane</p>
+    </div>
+    <div *ngIf="!uploadSuccessStatus && uploadOperationMessage" class="alert alert-danger">
+      <p>{{uploadOperationMessage}}</p>
+    </div>
+    <div *ngIf="uploadSuccessStatus && uploadOperationMessage" class="alert-success">
+      <p>{{uploadOperationMessage}}</p>
+    </div>
+  </form>
 
     <form [formGroup]="languageForm" (ngSubmit)="onSubmit()" >
       <div class="row">
@@ -37,7 +69,7 @@
       </div>
 
       <div class="addButon">
-        <button type="submit" [disabled]="!languageForm.valid" class="btn btn-danger">Zapisz</button>
+        <button type="submit" [disabled]="!languageForm.valid || uploadSuccessStatus === false" class="btn btn-danger">Zapisz</button>
       </div>
     </form>
 

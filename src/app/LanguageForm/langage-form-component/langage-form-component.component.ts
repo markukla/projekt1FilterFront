@@ -15,6 +15,7 @@ import OperationModeEnum from '../../util/OperationModeEnum';
 import {LanguageFormService} from '../language-form.service';
 import DimensionCode from '../../DimensionCodes/DimensionCodesTypesAnClasses/diemensionCode.entity';
 import {ActivatedRoute} from '@angular/router';
+import {API_URL} from '../../Config/apiUrl';
 
 @Component({
   selector: 'app-langage-form-component',
@@ -26,6 +27,7 @@ export class LangageFormComponentComponent implements OnInit, AfterViewInit, Aft
   languages: Language[];
   operationMode: string;
   selectedRecordToupdateId: string;
+  apiUrl = API_URL;
   @ViewChildren('nameInput', {read: ElementRef}) languageNames: ElementRef[];
   constructor(
     private languageService: LanguageBackendService,

@@ -8,6 +8,7 @@ import {SearchService} from '../../helpers/directive/SearchDirective/search.serv
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 import {LanguageBackendService} from '../languageServices/language-backend.service';
 import Language from '../LanguageTypesAndClasses/languageEntity';
+import {API_URL} from '../../Config/apiUrl';
 
 @Component({
   selector: 'app-language-main',
@@ -96,5 +97,10 @@ export class LanguageMainComponent implements OnInit, AfterContentChecked {
 
   createNewRecord(): void {
     this.router.navigateByUrl(`/languages/create?mode=createNew`);
+  }
+  getFlagUrl(language: Language): string {
+    const flagUlr = API_URL + language.flagUrl;
+    return flagUlr;
+
   }
 }

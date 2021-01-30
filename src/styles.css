@@ -22,7 +22,7 @@
 }
 .closeButton {
   position: absolute;
-  left: 94%;
+  right: 0%;
   top: 0%;
 }
 .addButon {
@@ -60,5 +60,9 @@
 
 .confirmOrChangeButton {
 
+}
+.flagImage {
+  width: 40px;
+  height: 40px;
 }
 
