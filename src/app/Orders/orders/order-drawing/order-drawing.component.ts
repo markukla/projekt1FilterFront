@@ -79,6 +79,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   dimensionRoleSecondIndex: DimensionRoleEnum = DimensionRoleEnum.SECONDINDEXDIMENSION;
   dimensionRoleNoIndexDimensionDescription = 'Wymiar nie wchodzący do indeksu';
   dimensionRoleNoIndex: DimensionRoleEnum = DimensionRoleEnum.NOINDEXDIMENSION;
+  dragable = true;
 
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
   @ViewChildren('.inputDivHorizontal', {read: HTMLElement}) inputDivs: HTMLElement[];
@@ -280,7 +281,14 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo: DimensionTextFIeldInfo, input: HTMLElement): void {
-
+    // tslint:disable-next-line:max-line-length
+    const dimensionXInRelationToDiv = Number(dimensionInfo.dimensionTexfieldXposition) * this.drawing.nativeElement.getBoundingClientRect().width;
+    const dimensionYInRelationToDiv = Number(dimensionInfo.dimensionTexfieldYposition) * this.drawing.nativeElement.getBoundingClientRect().height;
+   /*  input.style.left = `${Number(this.drawing.nativeElement.getB) - dimensionXInRelationToDiv}px`;
+    input.style.top = `${Number(this.drawing.nativeElement.style.top.split('px')[0]) - dimensionYInRelationToDiv}px`; */
+    input.className = dimensionInfo.dimensionInputClass;
+    input.style.left = `${Number(dimensionXInRelationToDiv)}px`;
+    input.style.top = `${Number(dimensionYInRelationToDiv)}px`;
     if (dimensionInfo.transform) {
       input.style.transform = dimensionInfo.transform;
     }
@@ -290,12 +298,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     if (dimensionInfo.dimensionTexFieldHeight) {
       input.style.height = dimensionInfo.dimensionTexFieldHeight;
     }
-    // tslint:disable-next-line:max-line-length
-    const dimensionXInRelationToDiv = Number(dimensionInfo.dimensionTexfieldXposition) * this.drawing.nativeElement.getBoundingClientRect().width;
-    const dimensionYInRelationToDiv = Number(dimensionInfo.dimensionTexfieldYposition) * this.drawing.nativeElement.getBoundingClientRect().height;
-    input.style.left = `${Number(this.drawing.nativeElement.style.left.split('px')[0]) - dimensionXInRelationToDiv}px`;
-    input.style.top = `${Number(this.drawing.nativeElement.style.top.split('px')[0]) - dimensionYInRelationToDiv}px`;
-    input.className = dimensionInfo.dimensionInputClass;
     input.id = dimensionInfo.dimensionId;
     input.style.position = 'absolute';
     input.style.zIndex = '1000';
@@ -338,8 +340,22 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     }
 
   }
+  enableOrDisableDraggingInputsEvent(): void {
+    if (this.orderOperationMode === OrderOperationMode.CREATENEWPRODUCT || this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT) {
+      this.mainContainer.nativeElement.addEventListener('contextmenu', (ev) => {
+
+        ev.preventDefault();
+        if (this.dragable === true) {
+          this.dragable = false;
+        } else if (this.dragable === false) {
+          this.dragable = true;
+        }
+      });
+    }
+  }
 
   ngAfterViewInit(): void {
+    this.enableOrDisableDraggingInputsEvent();
     /* in this method i create all drawing which does not require data from database but already have it stored in service*/
     // tslint:disable-next-line:max-line-length
     if (this.orderOperationMode && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWPRODUCT) {
@@ -531,20 +547,11 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   makeInputDivDragable(input: HTMLElement): void {
-
-    let dragable = true;
-
     input.addEventListener('contextmenu', (ev) => {
 
       ev.preventDefault();
-      if (dragable === true) {
-        dragable = false;
-      } else if (dragable === false) {
-        dragable = true;
-      }
+      this.drawing.nativeElement.removeChild(input);
     });
-
-
     input.onmousedown = (event) => {
 
       console.log(`event.type= ${event.type}`);
@@ -553,7 +560,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       console.log(`textfield.style.height= ${input.style.height}`);
       const texfieldWith = document.getElementById(input.id).style.width;
       console.log(`texfieldWith= ${texfieldWith}`);
-      if (dragable === true && event.type !== 'dblclick') {
+      if (this.dragable === true && event.type !== 'dblclick') {
         // event.clientX and event.clientY are mouse pointer coordinates
         //  textField.getBoundingClientRect().left distance from left corner to html.element
         const transform = input.style.transform;
@@ -720,10 +727,12 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       /* const inputDivRelativeToContainerXPosition = inputDivs[i].style.left/this.drawing */
       // tslint:disable-next-line:max-line-length
       const dimensionXPositionInRelationtoDrawingDiv = this.drawing.nativeElement.getBoundingClientRect().left - inputDivs[i].getBoundingClientRect().left;
-      const dimensionXRelativeShiftToDivWith = dimensionXPositionInRelationtoDrawingDiv / this.drawing.nativeElement.getBoundingClientRect().width;
+      const dimensionXAsInputStyleLeft: number = Number(inputDivs[i].style.left.split('px')[0]);
+      const dimensionXRelativeShiftToDivWith = dimensionXAsInputStyleLeft / this.drawing.nativeElement.getBoundingClientRect().width;
       // tslint:disable-next-line:max-line-length
       const dimensionYPositionInRelationToDrawingDiv = this.drawing.nativeElement.getBoundingClientRect().top - inputDivs[i].getBoundingClientRect().top;
-      const dimensionYRelativeShiftToDivHeight = dimensionYPositionInRelationToDrawingDiv / this.drawing.nativeElement.getBoundingClientRect().height;
+      const dimensionYAsInputStyleTop: number = Number(inputDivs[i].style.top.split('px')[0]);
+      const dimensionYRelativeShiftToDivHeight = dimensionYAsInputStyleTop / this.drawing.nativeElement.getBoundingClientRect().height;
       const dimensionTextFIeldInfo: DimensionTextFIeldInfo = {
         dimensionId: inputDivs[i].id,
         dimensionTexfieldXposition: String(dimensionXRelativeShiftToDivWith),
