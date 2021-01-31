@@ -49,6 +49,16 @@ export class MaterialBackendService {
       this.materialTableService.updateTableRecord(Number(id), material.body);
       }));
   }
+  findMaterialBycode(materiaCodeObject: any): Observable<Material> {
+    const url = `${this.rootURL + this.endpointUrl}/codes`;
+    return this.http.post<any>(url, materiaCodeObject);
+
+  }
+  findMaterialByName(materialNameObject: any): Observable<Material> {
+    const url = `${this.rootURL + this.endpointUrl}/names`;
+    return this.http.post<any>(url, materialNameObject);
+
+  }
 
   findRecordBycode(materiaCode: string): Observable<boolean> {
     const url = `${this.rootURL + this.endpointUrl}/codes/${materiaCode}`;

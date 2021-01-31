@@ -1,4 +1,4 @@
-<div class="createMaterial">
+<div class="createOrUpdateFormWindow">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
   <h2>Dodaj Nowe wykończenie dna</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -39,7 +39,7 @@
 
   </form>
 
-  <div *ngIf="showoperationStatusMessage">
+  <div class="showOperationStatusContainer" *ngIf="showoperationStatusMessage">
     <textarea>{{showoperationStatusMessage}}</textarea>
   </div>
 </div>

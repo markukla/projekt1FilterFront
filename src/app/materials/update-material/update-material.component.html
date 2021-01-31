@@ -1,26 +1,53 @@
-<div class="updateMaterial">
-  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
-<div class="container">
-  <div class="row">
-    <div class="col-md-7 mrgnbtm">
-      <h2>Aktualizuj Materiał</h2>
-      <form [formGroup]="materialForm" (ngSubmit)="onSubmit()">
-        <div class="row">
-          <div class="form-group col-md-6">
-            <label for="materialCode">Kod materiału</label>
-            <input type="text" class="form-control" formControlName="materialCode" id="materialCode"  placeholder="Kod materiału">
+<div class="createOrUpdateFormWindow">
+  <button id="close button" class="closeButton" (click)="closeAndGoBack();" [title]='"zamknij"'>x</button>
+  <h2 class="formTitle">Aktualizuj Materiał</h2>
+  <form [formGroup]="materialForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <div class="form-group col-md-6">
+          <label for="materialCode">Kod materiału</label>
+          <input type="text" class="form-control" formControlName="materialCode" id="materialCode"
+                 placeholder="Kod materiału">
+          <div *ngIf="materialCode.invalid && (materialCode.dirty || materialCode.touched)"
+               class="alert alert-danger">
+
+            <div class="validatorInfo" *ngIf="materialCode.errors.required">
+              Podanie kodu materiału jest wymagane
+            </div>
+            <div class="validatorInfo" *ngIf="materialCode.errors.minlength">
+              Kod materiały nie może być krótszy niż 6 znaków
+            </div>
+            <div class="validatorInfo" *ngIf="materialCode.errors.maxlength">
+              Kod materiały nie może być dłuższy niż 6 znaków.
+            </div>
+            <div class="has-text-danger" *ngIf="materialCode.errors?.taken">
+              <!--error name is name of error in async validatod:ValidateMaterialCodeUniqueService-->
+              Ten kod materiału jest już zajęty
+            </div>
           </div>
-          <div class="form-group col-md-6">
-            <label for="materialName">Nazwa Materiału</label>
-            <input type="text" class="form-control" formControlName="materialName" id="materialName" placeholder="Nazwa Materiału">
-          </div>
+
         </div>
+        <div class="form-group col-md-6">
+          <label for="materialName">Nazwa Materiału</label>
+          <input type="text" class="form-control" formControlName="materialName" id="materialName"
+                 placeholder="Nazwa Materiału">
+          <div *ngIf="materialName.invalid && (materialName.dirty || materialName.touched)"
+               class="alert alert-danger">
 
-        <button type="submit" [disabled]="!materialForm.valid" class="btn btn-danger">Zatwierdź</button>
-      </form>
+            <div class="validatorInfo" *ngIf="materialName.errors.required">
+              Podanie nazwy materiału jest wymgane
+            </div>
+            <div class="validatorInfo" *ngIf="materialName.errors?.taken">
+              Podana nazwa materiału jest już zajęta.
+            </div>
+          </div>
 
+        </div>
     </div>
-    <div *ngIf="operationStatusMessage">
-<p>{{operationStatusMessage}}</p>
+    <div class="addButon">
+      <button type="submit" [disabled]="!materialForm.valid" class="btn btn-danger">Zatwierdź</button>
     </div>
+  </form>
+  <div class="showOperationStatusContainer" *ngIf="operationStatusMessage">
+    <p>{{operationStatusMessage}}</p>
   </div>
+</div>

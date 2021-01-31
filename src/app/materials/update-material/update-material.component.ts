@@ -8,6 +8,8 @@ import HttpException from '../../helpers/ErrorHandling/httpException';
 import {getBackendErrrorMesage} from '../../helpers/errorHandlingFucntion/handleBackendError';
 import {Router} from '@angular/router';
 import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {ValidateMaterialCodeUniqueService} from '../MaterialServices/validate-material-code-unique.service';
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 @Component({
   selector: 'app-update-material',
@@ -18,18 +20,22 @@ export class UpdateMaterialComponent implements OnInit {
   operationStatusMessage: string;
   materialToUpdate: Material;
   materialToUpdateId: number;
-  materialForm = new FormGroup({
-    materialCode: new FormControl('', ),
-    materialName: new FormControl('', )
-  });
+  materialForm: FormGroup;
 
-  constructor(private materialTableService: MaterialTableService,
+  constructor(private materialTableService: GeneralTableService,
               private materialBackendService: MaterialBackendService,
+              public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
               private router: Router,
               private authenticationService: AuthenticationService) {
   }
 
   ngOnInit(): void {
+    this.materialForm = new FormGroup({
+      // tslint:disable-next-line:max-line-length
+      materialCode: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(6),   Validators.maxLength(6)], [this.validateMaterialCodeUniqueService.materialCodeValidatorForUpdate()]),
+      // tslint:disable-next-line:max-line-length
+      materialName: new FormControl('', [Validators.nullValidator && Validators.required], [this.validateMaterialCodeUniqueService.materialNameValidatorForUpdate()]),
+    }, {updateOn: 'change'});
     this.materialToUpdateId = this.materialTableService.selectedId;
     console.log(`materialToUpdateId= ${this.materialToUpdateId}`);
     this.materialBackendService.findRecordById(String(this.materialToUpdateId)).subscribe((material) => {
@@ -40,6 +46,15 @@ export class UpdateMaterialComponent implements OnInit {
       error => {
         console.log(`This error occured: ${error.error}`);
       });
+  }
+  // tslint:disable-next-line:typedef
+  get materialCode() {
+    return this.materialForm.get('materialCode');
+  }
+
+  // tslint:disable-next-line:typedef
+  get materialName() {
+    return this.materialForm.get('materialName');
   }
 
 

@@ -9,6 +9,7 @@ import {UserHasAdminRole} from '../../../../helpers/otherGeneralUseFunction/chec
 import {BusinesPartnerBackendService} from '../../BusinessPartnerServices/busines-partner-backend.service';
 import {BusinessPartnerTableService} from '../../BusinessPartnerServices/business-partner-table.service';
 import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/business-partner-validator.service';
+import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-business-partner-change-password',
@@ -22,6 +23,7 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
 
   constructor(
     private backendService: BusinesPartnerBackendService,
+    private authenticationService: AuthenticationService,
     private tableService: BusinessPartnerTableService,
     public validatorService: BusinessPartnerValidatorService,
     private formBuilder: FormBuilder,
@@ -61,7 +63,7 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
     });
   }
   closeAndGoBack(): void {
-    this.router.navigateByUrl('/users');
+    this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
   ngOnInit(): void {

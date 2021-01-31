@@ -1,4 +1,4 @@
-<div class="createMaterial">
+<div class="createOrUpdateFormWindow">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
   <h2>Dodaj nowego użytkownika</h2>
   <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
@@ -7,7 +7,7 @@
         <label class="label" for="fullName" id="materialCodeLabel">Imię i nazwisko</label>
         <input type="text" class="form-control" formControlName="fulName" id="fullName" placeholder="Imię i nazwisko">
         <div *ngIf="fulName.invalid && (fulName.dirty || fulName.touched)" class="alert alert-danger">
-          <div class="validatorInfo" *ngIf="fulName.errors.required">
+          <div *ngIf="fulName.errors.required">
               To pole jest wymagane
           </div>
         </div>

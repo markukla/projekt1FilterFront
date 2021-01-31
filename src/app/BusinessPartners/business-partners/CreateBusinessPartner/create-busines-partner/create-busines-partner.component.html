@@ -1,5 +1,5 @@
 
-<div class="createMaterial">
+<div class="createOrUpdateFormWindow">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
   <h2>Dodaj nowego użytkownika</h2>
   <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
@@ -21,6 +21,7 @@
 
 
         </div>
+      </div>
         <div class="form-group col-md-6">
           <label class="label" for="businesPartnerCompanyName" >Kod</label>
           <input type="text" class="form-control" formControlName="businesPartnerCompanyName" id="businesPartnerCompanyName"
@@ -38,6 +39,7 @@
 
 
           </div>
+        </div>
       <div class="form-group col-md-6">
         <label class="label" for="fullName" >Imię i nazwisko</label>
         <input type="text" class="form-control" formControlName="fulName" id="fullName"
@@ -54,6 +56,7 @@
           </div>
 
 
+        </div>
         </div>
         <div class="form-group col-md-6">
           <label class="label" for="email">Email</label>
@@ -138,12 +141,10 @@
           </Span>
 
         </div>
-      </div>
+
     </div>
     <div class="addButon">
       <button type="submit" [disabled]="!userForm.valid" class="btn btn-danger">Zapisz</button>
-    </div>
-      </div>
     </div>
   </form>
 

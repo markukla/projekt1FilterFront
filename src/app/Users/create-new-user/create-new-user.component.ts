@@ -17,6 +17,7 @@ export class CreateNewUserComponent implements OnInit {
   operationStatusMessage: string;
   admin: string;
   editor: string;
+  userForm: FormGroup;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -27,21 +28,23 @@ export class CreateNewUserComponent implements OnInit {
     private router: Router) {
 
   }
+  ngOnInit(): void {
+    this.userForm = new FormGroup({
+      // tslint:disable-next-line:max-line-length
+      fulName: new FormControl('', [Validators.nullValidator, Validators.required]),
+      // tslint:disable-next-line:max-line-length
+      email: new FormControl('', {updateOn: 'change', validators: [Validators.nullValidator, Validators.required, Validators.email], asyncValidators: [this.userValidatorService.emailAsyncValidator()]}),
+      // tslint:disable-next-line:max-line-length
+      password: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(8),  this.userValidatorService.patternValidator(/(?=(.*\d){2})/, { hasNumber: true }), this.userValidatorService.patternValidator(/[A-Z]/, { hasCapitalCase: true }), this.userValidatorService.patternValidator(/[a-z]/, { hasSmallCase: true })]),
+      confirmPassword: new FormControl('', [Validators.nullValidator, Validators.required]),
+      // tslint:disable-next-line:max-line-length
+      active: new FormControl(false),
+      // tslint:disable-next-line:max-line-length
+      isAdmin: new FormControl(false, [Validators.required])
+    }, {updateOn: 'change', validators: [this.userValidatorService.passwordMatchValidator({NoPassswordMatch: true})]});
 
-  // @ts-ignore
-  userForm = new FormGroup({
-    // tslint:disable-next-line:max-line-length
-    fulName: new FormControl('', [Validators.nullValidator, Validators.required]),
-    // tslint:disable-next-line:max-line-length
-    email: new FormControl('', {updateOn: 'change', validators: [Validators.nullValidator, Validators.required, Validators.email], asyncValidators: [this.userValidatorService.emailAsyncValidator()]}),
-    // tslint:disable-next-line:max-line-length
-    password: new FormControl('', [Validators.nullValidator, Validators.required, Validators.minLength(8),  this.userValidatorService.patternValidator(/(?=(.*\d){2})/, { hasNumber: true }), this.userValidatorService.patternValidator(/[A-Z]/, { hasCapitalCase: true }), this.userValidatorService.patternValidator(/[a-z]/, { hasSmallCase: true })]),
-    confirmPassword: new FormControl('', [Validators.required]),
-    // tslint:disable-next-line:max-line-length
-    active: new FormControl(false),
-    // tslint:disable-next-line:max-line-length
-    isAdmin: new FormControl(false, [Validators.required])
-  }, {updateOn: 'change', validators: [this.userValidatorService.passwordMatchValidator({NoPassswordMatch: true})]});
+    this.initNamesForSelectedLanguage();
+  }
 
   // tslint:disable-next-line:typedef
   get fulName() {
@@ -66,7 +69,7 @@ export class CreateNewUserComponent implements OnInit {
   }
   // tslint:disable-next-line:typedef
   get isAdmin() {
-    return this.userForm.get('status');
+    return this.userForm.get('isAdmin');
   }
 
 
@@ -84,9 +87,6 @@ export class CreateNewUserComponent implements OnInit {
     this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 
-  ngOnInit(): void {
-    this.initNamesForSelectedLanguage();
-  }
   initNamesForSelectedLanguage(): void {
     this.admin = 'Administator';
     this.editor = 'Edytor';

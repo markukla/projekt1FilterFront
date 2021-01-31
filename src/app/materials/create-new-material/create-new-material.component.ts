@@ -51,6 +51,7 @@ export class CreateNewMaterialComponent implements OnInit{
     });
  }
   closeAndGoBack(): void {
+    console.log('close button clicked');
     this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
 

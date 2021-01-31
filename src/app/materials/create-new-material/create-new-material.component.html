@@ -1,6 +1,6 @@
-<div class="createMaterial">
+<div class="createOrUpdateFormWindow">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
-  <h2>Dodaj nowy materiał</h2>
+  <h2 class="formTitle">Dodaj nowy materiał</h2>
   <form [formGroup]="materialForm" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="form-group col-md-6">
@@ -22,8 +22,8 @@
           <div class="has-text-danger" *ngIf="materialCode.errors?.taken">  <!--error name is name of error in async validatod:ValidateMaterialCodeUniqueService-->
             Ten kod materiału jest już zajęty
           </div>
-
         </div>
+      </div>
         <div class="form-group col-md-6">
           <label class="label" for="materialName">Nazwa Materiału</label>
           <input type="text" class="form-control" formControlName="materialName" id="materialName"
@@ -40,14 +40,13 @@
           </div>
 
         </div>
-      </div>
     </div>
     <div class="addButon">
       <button type="submit" [disabled]="!materialForm.valid" class="btn btn-danger">Zatwierdź</button>
     </div>
   </form>
 
-  <div *ngIf="showoperationStatusMessage">
+  <div class="showOperationStatusContainer" *ngIf="showoperationStatusMessage">
     <textarea>{{showoperationStatusMessage}}</textarea>
   </div>
 </div>
