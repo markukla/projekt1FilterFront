@@ -9,6 +9,7 @@ import User from '../users/userTypes/user';
 import {UserHasAdminRole, UserHasEditorRoleButIsNotAdmin} from '../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
 import BlockUserDto from '../users/userTypes/blockUseDto';
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
+import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
 
 @Component({
   selector: 'app-users',
@@ -33,6 +34,7 @@ export class UsersComponent implements OnInit, AfterContentChecked {
 
   constructor(public userTableService: GeneralTableService,
               public userBackendService: UserBackendService,
+              public searChService: SearchService,
               private router: Router,
               private activedIdParam: ActivatedRoute) {
     this.admins = [];
@@ -85,12 +87,7 @@ else {
       this.allPriviligedUsers = this.userTableService.getRecords();
       this.updateAdminsTable();
       this.updateEditorsTable();
-      console.log(`this admins= ${this.admins}`);
-      if (this.admins){
-      this.admins.forEach((admin) => {
-        console.log(admin.fulName);
-      });
-      }
+      this.searChService.orginalArrayCopy = [...this.userTableService.getRecords()];
     });
 
   }

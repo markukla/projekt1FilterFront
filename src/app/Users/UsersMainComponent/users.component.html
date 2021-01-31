@@ -14,9 +14,13 @@
     <thead>
     <tr>
       <th> L.p <br></th>
-      <th> Imię i Nazwisko> </th>
-      <th>Email</th>
-
+      <th [appSort]="allPriviligedUsers" data-order="desc" data-name="fulName" scope="col"> Imię i Nazwisko </th>
+      <th [appSort]="allPriviligedUsers" data-order="desc" data-name="email" scope="col">Email</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th><input class="tableSearchInput" [appSearch]="allPriviligedUsers" serchedColumn="fulName" id="serchInCodes" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appSearch]="allPriviligedUsers" serchedColumn="email" id="serchInNames" placeholder="Wyszukaj" /></th>
     </tr>
     </thead>
     <tbody>
@@ -35,8 +39,6 @@
       </td>
 
     </tr>
-    </tbody>
-    <tbody>
     <p>Edytorzy</p>
     <tr *ngFor="let editor of editors;let i=index">
       <td>{{i+1}}</td>
@@ -48,9 +50,7 @@
         <button (click)="updateSelectedRecord(editor.id);" [title]="updateButtonInfo">u</button>
         <button [title]="setBlockButtonActionInfoMessage(editor)" (click)="blockOrUnblockUser(editor)">{{setBlockButtonStatusMessage(editor)}}</button>
         <button (click)="this.deleteSelectedRecord(editor.id)" [title]="deleteButtonInfo" >x</button>
-
       </td>
-
     </tr>
     </tbody>
   </table>

@@ -15,6 +15,8 @@ import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices
 export class CreateNewUserComponent implements OnInit {
 
   operationStatusMessage: string;
+  admin: string;
+  editor: string;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -38,7 +40,7 @@ export class CreateNewUserComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     active: new FormControl(false),
     // tslint:disable-next-line:max-line-length
-    isAdmin: new FormControl(false)
+    isAdmin: new FormControl(false, [Validators.required])
   }, {updateOn: 'change', validators: [this.userValidatorService.passwordMatchValidator({NoPassswordMatch: true})]});
 
   // tslint:disable-next-line:typedef
@@ -64,7 +66,7 @@ export class CreateNewUserComponent implements OnInit {
   }
   // tslint:disable-next-line:typedef
   get isAdmin() {
-    return this.userForm.get('isAdmin');
+    return this.userForm.get('status');
   }
 
 
@@ -83,6 +85,11 @@ export class CreateNewUserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initNamesForSelectedLanguage();
+  }
+  initNamesForSelectedLanguage(): void {
+    this.admin = 'Administator';
+    this.editor = 'Edytor';
   }
   cleanOperationMessage(): void {
     setTimeout(() => {

@@ -63,8 +63,19 @@
         </div>
         <div class="form-group col-md-6">
           <span>
-            <label for="isAdmin" class="label">Status Administratora</label><input type="checkbox" class="form-control" formControlName="isAdmin" id="isAdmin">
+            <label for="status" class="label">Status Administratora</label>
+            <select class="form-control" formControlName="isAdmin" id="status" #selectStatus>
+              <option #optionForSelectStatus id='admin' [ngValue]="true">{{this.admin}}</option>
+              <option #optionForSelectStatus id='editor' [ngValue]="false">{{this.editor}}</option>
+
+            </select>
           </span>
+          <div *ngIf="isAdmin.invalid && (isAdmin.dirty || isAdmin.touched)"
+               class="alert alert-danger">
+            <div class="validatorInfo" *ngIf="isAdmin.errors.required">
+              To pole jest wymagane
+            </div>
+          </div>
 
         </div>
       </div>

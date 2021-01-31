@@ -18,7 +18,7 @@ export class CreateNewMaterialComponent implements OnInit{
   operationMessage: string;
   showoperationStatusMessage: string;
 
-  constructor( private authenticationService: AuthenticationService,
+  constructor(private authenticationService: AuthenticationService,
               private materialbackendService: MaterialBackendService,
               public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
               private formBuilder: FormBuilder,

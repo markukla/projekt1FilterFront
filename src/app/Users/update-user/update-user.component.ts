@@ -1,4 +1,4 @@
-import {AfterContentChecked, Component, OnInit} from '@angular/core';
+import {AfterContentChecked, AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewChildren} from '@angular/core';
 import {UserBackendService} from '../UserServices/user-backend.service';
 import {UserValidatorService} from '../UserServices/user-validator.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -6,20 +6,27 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UsersTableService} from '../UserServices/users-table.service';
 import {UserHasAdminRole} from '../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
 import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
+import User from '../users/userTypes/user';
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 @Component({
   selector: 'app-update-user',
   templateUrl: './update-user.component.html',
   styleUrls: ['./update-user.component.css']
 })
-export class UpdateUserComponent implements OnInit, AfterContentChecked {
+export class UpdateUserComponent implements OnInit, AfterContentChecked, AfterViewInit {
   operationStatusMessage: string;
   selectedId = String(this.userTableService.selectedId);
+  admin: string;
+  editor: string;
+  userToUpdate: User;
+  @ViewChild('selectStatus', {read: ElementRef}) selectStatusElement: ElementRef;
+  @ViewChildren('optionForSelectStatus', {read: ElementRef}) optionsForSelectStatus: ElementRef[];
 
   constructor(
     private authenticationService: AuthenticationService,
     private userBackendService: UserBackendService,
-    private userTableService: UsersTableService,
+    private userTableService: GeneralTableService,
     public userValidatorService: UserValidatorService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -63,6 +70,7 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked {
   setCurrentValueOfFormFields(): void {
     this.userBackendService.findUserById(this.selectedId).subscribe((user) => {
       const foundUser = user.body;
+      this.userToUpdate = foundUser;
       this.fulName.setValue(user.body.fulName);
       this.email.setValue(user.body.email);
       this.active.setValue(user.body.active);
@@ -90,7 +98,13 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit(): void {
+    this.initNamesForSelectedLanguage();
     this.setCurrentValueOfFormFields();
+  }
+
+  initNamesForSelectedLanguage(): void {
+    this.admin = 'Administator';
+    this.editor = 'Edytor';
   }
 
   cleanOperationMessageAndGoBack(): void {
@@ -103,5 +117,25 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked {
   ngAfterContentChecked(): void {
   }
 
+  ngAfterViewInit(): void {
+    this.setSelectStatusValuForCHosenUser();
+  }
+
+  setSelectStatusValuForCHosenUser(): void {
+    let adminOption: HTMLOptionElement;
+    let editorOption: HTMLOptionElement;
+    this.optionsForSelectStatus.forEach((option) => {
+      if (option.nativeElement.id === 'admin') {
+        adminOption = option.nativeElement;
+      } else if (option.nativeElement.id === 'editor') {
+        editorOption = option.nativeElement;
+      }
+    });
+    if (this.isAdmin.value === true) {
+      this.selectStatusElement.nativeElement.setValue(adminOption.value);
+    } else if (this.isAdmin.value === false) {
+      this.selectStatusElement.nativeElement.setValue(editorOption.value);
+    }
+  }
 
 }
