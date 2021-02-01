@@ -1,0 +1,9 @@
+<div>
+
+  <p> Wybierz product klikając w na wybrany rysunek</p>
+
+<div *ngFor="let product of products">
+  <p> {{product.productType.code +';'+ product.productBottom.code + ';'+ product.productTop.code}}</p>
+  <img [src]="getDrawingUrl(product)"] (click)="selectProductAndNavigateBack(product)">
+</div>
+</div>

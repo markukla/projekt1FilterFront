@@ -110,7 +110,8 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   }
 
   updateSelectedRecord(selectedId: number): void {
-        this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${selectedId}&mode=${OrderOperationMode.UPDATE}`);
+    this.backendService.createOrderDtoForConfirmUpdateShowDrawing = null;
+    this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${selectedId}&mode=${OrderOperationMode.UPDATE}`);
   }
 
 
@@ -123,6 +124,7 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   }
 
   createNewOrder(): void {
+    this.backendService.createOrderDtoForConfirmUpdateShowDrawing = null;
     this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CREATENEW}`);
   }
 }

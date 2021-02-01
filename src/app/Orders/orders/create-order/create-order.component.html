@@ -49,10 +49,14 @@
 
         </div>
         <div *ngIf="!productConfirmed">
+          <span>
+          <p>Wybierz produkt określając jego parametry lub naciśnij przycisk aby wybrać na podstawie rysunku </p>
+            <button (click)="chooseProductByMiniatureButtonAction();"> Wybierz Product klikając na rysunek</button>
+          </span>
           <label class="label" for="type"> Typ Produktu</label>
-          <select class="form-control" formControlName="type" id="type" >
+          <select class="form-control" formControlName="type" id="type" (change)="setTopsAndBottomsToSelectAfterTypeSelected(this.type.value)" >
             <option [ngValue]="null" disabled> -</option>
-            <option *ngFor="let type of allTypesToSelect" [ngValue]="type">
+            <option *ngFor="let type of allTypesToSelect" [ngValue]="type" >
               {{ type.code + ' - ' +  getNameInSelectedLanguage(type.localizedNames) }}
             </option>
           </select>

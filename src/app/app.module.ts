@@ -65,6 +65,7 @@ import { LangageFormComponentComponent } from './LanguageForm/langage-form-compo
 import { VocabularyMainComponentComponent } from './Vocablulaty/vocabulary-main-component/vocabulary-main-component.component';
 import { CreateOrUpdateVocabularyComponent } from './Vocablulaty/create-or-update-vocabulary/create-or-update-vocabulary.component';
 import { ChangePasswordForLoggedUserComponent } from './change-password-component/change-password-for-logged-user.component';
+import { ProcutMiniatureComponentComponent } from './Orders/orders/productMiniature/procut-miniature-component/procut-miniature-component.component';
 
 
 
@@ -123,7 +124,8 @@ import { ChangePasswordForLoggedUserComponent } from './change-password-componen
     LangageFormComponentComponent,
     VocabularyMainComponentComponent,
     CreateOrUpdateVocabularyComponent,
-    ChangePasswordForLoggedUserComponent
+    ChangePasswordForLoggedUserComponent,
+    ProcutMiniatureComponentComponent
     ],
   imports: [
     BrowserModule,
@@ -158,6 +160,7 @@ import { ChangePasswordForLoggedUserComponent } from './change-password-componen
       { path: 'products/bottoms/add', component: CreateProductBottomComponent},
       { path: 'products/tops', component: ProductTopComponent},
       { path: 'products/tops/add', component: CreateProductTopComponent},
+      { path: 'products/chooseByMiniature', component: ProcutMiniatureComponentComponent},
       {path: 'login', component: LoginComponent },
       {path: 'drag', component: ContainerForDragableComponent },
       {path: 'languages', component: LanguageMainComponent},

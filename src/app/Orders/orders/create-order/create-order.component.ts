@@ -34,6 +34,8 @@ import {TableFormServiceService} from '../../../Products/ProductMainComponent/pr
 import OrderDetails from '../../OrdersTypesAndClasses/orderDetail';
 import LocalizedName from '../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
 import {getSelectedLanguageFromNamesInAllLanguages} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {ProductMiniatureService} from '../productMiniature/productMiniatureService/product-miniature.service';
+import {ProcutMiniatureComponentComponent} from '../productMiniature/procut-miniature-component/procut-miniature-component.component';
 
 @Component({
   selector: 'app-create-order',
@@ -83,6 +85,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   @ViewChild('commentToOrder', {read: ElementRef}) commentToOrder: ElementRef;
   constructor(
     private backendService: OrderBackendService,
+    private productMiniatureService: ProductMiniatureService,
     private tableFormService: TableFormServiceService,
     private host: ElementRef,
     private renderer: Renderer2,
@@ -102,7 +105,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   async ngOnInit(): Promise<void> {
     this.productHasBeenChanged = false;
     this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
-    this.getDataToDropdownLists();
+    await this.getDataToDropdownLists();
     this.form = new FormGroup({
       type: new FormControl(null, [Validators.required]),
       top: new FormControl(null, [Validators.required]),
@@ -122,6 +125,8 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
         this.orderOperationMode = OrderOperationMode.CREATENEW;
         this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
         this.setOrderNumbersinOrderTableForNewOrder();
+        this.createOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
+        this.setFormControlValuesForUpdateOrShowDrawingMode(this.createOrderDto);
       } else if (mode === OrderOperationMode.UPDATE || mode === OrderOperationMode.SHOWDRAWING) {
         if (mode === OrderOperationMode.UPDATE) {
           this.orderOperationMode = OrderOperationMode.UPDATE;
@@ -174,7 +179,12 @@ setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
     if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
       this.submitButtonDescription = 'dalej';
       this.materialConfirmed = false;
-      this.productConfirmed = false;
+      if (!this.productMiniatureService.selectedProduct) {
+        this.productConfirmed = false;
+      }
+      else {
+        this.productConfirmed = true;
+      }
       this.partnerConfirmed = false;
       this.confirmOrCHangeProductParmatersButtonInfo = 'zatwierdź parametry produktu';
       this.confirmOrCHangeMaterialButtonInfo = 'zatwierdź materiał worka';
@@ -246,40 +256,48 @@ get productMaterial() {
     return this.form.get('productMaterial');
   }
 
-getDataToDropdownLists(): void {
-    this.typesBackendService.getRecords().subscribe((records) => {
-      this.allTypesToSelect = records.body;
-    }, error => {
-      console.log('error during requesting productTypes from db');
-    });
-    if (this.isPartner === false) { } {
-      this.partnersBackendService.getAllRecords().subscribe((records) => {
-        this.allParntersToSelect = records.body;
-      }, error => {
-        console.log('error during requesting partners from db');
-      });
-    }
-    this.materialBackendService.getRecords().subscribe((records) => {
-      this.allMaterialsToSelect = records.body;
-    }, error => {
-      console.log('error during requesting materials from db');
-    });
-
-    /*  * this.allTypesForExistingProducts = [];
-    this.allusedForCreatingProductProductTops = [];
-    this.allusedForCreatinfProductProductBottoms = [];
-    const allProducts = await this.backendService.getRecords().toPromise();
-    allProducts.body.forEach((product) => {
-      this.allTypesForExistingProducts.push(product.productType);
-      this.allusedForCreatinfProductProductBottoms.push(product.productBottom);
-      this.allusedForCreatingProductProductTops.push(product.productTop);
-    });
-    this.allTypesToSelect = this.allTypesForExistingProducts;*/
+async getDataToDropdownLists(): Promise<void> {
+  if (this.isPartner === false) {
   }
+  {
+    this.partnersBackendService.getAllRecords().subscribe((records) => {
+      this.allParntersToSelect = records.body;
+    }, error => {
+      console.log('error during requesting partners from db');
+    });
+  }
+  this.materialBackendService.getRecords().subscribe((records) => {
+    this.allMaterialsToSelect = records.body;
+  }, error => {
+    console.log('error during requesting materials from db');
+  });
+
+  this.allTypesForExistingProducts = [];
+  this.allusedForCreatingProductProductTops = [];
+  this.allusedForCreatinfProductProductBottoms = [];
+  const allProducts = await this.productBackendService.getRecords().toPromise();
+  this.productMiniatureService.allProducts = allProducts.body;
+  const allTypes = await this.typesBackendService.getRecords().toPromise();
+  allProducts.body.forEach((product) => {
+    this.allTypesForExistingProducts.push(product.productType);
+    this.allusedForCreatinfProductProductBottoms.push(product.productBottom);
+    this.allusedForCreatingProductProductTops.push(product.productTop);
+  });
+  /* filter does not accept complex expression with {} */
+  this.allTypesToSelect = allTypes.body.filter(type =>
+    this.allTypesForExistingProducts.map(productType =>
+      productType.id).includes(type.id)
+  );
+}
 
 setTopsAndBottomsToSelectAfterTypeSelected(productType: ProductType): void {
-    this.allTopsToSelect = productType.topsForThisProductType;
-    this.allBotomsToselect = productType.bottomsForThisProductType;
+    this.allTopsToSelect = productType.topsForThisProductType.filter(topsInProductType =>
+      this.allusedForCreatingProductProductTops.map(productTop =>
+        productTop.id).includes(topsInProductType.id)
+    );
+    this.allBotomsToselect = productType.bottomsForThisProductType.filter(bottomsInProductType =>
+    this.allusedForCreatinfProductProductBottoms.map(productTop =>
+      productTop.id).includes(bottomsInProductType.id));
   }
 
 onSubmit(): void {
@@ -399,7 +417,6 @@ changeModeTOCreateNewIfrProductChangedInUpdateOrCOnfirmMode(): void {
 ngAfterContentChecked(): void {
     this.checkOperationMode();
     this.setUpdateModeOrPartnerLoggedValue();
-    this.onTypeSelectedSetTopsAndBottoms();
     this.setAllowSubmit();
     // this.changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode();
   }
@@ -458,6 +475,11 @@ confirmOrchangeProductButtonAction(): void {
       this.productConfirmed = false;
     }
 
+  }
+  async chooseProductByMiniatureButtonAction(): Promise<void> {
+    // tslint:disable-next-line:max-line-length
+    this.backendService.createOrderDtoForConfirmUpdateShowDrawing = await this.updateCreateOrderDtoForChooseDrawingByMiniature(this.createOrderDto);
+    await this.router.navigateByUrl('products/chooseByMiniature');
   }
 
 confirmOrChangeMaterialButtonAction(): void {
@@ -622,5 +644,20 @@ listenToChangeProductEvent(event: any): void {
   }
   getNameInSelectedLanguage(localizedNames: LocalizedName[]): string {
     return getSelectedLanguageFromNamesInAllLanguages(localizedNames, this.authenticationService.selectedLanguageCode);
+  }
+  async updateCreateOrderDtoForChooseDrawingByMiniature(createOrderDto: CreateOrderDto): Promise<CreateOrderDto> {
+    const createProductDto: CreateProductDto = {
+      productType: this.type.value,
+      productTop: this.top.value,
+      productBottom: this.bottom.value,
+    };
+    const selectedProduct =  await this.productBackendService.getProductByTypeTopBottom(createProductDto).toPromise();
+    const updatedCreateOrderDto = {
+      ... createOrderDto,
+      productMaterial: this.selectedMaterial,
+      businessPartner: this.selectedPartner,
+      product: selectedProduct.body
+    };
+    return updatedCreateOrderDto;
   }
 }
