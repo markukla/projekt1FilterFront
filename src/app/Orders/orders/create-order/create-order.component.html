@@ -1,4 +1,4 @@
-<div class="createOrUpdateFormWindow">
+<div class="createOrUpdateOrder">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
   <h2>Dodaj nowe zamówienie</h2>
 
@@ -57,7 +57,7 @@
           {{ type.code + ' - ' + getNameInSelectedLanguage(type.localizedNames) }}
         </option>
       </select>
-
+      <div *ngIf="type.value">
       <label class="label" for="top"> Wykończenie góry</label>
       <select class="form-control" formControlName="top" id="top">
         <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
@@ -72,6 +72,7 @@
           {{ bottom.code + ' - ' + getNameInSelectedLanguage(bottom.localizedNames) }}
         </option>
       </select>
+      </div>
     </div>
     <button type="button" class="confirmOrChangeButton" id="confirmOrchangeProduct"
             (click)="confirmOrchangeProductButtonAction();"> {{confirmOrCHangeProductParmatersButtonInfo}}  </button>

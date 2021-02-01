@@ -17,6 +17,15 @@
 
   padding: 10px;
 }
+.createOrUpdateOrder{
+  position: absolute;
+  top: 5%;
+  width: 50%;
+  left: 30%;
+  height: auto;
+  border: 5px solid #FFFF00;
+
+}
 .formTitle {
   position: relative;
   left: 5%;
