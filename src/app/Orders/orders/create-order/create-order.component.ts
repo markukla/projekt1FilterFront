@@ -77,6 +77,9 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   newOrderTotalNumber: string;
   newData: string;
   selctedOrderId: string;
+  allTypesForExistingProducts: ProductType[];
+  allusedForCreatingProductProductTops: ProductTop[];
+  allusedForCreatinfProductProductBottoms: ProductBottom [];
   @ViewChild('commentToOrder', {read: ElementRef}) commentToOrder: ElementRef;
   constructor(
     private backendService: OrderBackendService,
@@ -261,6 +264,17 @@ getDataToDropdownLists(): void {
     }, error => {
       console.log('error during requesting materials from db');
     });
+
+    /*  * this.allTypesForExistingProducts = [];
+    this.allusedForCreatingProductProductTops = [];
+    this.allusedForCreatinfProductProductBottoms = [];
+    const allProducts = await this.backendService.getRecords().toPromise();
+    allProducts.body.forEach((product) => {
+      this.allTypesForExistingProducts.push(product.productType);
+      this.allusedForCreatinfProductProductBottoms.push(product.productBottom);
+      this.allusedForCreatingProductProductTops.push(product.productTop);
+    });
+    this.allTypesToSelect = this.allTypesForExistingProducts;*/
   }
 
 setTopsAndBottomsToSelectAfterTypeSelected(productType: ProductType): void {

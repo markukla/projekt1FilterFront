@@ -7,8 +7,8 @@
         <label class="label" for="fullName" id="materialCodeLabel">Imię i nazwisko</label>
         <input type="text" class="form-control" formControlName="fulName" id="fullName"
                placeholder="Imię i nazwisko">
-        <div  *ngIf="fulName.invalid && (fulName.dirty || fulName.touched)"
-              class="alert alert-danger">
+        <div *ngIf="fulName.invalid && (fulName.dirty || fulName.touched)"
+             class="alert alert-danger">
 
           <div class="validatorInfo" *ngIf="fulName.errors.required">
             <label
@@ -20,64 +20,60 @@
 
 
         </div>
-        <div class="form-group col-md-6">
-          <label class="label" for="email">Email</label>
-          <input type="text" class="form-control" formControlName="email" id="email"
-                 placeholder="email">
-          <div *ngIf="email.invalid && (email.dirty || email.touched)"
-               class="alert alert-danger">
+      </div>
+      <div class="form-group col-md-6">
+        <label class="label" for="email">Email</label>
+        <input type="text" class="form-control" formControlName="email" id="email"
+               placeholder="email">
+        <div *ngIf="email.invalid && (email.dirty || email.touched)"
+             class="alert alert-danger">
 
-            <div class="validatorInfo" *ngIf="email.errors.required">
-              <label
-                class="text-danger">
-                Email jest wymagany
-              </label>
+          <div class="validatorInfo" *ngIf="email.errors.required">
+            <label
+              class="text-danger">
+              Email jest wymagany
+            </label>
 
-            </div>
-            <div class="validatorInfo" *ngIf="email.errors?.taken">
-              <label
-                class="text-danger">
-                Podany email jest już zajęty
-              </label>
-
-
-            </div>
-            <div class="validatorInfo" *ngIf="email.errors.email">
-              <label
-                class="text-danger">
-                Podany email musi być prawidłowym adresem email.
-              </label>
-
-
-            </div>
           </div>
+          <div class="validatorInfo" *ngIf="email.errors?.taken">
+            <label
+              class="text-danger">
+              Podany email jest już zajęty
+            </label>
 
+
+          </div>
+          <div class="validatorInfo" *ngIf="email.errors.email">
+            <label
+              class="text-danger">
+              Podany email musi być prawidłowym adresem email.
+            </label>
+          </div>
         </div>
-
-
-        <div class="form-group col-md-6">
+      </div>
+      <div class="form-group col-md-6">
           <Span>
-            <label for="active" class="label">Aktywny</label><input type="checkbox" class="form-control" formControlName="active" id="active">
+            <label for="active" class="label">Aktywny</label>
+            <input type="checkbox" class="form-control" formControlName="active" id="active">
           </Span>
 
-        </div>
-        <div class="form-group col-md-6">
+      </div>
+      <div class="form-group col-md-6">
           <span>
-            <label for="status" class="label">Status Administratora</label>
+            <label for="status" class="label">Status</label>
             <select class="form-control" formControlName="isAdmin" id="status" #selectStatus>
               <option #optionForSelectStatus id='admin' [ngValue]="true">{{this.admin}}</option>
               <option #optionForSelectStatus id='editor' [ngValue]="false">{{this.editor}}</option>
 
             </select>
           </span>
-          <div *ngIf="isAdmin.invalid && (isAdmin.dirty || isAdmin.touched)"
-               class="alert alert-danger">
-            <div class="validatorInfo" *ngIf="isAdmin.errors.required">
-              To pole jest wymagane
-            </div>
+        <div *ngIf="isAdmin.invalid && (isAdmin.dirty || isAdmin.touched)"
+             class="alert alert-danger">
+          <div class="validatorInfo" *ngIf="isAdmin.errors.required">
+            To pole jest wymagane
           </div>
-
         </div>
+
       </div>
     </div>
     <div class="addButon">
