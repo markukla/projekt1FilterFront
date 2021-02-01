@@ -3,149 +3,127 @@
   <h2>Dodaj nowe zamówienie</h2>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="col">
-      <div *ngIf="!updateModeOrPartnerLogged" class="form-group col-md-6">
-        <div *ngIf="partnerConfirmed">
-          <p>
-            Kod: {{this.selectedPartner.code}} <br>
-            Nazwa Partnera Handlowego: {{ this.selectedPartner.fulName + ' - ' + this.selectedPartner.businesPartnerCompanyName}}
-
-          </p>
-
-
-        </div>
-        <div *ngIf="!partnerConfirmed">
-
-
-          <label class="label" for="businessPartner"> Partner Handlowy</label>
-          <select class="form-control" formControlName="businessPartner" id="businessPartner" #businessPartner>
-            <option [ngValue]="null" disabled>-</option>
-            <option *ngFor="let partner of allParntersToSelect" [ngValue]="partner">
-              {{ partner.code + ' - ' + partner.businesPartnerCompanyName + ' : ' + partner.fulName}}
-            </option>
-          </select>
-          <div *ngIf="type.invalid && (type.dirty || type.touched)"
-               class="alert alert-danger">
-
-            <div class="validatorInfo" *ngIf="type.errors.required">
-              Wybranie opcji z listy jest wymagane.
-            </div>
-          </div>
-        </div>
-          <button type="button" class="confirmOrChangeButton"
-                  (click)="changeOrConfirmPartnerButtonAction();"> {{confirmOrCHangePartnerButtonInfo}}  </button>
-
+    <div *ngIf="!updateModeOrPartnerLogged">
+      <div *ngIf="partnerConfirmed">
+        <p>
+          Kod: {{this.selectedPartner.code}} <br>
+          Nazwa Partnera
+          Handlowego: {{ this.selectedPartner.fulName + ' - ' + this.selectedPartner.businesPartnerCompanyName}}
+        </p>
       </div>
-
-      <div class="form-group col-md-6">
-        <div *ngIf="productConfirmed && type.value && top.value && bottom.value">
-          <p>
-            Typ Produktu: {{this.type.value.code + ' - ' + this.type.value.name}} <br>
-            Wykończenie Góry: {{this.top.value.code + ' - ' + this.top.value.name}}<br>
-            Wykończenie Dna: {{this.bottom.value.code + ' - ' + this.bottom.value.name}} <br>
-
-          </p>
+      <div *ngIf="!partnerConfirmed">
 
 
-        </div>
-        <div *ngIf="!productConfirmed">
-          <span>
-          <p>Wybierz produkt określając jego parametry lub naciśnij przycisk aby wybrać na podstawie rysunku </p>
-            <button (click)="chooseProductByMiniatureButtonAction();"> Wybierz Product klikając na rysunek</button>
-          </span>
-          <label class="label" for="type"> Typ Produktu</label>
-          <select class="form-control" formControlName="type" id="type" (change)="setTopsAndBottomsToSelectAfterTypeSelected(this.type.value)" >
-            <option [ngValue]="null" disabled> -</option>
-            <option *ngFor="let type of allTypesToSelect" [ngValue]="type" >
-              {{ type.code + ' - ' +  getNameInSelectedLanguage(type.localizedNames) }}
-            </option>
-          </select>
-          <div *ngIf="type.invalid && (type.dirty || type.touched)"
-               class="alert alert-danger">
+        <label class="label" for="businessPartner"> Partner Handlowy</label>
+        <select class="form-control" formControlName="businessPartner" id="businessPartner" #businessPartner>
+          <option [ngValue]="null" disabled>-</option>
+          <option *ngFor="let partner of allParntersToSelect" [ngValue]="partner">
+            {{ partner.code + ' - ' + partner.businesPartnerCompanyName + ' : ' + partner.fulName}}
+          </option>
+        </select>
+        <div *ngIf="type.invalid && (type.dirty || type.touched)"
+             class="alert alert-danger">
 
-            <div class="validatorInfo" *ngIf="type.errors.required">
-              Wybranie opcji z listy jest wymagane.
-            </div>
-          </div>
-          <div class="form-group col-md-6" *ngIf="type.value">
-            <label class="label" for="top" > Wykończenie góry</label>
-            <select class="form-control" formControlName="top" id="top">
-              <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
-              <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
-                {{ top.code + ' - ' + getNameInSelectedLanguage(top.localizedNames) }}
-              </option>
-            </select>
-            <div *ngIf="top.invalid && (top.dirty || top.touched)"
-                 class="alert alert-danger">
-
-              <div class="validatorInfo" *ngIf="top.errors.required">
-                Wybranie opcji z listy jest wymagane.
-              </div>
-            </div>
-          </div>
-          <div class="form-group col-md-6" *ngIf="type.value">
-            <label class="label" for="bottom"> Wykończenie Dna</label>
-            <select class="form-control" formControlName="bottom" id="bottom" >
-              <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
-              <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
-                {{ bottom.code + ' - ' + getNameInSelectedLanguage(bottom.localizedNames) }}
-              </option>
-            </select>
-            <div *ngIf="bottom.invalid && (bottom.dirty || bottom.touched)"
-                 class="alert alert-danger">
-
-              <div class="validatorInfo" *ngIf="bottom.errors.required">
-                Wybranie opcji z listy jest wymagane.
-              </div>
-            </div>
+          <div class="validatorInfo" *ngIf="type.errors.required">
+            Wybranie opcji z listy jest wymagane.
           </div>
         </div>
-        <button type="button" class="confirmOrChangeButton" id="confirmOrchangeProduct"
-                (click)="confirmOrchangeProductButtonAction();"> {{confirmOrCHangeProductParmatersButtonInfo}}  </button>
       </div>
-      <div class="form-group col-md-6" >
-        <div *ngIf="materialConfirmed && selectedMaterial">
-          Materiał Produktu: <br>
-          Kod: {{selectedMaterial.materialCode}} <br>
-          Nazwa: {{selectedMaterial.materialName}}
-        </div>
-        <div *ngIf="!materialConfirmed">
-          <label class="label" for="productMaterial">Wybierz Materiał Produktu</label>
-          <select class="form-control" formControlName="productMaterial" id="productMaterial">
-            <option [ngValue]="null" disabled> -</option>
-            <option *ngFor="let material of allMaterialsToSelect" [ngValue]="material">
-              {{ material.materialCode + ' - ' + material.materialName }}
-            </option>
-          </select>
-          <div *ngIf="bottom.invalid && (bottom.dirty || bottom.touched)"
-               class="alert alert-danger">
+      <button type="button" class="confirmOrChangeButton"
+              (click)="changeOrConfirmPartnerButtonAction();"> {{confirmOrCHangePartnerButtonInfo}}  </button>
+    </div>
 
-            <div class="validatorInfo" *ngIf="bottom.errors.required">
-              Wybranie opcji z listy jest wymagane.
-            </div>
-          </div>
-        </div>
-        <button type="button" class="confirmOrChangeButton"
-                (click)="confirmOrChangeMaterialButtonAction();"> {{confirmOrCHangeMaterialButtonInfo}}  </button>
+    <div *ngIf="productConfirmed && type.value && top.value && bottom.value">
+      <p>
+        Typ Produktu: {{this.type.value.code + ' - ' + getNameInSelectedLanguage(this.type.value.localizedNames)}}
+        <br>
+        Wykończenie Góry: {{this.top.value.code + ' - ' + getNameInSelectedLanguage(this.top.value.localizedNames)}}
+        <br>
+        Wykończenie
+        Dna: {{this.bottom.value.code + ' - ' + getNameInSelectedLanguage(this.bottom.value.localizedNames)}} <br>
+      </p>
+    </div>
+    <div *ngIf="!productConfirmed">
+      <p> naciśnij przycisk aby wybrać product na podstawie rysunku </p>
+      <button (click)="chooseProductByMiniatureButtonAction();"> Wybierz Product klikając na rysunek</button>
+      <p> Lub <br>
+        Wybierz produkt określając parametry produktu
+      </p>
+      <label class="label" for="type"> Typ Produktu</label>
+      <select class="form-control" formControlName="type" id="type"
+              (change)="setTopsAndBottomsToSelectAfterTypeSelected(this.type.value)">
+        <option [ngValue]="null" disabled> -</option>
+        <option *ngFor="let type of allTypesToSelect" [ngValue]="type">
+          {{ type.code + ' - ' + getNameInSelectedLanguage(type.localizedNames) }}
+        </option>
+      </select>
+
+      <label class="label" for="top"> Wykończenie góry</label>
+      <select class="form-control" formControlName="top" id="top">
+        <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
+        <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
+          {{ top.code + ' - ' + getNameInSelectedLanguage(top.localizedNames) }}
+        </option>
+      </select>
+      <label class="label" for="bottom"> Wykończenie Dna</label>
+      <select class="form-control" formControlName="bottom" id="bottom">
+        <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
+        <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
+          {{ bottom.code + ' - ' + getNameInSelectedLanguage(bottom.localizedNames) }}
+        </option>
+      </select>
+    </div>
+    <button type="button" class="confirmOrChangeButton" id="confirmOrchangeProduct"
+            (click)="confirmOrchangeProductButtonAction();"> {{confirmOrCHangeProductParmatersButtonInfo}}  </button>
+    <div *ngIf="!this.productConfirmed"
+         class="alert alert-danger">
+
+      <div class="validatorInfo">
+        Wybranie i zatwierdzenie produktu jest wymagane
       </div>
     </div>
+    <div *ngIf="materialConfirmed && selectedMaterial">
+      Materiał Produktu: <br>
+      Kod: {{selectedMaterial.materialCode}} <br>
+      Nazwa: {{selectedMaterial.materialName}}
+    </div>
+    <div *ngIf="!materialConfirmed">
+      <label class="label" for="productMaterial">Wybierz Materiał Produktu</label>
+      <select class="form-control" formControlName="productMaterial" id="productMaterial">
+        <option [ngValue]="null" disabled> -</option>
+        <option *ngFor="let material of allMaterialsToSelect" [ngValue]="material">
+          {{ material.materialCode + ' - ' + material.materialName }}
+        </option>
+      </select>
+      <div *ngIf="bottom.invalid && (bottom.dirty || bottom.touched)"
+           class="alert alert-danger">
+
+        <div class="validatorInfo" *ngIf="bottom.errors.required">
+          Wybranie opcji z listy jest wymagane.
+        </div>
+      </div>
+    </div>
+    <button type="button" class="confirmOrChangeButton"
+            (click)="confirmOrChangeMaterialButtonAction();"> {{confirmOrCHangeMaterialButtonInfo}}  </button>
     <div class="addButon">
       <div *ngIf="operationModeEqualConfirmNewOrUpdate">
         <p> Zmień wymiary rysunku</p> <br>
         <button type="button" class="confirmOrChangeButton" (click)="seeDrawing();"> Zobacz rysunek</button>
-        <button type="button" class="confirmOrChangeButton" (click)="updateDrawing();"> Zmień wymiary produktu</button>
+        <button type="button" class="confirmOrChangeButton" (click)="updateDrawing();"> Zmień wymiary produktu
+        </button>
         <label for="commentToOrder">Twoje uwagi do zapytania </label> <br>
         <textarea id="commentToOrder" #commentToOrder>  </textarea>
 
       </div>
+    </div>
+
+    <div class="addButon">
       <button type="submit" [disabled]="this.allowSubmit === false" class="btn btn-danger">{{submitButtonDescription}}
       </button>
     </div>
 
-
   </form>
-
-  <div *ngIf="showoperationStatusMessage">
+  <div class="showOperationStatusContainer" *ngIf="showoperationStatusMessage">
     <textarea>{{showoperationStatusMessage}}</textarea>
   </div>
 </div>

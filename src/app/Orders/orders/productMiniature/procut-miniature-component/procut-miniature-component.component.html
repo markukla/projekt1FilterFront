@@ -3,7 +3,10 @@
   <p> Wybierz product klikając w na wybrany rysunek</p>
 
 <div *ngFor="let product of products">
-  <p> {{product.productType.code +';'+ product.productBottom.code + ';'+ product.productTop.code}}</p>
-  <img [src]="getDrawingUrl(product)"] (click)="selectProductAndNavigateBack(product)">
+  <p> {{'Typ produktu: '+product.productType.code + ' - '+ getNameInSelectedLanguage(product.productType.localizedNames)}}</p>
+  <p>{{'Typ wykończenia góry: '+  product.productTop.code +' - '+ getNameInSelectedLanguage(product.productTop.localizedNames)}}</p>
+  <p>{{'Typ wykończenia dna: '+product.productBottom.code + ' - '+ getNameInSelectedLanguage(product.productBottom.localizedNames)}}</p>
+
+  <img id="productMiniature" [src]="getDrawingUrl(product)" (click)="selectProductAndNavigateBack(product)">
 </div>
 </div>

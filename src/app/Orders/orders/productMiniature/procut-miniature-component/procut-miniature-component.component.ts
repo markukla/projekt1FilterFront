@@ -5,6 +5,8 @@ import {API_URL} from '../../../../Config/apiUrl';
 import {OrderBackendService} from '../../OrderServices/order-backend.service';
 import {Router} from '@angular/router';
 import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import LocalizedName from '../../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
+import {getSelectedLanguageFromNamesInAllLanguages} from '../../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
 
 @Component({
   selector: 'app-procut-miniature-component',
@@ -34,5 +36,8 @@ export class ProcutMiniatureComponentComponent implements OnInit {
     this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing.product = product;
     this.productMiniatureService.selectedProduct = product;
     this.router.navigateByUrl(this.authenticationService._previousUrl);
+  }
+  getNameInSelectedLanguage(localizedNames: LocalizedName[]): string {
+    return getSelectedLanguageFromNamesInAllLanguages(localizedNames, this.authenticationService.selectedLanguageCode);
   }
 }

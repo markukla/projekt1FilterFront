@@ -103,16 +103,16 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 
 
   async ngOnInit(): Promise<void> {
-    this.productHasBeenChanged = false;
-    this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
-    await this.getDataToDropdownLists();
     this.form = new FormGroup({
-      type: new FormControl(null, [Validators.required]),
-      top: new FormControl(null, [Validators.required]),
-      bottom: new FormControl(null, [Validators.required]),
+      type: new FormControl(null),
+      top: new FormControl(null),
+      bottom: new FormControl(null),
       businessPartner: new FormControl(null, Validators.required),
       productMaterial: new FormControl(null, Validators.required)
     }, {updateOn: 'change'});
+    this.productHasBeenChanged = false;
+    this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
+    await this.getDataToDropdownLists();
     await this.setOrderOperatiomModeBasingOnQueryParamtersAndInitPropertyValues();
   }
 
@@ -123,9 +123,27 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       this.selctedOrderId = orderId;
       if (mode === OrderOperationMode.CREATENEW ) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
+        if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
+          this.createOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
+        }
+        else {
+          this.createOrderDto = {
+            product: null,
+            businessPartner: null,
+            productMaterial: null,
+            date: null,
+            creator: null,
+            commentToOrder: null,
+            orderVersionNumber: null,
+            orderTotalNumber: null,
+            index: null,
+            orderName: null,
+            orderDetails: null,
+            orderNumber: null,
+          };
+        }
         this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
         this.setOrderNumbersinOrderTableForNewOrder();
-        this.createOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
         this.setFormControlValuesForUpdateOrShowDrawingMode(this.createOrderDto);
       } else if (mode === OrderOperationMode.UPDATE || mode === OrderOperationMode.SHOWDRAWING) {
         if (mode === OrderOperationMode.UPDATE) {
@@ -135,7 +153,12 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
           this.orderOperationMode = OrderOperationMode.SHOWDRAWING;
         }
         const selectedOrder = await this.backendService.findRecordById(orderId).toPromise();
-        this.createOrderDto = this.backendService.getCreateOrderDtoFromOrder(selectedOrder.body);
+        if (this.productMiniatureService.selectedProduct) {
+          this.createOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
+        }
+        else {
+          this.createOrderDto = this.backendService.getCreateOrderDtoFromOrder(selectedOrder.body);
+        }
         this.setFormControlValuesForUpdateOrShowDrawingMode(this.createOrderDto);
         this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
         // tslint:disable-next-line:max-line-length
@@ -161,34 +184,53 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
 setFormControlValuesForUpdateOrShowDrawingMode(createOrderDto: CreateOrderDto): void {
     if (createOrderDto) {
       console.error('in setFormControlValuesForUpdateOrShowDrawingMode');
-      this.businessPartner.setValue(createOrderDto.businessPartner);
-      this.productMaterial.setValue(createOrderDto.productMaterial);
-      this.selectedMaterial = this.productMaterial.value;
-      this.selectedPartner = this.businessPartner.value;
-      this.type.setValue(createOrderDto.product.productType);
-      this.selectedtType = this.type.value;
-      this.top.setValue(createOrderDto.product.productTop);
-      this.selectedTop = this.top.value;
-      this.bottom.setValue(createOrderDto.product.productBottom);
-      this.selectedBottom = this.bottom.value;
-      this.selectedProduct = createOrderDto.product;
+      if (createOrderDto.businessPartner) {
+        this.businessPartner.setValue(createOrderDto.businessPartner);
+        this.selectedPartner = this.businessPartner.value;
+      }
+      if (createOrderDto.productMaterial) {
+        this.productMaterial.setValue(createOrderDto.productMaterial);
+        this.selectedMaterial = this.productMaterial.value;
+      }
+      if (createOrderDto.product) {
+        this.type.setValue(createOrderDto.product.productType);
+        this.top.setValue(createOrderDto.product.productTop);
+        this.bottom.setValue(createOrderDto.product.productBottom);
+        this.selectedtType = this.type.value;
+        this.selectedTop = this.top.value;
+        this.selectedBottom = this.bottom.value;
+        this.selectedProduct = createOrderDto.product;
+      }
     }
   }
 
 setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
     if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
       this.submitButtonDescription = 'dalej';
-      this.materialConfirmed = false;
+      if (this.createOrderDto.productMaterial) {
+        this.materialConfirmed = true;
+        this.confirmOrCHangeMaterialButtonInfo = 'Zmień materiał worka';
+      }
+      else {
+        this.materialConfirmed = false;
+        this.confirmOrCHangeMaterialButtonInfo = 'zatwierdź materiał worka';
+      }
       if (!this.productMiniatureService.selectedProduct) {
         this.productConfirmed = false;
+        this.confirmOrCHangeProductParmatersButtonInfo = 'zatwierdź parametry produktu';
       }
       else {
         this.productConfirmed = true;
+        this.confirmOrCHangeProductParmatersButtonInfo = 'zmień parametry produktu';
       }
-      this.partnerConfirmed = false;
-      this.confirmOrCHangeProductParmatersButtonInfo = 'zatwierdź parametry produktu';
-      this.confirmOrCHangeMaterialButtonInfo = 'zatwierdź materiał worka';
-      this.confirmOrCHangePartnerButtonInfo = 'zatwierdż partnera handlowego';
+      if (this.createOrderDto.businessPartner) {
+        this.partnerConfirmed = true;
+        this.confirmOrCHangePartnerButtonInfo = 'zmień partnera handlowego';
+      }
+      else {
+        this.partnerConfirmed = false;
+        this.confirmOrCHangePartnerButtonInfo = 'zatwierdż partnera handlowego';
+      }
       this.onSubmitButtonInfo = 'dalej';
       this.operationModeEqualConfirmNewOrUpdate = false;
     }
@@ -476,10 +518,24 @@ confirmOrchangeProductButtonAction(): void {
     }
 
   }
-  async chooseProductByMiniatureButtonAction(): Promise<void> {
+   chooseProductByMiniatureButtonAction(): void{
     // tslint:disable-next-line:max-line-length
-    this.backendService.createOrderDtoForConfirmUpdateShowDrawing = await this.updateCreateOrderDtoForChooseDrawingByMiniature(this.createOrderDto);
-    await this.router.navigateByUrl('products/chooseByMiniature');
+    const createProductDto: CreateProductDto = {
+      productType: this.type.value,
+      productTop: this.top.value,
+      productBottom: this.bottom.value,
+    };
+    this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
+      // tslint:disable-next-line:max-line-length
+      this.productMiniatureService.selectedProduct = product.body;
+      // tslint:disable-next-line:max-line-length
+      this.backendService.createOrderDtoForConfirmUpdateShowDrawing =  this.updateCreateOrderDtoForChooseDrawingByMiniature(this.createOrderDto, product.body);
+      this.router.navigateByUrl('products/chooseByMiniature');
+    }, error => {
+      // tslint:disable-next-line:max-line-length
+      this.backendService.createOrderDtoForConfirmUpdateShowDrawing =  this.updateCreateOrderDtoForChooseDrawingByMiniature(this.createOrderDto, null);
+      this.router.navigateByUrl('products/chooseByMiniature');
+    });
   }
 
 confirmOrChangeMaterialButtonAction(): void {
@@ -645,18 +701,12 @@ listenToChangeProductEvent(event: any): void {
   getNameInSelectedLanguage(localizedNames: LocalizedName[]): string {
     return getSelectedLanguageFromNamesInAllLanguages(localizedNames, this.authenticationService.selectedLanguageCode);
   }
-  async updateCreateOrderDtoForChooseDrawingByMiniature(createOrderDto: CreateOrderDto): Promise<CreateOrderDto> {
-    const createProductDto: CreateProductDto = {
-      productType: this.type.value,
-      productTop: this.top.value,
-      productBottom: this.bottom.value,
-    };
-    const selectedProduct =  await this.productBackendService.getProductByTypeTopBottom(createProductDto).toPromise();
+  updateCreateOrderDtoForChooseDrawingByMiniature(createOrderDto: CreateOrderDto, product: Product): CreateOrderDto {
     const updatedCreateOrderDto = {
       ... createOrderDto,
       productMaterial: this.selectedMaterial,
       businessPartner: this.selectedPartner,
-      product: selectedProduct.body
+      product
     };
     return updatedCreateOrderDto;
   }
