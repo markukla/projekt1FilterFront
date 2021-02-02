@@ -34,6 +34,7 @@ import CreateProductDto from '../../../Products/ProductTypesAndClasses/product.d
 import {getBackendErrrorMesage} from '../../../helpers/errorHandlingFucntion/handleBackendError';
 import {navigateToUrlAfterTimout} from '../../../helpers/otherGeneralUseFunction/navigateToUrlAfterTimeOut';
 import {API_URL} from '../../../Config/apiUrl';
+import {ProductMiniatureService} from '../productMiniature/productMiniatureService/product-miniature.service';
 
 @Component({
   selector: 'app-order-drawing',
@@ -88,6 +89,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   @ViewChild('drawingAndTableContainer', {read: ElementRef}) drawingAndTableContainer: ElementRef;
   constructor(
     private orderBackendService: OrderBackendService,
+    private productMiniatureService: ProductMiniatureService,
     private orderTableService: OrderTableService,
     private renderer: Renderer2,
     private productBackendService: ProductBackendService,
@@ -158,6 +160,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   async initPropertiValuesToServicesValues(): Promise<void> {
     this.tableForm = this.tableFormService.tableForm;
+    this.productMiniatureService.productChangedByDrawingCliclingInUpdateOrConfirmModes = false;
     // tslint:disable-next-line:max-line-length
     if (this.orderOperationMode === OrderOperationMode.SHOWDRAWING) {
       const foundOrder = await this.orderBackendService.findRecordById(this.selectedOrderId).toPromise();
@@ -321,6 +324,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       if (this.orderOperationMode === OrderOperationMode.CREATENEW && this.allowSubmit === true) {
         this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
       } else if (this.orderOperationMode === OrderOperationMode.UPDATE && this.allowSubmit === true) {
+        this.productMiniatureService.productChangedByDrawingCliclingInUpdateOrConfirmModes = false;
         // tslint:disable-next-line:max-line-length
         this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${this.selectedOrderId}&mode=${OrderOperationMode.CONFIRMUPDATE}`);
       } else if (this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {

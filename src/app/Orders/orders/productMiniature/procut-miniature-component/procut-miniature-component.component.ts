@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ProductMiniatureService} from '../productMiniatureService/product-miniature.service';
 import Product from '../../../../Products/ProductTypesAndClasses/product.entity';
 import {API_URL} from '../../../../Config/apiUrl';
@@ -35,9 +35,18 @@ export class ProcutMiniatureComponentComponent implements OnInit {
   selectProductAndNavigateBack(product: Product): void {
     this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing.product = product;
     this.productMiniatureService.selectedProduct = product;
-    this.router.navigateByUrl(this.authenticationService._previousUrl);
+    const routeHistoryLastindex: number = this.authenticationService._routeHistory.length - 1;
+    const routeHistorySecondLastindex = this.authenticationService._routeHistory.length - 1;
+    if (this.authenticationService._routeHistory[routeHistoryLastindex].includes('orders/drawing')) {
+      this.router.navigateByUrl(this.authenticationService._routeHistory[routeHistorySecondLastindex]);
+    }
+    else {
+      this.router.navigateByUrl(this.authenticationService._previousUrl);
+    }
   }
   getNameInSelectedLanguage(localizedNames: LocalizedName[]): string {
     return getSelectedLanguageFromNamesInAllLanguages(localizedNames, this.authenticationService.selectedLanguageCode);
   }
+
+
 }

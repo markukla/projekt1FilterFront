@@ -7,6 +7,7 @@ import Product from '../../../../Products/ProductTypesAndClasses/product.entity'
 export class ProductMiniatureService {
   allProducts: Product[];
   selectedProduct: Product;
+  productChangedByDrawingCliclingInUpdateOrConfirmModes: boolean;
   constructor() {
   }
 }

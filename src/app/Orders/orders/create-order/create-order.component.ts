@@ -35,7 +35,6 @@ import OrderDetails from '../../OrdersTypesAndClasses/orderDetail';
 import LocalizedName from '../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
 import {getSelectedLanguageFromNamesInAllLanguages} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
 import {ProductMiniatureService} from '../productMiniature/productMiniatureService/product-miniature.service';
-import {ProcutMiniatureComponentComponent} from '../productMiniature/procut-miniature-component/procut-miniature-component.component';
 
 @Component({
   selector: 'app-create-order',
@@ -82,6 +81,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   allTypesForExistingProducts: ProductType[];
   allusedForCreatingProductProductTops: ProductTop[];
   allusedForCreatinfProductProductBottoms: ProductBottom [];
+  allProducts: Product[];
   @ViewChild('commentToOrder', {read: ElementRef}) commentToOrder: ElementRef;
   constructor(
     private backendService: OrderBackendService,
@@ -124,6 +124,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       if (mode === OrderOperationMode.CREATENEW ) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
         if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
+          this.productHasBeenChanged = true;
           this.createOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
         }
         else {
@@ -153,7 +154,8 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
           this.orderOperationMode = OrderOperationMode.SHOWDRAWING;
         }
         const selectedOrder = await this.backendService.findRecordById(orderId).toPromise();
-        if (this.productMiniatureService.selectedProduct) {
+        if (this.productMiniatureService.productChangedByDrawingCliclingInUpdateOrConfirmModes === true) {
+          this.productHasBeenChanged = true;
           this.createOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
         }
         else {
@@ -162,7 +164,7 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
         this.setFormControlValuesForUpdateOrShowDrawingMode(this.createOrderDto);
         this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
         // tslint:disable-next-line:max-line-length
-      } else if (mode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || mode === OrderOperationMode.CONFIRMUPDATE || OrderOperationMode.UPDATEDRAWING || mode === OrderOperationMode.CONFIRMNEW || OrderOperationMode.SHOWDRAWINGCONFIRM) {
+      } else if (mode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || mode === OrderOperationMode.CONFIRMUPDATE || mode === OrderOperationMode.UPDATEDRAWING || mode === OrderOperationMode.CONFIRMNEW || mode === OrderOperationMode.SHOWDRAWINGCONFIRM) {
         if (mode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT) {
           this.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
         } else if (mode === OrderOperationMode.UPDATEDRAWING) {
@@ -175,6 +177,9 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
           this.orderOperationMode = OrderOperationMode.SHOWDRAWINGCONFIRM;
         }
         this.createOrderDto = this.backendService.createOrderDtoForConfirmUpdateShowDrawing;
+        if (this.productMiniatureService.productChangedByDrawingCliclingInUpdateOrConfirmModes === true) {
+          this.productHasBeenChanged = true;
+        }
         this.setFormControlValuesForUpdateOrShowDrawingMode(this.createOrderDto);
         this.setInitStateofConfirmOrCHangeButtonsAndSubmitButton();
       }
@@ -186,19 +191,19 @@ setFormControlValuesForUpdateOrShowDrawingMode(createOrderDto: CreateOrderDto): 
       console.error('in setFormControlValuesForUpdateOrShowDrawingMode');
       if (createOrderDto.businessPartner) {
         this.businessPartner.setValue(createOrderDto.businessPartner);
-        this.selectedPartner = this.businessPartner.value;
+        this.selectedPartner = createOrderDto.businessPartner;
       }
       if (createOrderDto.productMaterial) {
         this.productMaterial.setValue(createOrderDto.productMaterial);
-        this.selectedMaterial = this.productMaterial.value;
+        this.selectedMaterial = createOrderDto.productMaterial;
       }
       if (createOrderDto.product) {
         this.type.setValue(createOrderDto.product.productType);
         this.top.setValue(createOrderDto.product.productTop);
         this.bottom.setValue(createOrderDto.product.productBottom);
-        this.selectedtType = this.type.value;
-        this.selectedTop = this.top.value;
-        this.selectedBottom = this.bottom.value;
+        this.selectedtType = createOrderDto.product.productType;
+        this.selectedTop = createOrderDto.product.productTop;
+        this.selectedBottom = createOrderDto.product.productBottom;
         this.selectedProduct = createOrderDto.product;
       }
     }
@@ -318,7 +323,7 @@ async getDataToDropdownLists(): Promise<void> {
   this.allusedForCreatingProductProductTops = [];
   this.allusedForCreatinfProductProductBottoms = [];
   const allProducts = await this.productBackendService.getRecords().toPromise();
-  this.productMiniatureService.allProducts = allProducts.body;
+  this.allProducts = allProducts.body;
   const allTypes = await this.typesBackendService.getRecords().toPromise();
   allProducts.body.forEach((product) => {
     this.allTypesForExistingProducts.push(product.productType);
@@ -445,13 +450,19 @@ cleanOperationMessage(): void {
     }, 2000 );
   }
 
-changeModeTOCreateNewIfrProductChangedInUpdateOrCOnfirmMode(): void {
-    // tslint:disable-next-line:max-line-length
-    if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMNEW) { } {
-      // tslint:disable-next-line:max-line-length
-      const productMaterialOrPartnerHastBeenCHanged: boolean = this.productConfirmed === false;
-      if (productMaterialOrPartnerHastBeenCHanged) {
+changeModeTOUpdatedWithChangedProductOrCreateNew(): void {
+    if (this.productHasBeenChanged === true) {
+      if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE) {
+        this.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
+        this.submitButtonDescription = 'dalej';
+      }
+      else if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
+        this.newOrderNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderNumber;
+        this.newOrderVersionNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderVersionNumber;
+        this.newOrderTotalNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderTotalNumber;
+        this.orderOperationMode = OrderOperationMode.CREATENEW;
+        this.submitButtonDescription = 'dalej';
       }
     }
   }
@@ -460,6 +471,7 @@ ngAfterContentChecked(): void {
     this.checkOperationMode();
     this.setUpdateModeOrPartnerLoggedValue();
     this.setAllowSubmit();
+    this.changeModeTOUpdatedWithChangedProductOrCreateNew();
     // this.changeModeTOCreateNewIfPartnerProductOrMaterialChangedInUpdateOrCOnfirmMode();
   }
 
@@ -519,22 +531,29 @@ confirmOrchangeProductButtonAction(): void {
 
   }
    chooseProductByMiniatureButtonAction(): void{
+     // tslint:disable-next-line:max-line-length
+     if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT ) {
+      this.productMiniatureService.productChangedByDrawingCliclingInUpdateOrConfirmModes = true;
+     }
+     this.productMiniatureService.allProducts = this.allProducts;
     // tslint:disable-next-line:max-line-length
-    const createProductDto: CreateProductDto = {
-      productType: this.type.value,
-      productTop: this.top.value,
-      productBottom: this.bottom.value,
+     const createProductDto: CreateProductDto = {
+      productType: this.selectedtType,
+      productTop: this.selectedTop,
+      productBottom: this.selectedBottom,
     };
-    this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
+     this.productBackendService.getProductByTypeTopBottom(createProductDto).subscribe((product) => {
       // tslint:disable-next-line:max-line-length
       this.productMiniatureService.selectedProduct = product.body;
       // tslint:disable-next-line:max-line-length
       this.backendService.createOrderDtoForConfirmUpdateShowDrawing =  this.updateCreateOrderDtoForChooseDrawingByMiniature(this.createOrderDto, product.body);
-      this.router.navigateByUrl('products/chooseByMiniature');
+      this.router.navigateByUrl('/products/chooseByMiniature');
+      console.log('navigated to on sucess');
     }, error => {
       // tslint:disable-next-line:max-line-length
       this.backendService.createOrderDtoForConfirmUpdateShowDrawing =  this.updateCreateOrderDtoForChooseDrawingByMiniature(this.createOrderDto, null);
-      this.router.navigateByUrl('products/chooseByMiniature');
+      this.router.navigateByUrl('/products/chooseByMiniature');
+      console.log('navigated to on error');
     });
   }
 
@@ -686,17 +705,10 @@ listenToChangeProductEvent(event: any): void {
     if (event.target.id === 'confirmOrchangeProduct' && updateOrConfirmMode) {
       this.productHasBeenChanged = true;
       console.error(`this.productHasBeenChanged = ${this.productHasBeenChanged}`);
-      this.submitButtonDescription = 'dalej';
-      if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
-        this.newOrderNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderNumber;
-        this.newOrderVersionNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderVersionNumber;
-        this.newOrderTotalNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderTotalNumber;
-        this.orderOperationMode = OrderOperationMode.CREATENEW;
-      }
-      if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE) {
-        this.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
-      }
     }
+  }
+  setProductHasBennChangedToTrue(): void {
+    this.productHasBeenChanged = true;
   }
   getNameInSelectedLanguage(localizedNames: LocalizedName[]): string {
     return getSelectedLanguageFromNamesInAllLanguages(localizedNames, this.authenticationService.selectedLanguageCode);

@@ -31,6 +31,14 @@
       </div>
       <button type="button" class="confirmOrChangeButton"
               (click)="changeOrConfirmPartnerButtonAction();"> {{confirmOrCHangePartnerButtonInfo}}  </button>
+
+      <div *ngIf="!this.partnerConfirmed"
+           class="alert alert-danger">
+
+        <div class="validatorInfo">
+          Wybranie i zatwierdzenie partnera handlowego jest wymagane
+        </div>
+      </div>
     </div>
 
     <div *ngIf="productConfirmed && type.value && top.value && bottom.value">
@@ -45,7 +53,7 @@
     </div>
     <div *ngIf="!productConfirmed">
       <p> naciśnij przycisk aby wybrać product na podstawie rysunku </p>
-      <button (click)="chooseProductByMiniatureButtonAction();"> Wybierz Product klikając na rysunek</button>
+      <button type="button" (click)="chooseProductByMiniatureButtonAction();"> Wybierz Product klikając na rysunek</button>
       <p> Lub <br>
         Wybierz produkt określając parametry produktu
       </p>
@@ -106,6 +114,13 @@
     </div>
     <button type="button" class="confirmOrChangeButton"
             (click)="confirmOrChangeMaterialButtonAction();"> {{confirmOrCHangeMaterialButtonInfo}}  </button>
+    <div *ngIf="!this.materialConfirmed"
+         class="alert alert-danger">
+
+      <div class="validatorInfo">
+        Wybranie i zatwierdzenie materiału jest wymagane
+      </div>
+    </div>
     <div class="addButon">
       <div *ngIf="operationModeEqualConfirmNewOrUpdate">
         <p> Zmień wymiary rysunku</p> <br>

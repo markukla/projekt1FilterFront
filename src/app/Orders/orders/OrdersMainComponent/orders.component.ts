@@ -11,6 +11,7 @@ import Order from '../../OrdersTypesAndClasses/orderEntity';
 import {BusinesPartnerBackendService} from '../../../BusinessPartners/business-partners/BusinessPartnerServices/busines-partner-backend.service';
 import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
+import {ProductMiniatureService} from '../productMiniature/productMiniatureService/product-miniature.service';
 
 @Component({
   selector: 'app-orders',
@@ -36,6 +37,7 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
 
   constructor(public tableService: GeneralTableService,
               public businessPartnerbackendService: BusinesPartnerBackendService,
+              private productMiniatureService: ProductMiniatureService,
               public backendService: OrderBackendService,
               private router: Router,
               private route: ActivatedRoute,
@@ -111,6 +113,8 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
 
   updateSelectedRecord(selectedId: number): void {
     this.backendService.createOrderDtoForConfirmUpdateShowDrawing = null;
+    this.productMiniatureService.selectedProduct = null;
+    this.productMiniatureService.productChangedByDrawingCliclingInUpdateOrConfirmModes = false;
     this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?orderId=${selectedId}&mode=${OrderOperationMode.UPDATE}`);
   }
 
@@ -124,7 +128,9 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   }
 
   createNewOrder(): void {
+    this.productMiniatureService.productChangedByDrawingCliclingInUpdateOrConfirmModes = false;
     this.backendService.createOrderDtoForConfirmUpdateShowDrawing = null;
+    this.productMiniatureService.selectedProduct = null;
     this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CREATENEW}`);
   }
 }
