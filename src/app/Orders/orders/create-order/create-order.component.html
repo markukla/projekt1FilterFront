@@ -139,9 +139,13 @@
     </div>
 
   </form>
-  <div class="showOperationStatusContainer" *ngIf="showoperationStatusMessage">
-    <textarea>{{showoperationStatusMessage}}</textarea>
+  <div *ngIf="operationFailerStatusMessage" class="alert-danger">
+    <p>{{operationFailerStatusMessage}}</p>
   </div>
+  <div *ngIf="operationSuccessStatusMessage" class="alert-success">
+    <p>{{operationSuccessStatusMessage}}</p>
+  </div>
+
 </div>
 
 

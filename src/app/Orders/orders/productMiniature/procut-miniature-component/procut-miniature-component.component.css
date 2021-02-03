@@ -1,0 +1,14 @@
+#productMiniatureContainer {
+  position: absolute;
+  top: 20%;
+  left: 30%;
+
+
+}
+#productMiniature {
+  width: 300px;
+  height: 300px;
+}
+#drawingAndDescriptionContainer {
+  border: 1px solid black;
+}

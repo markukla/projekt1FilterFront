@@ -1,5 +1,5 @@
 <div *ngIf="showHeaderIfNoDrawing()===true">
-<div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.admin">
+  <div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.admin">
   <span>
     <a [routerLink]="['/orders']" routerLinkActive="active"> Zamówienia</a>
   <a [routerLink]="['/businessPartners']" routerLinkActive="active"> Partnerzy</a>
@@ -13,8 +13,8 @@
      <a [routerLink]="['/login']" routerLinkActive="active"> Wyloguj</a>
   </span>
 
-</div>
-<div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.editor">
+  </div>
+  <div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.editor">
   <span>
      <a [routerLink]="['/orders']" routerLinkActive="active"> Zamówienia</a>
     <a [routerLink]="['/businessPartners']" routerLinkActive="active"> Partnerzy</a>
@@ -22,8 +22,8 @@
     <a [routerLink]="['/login']" routerLinkActive="active"> Wyloguj</a>
   </span>
 
-</div>
-<div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.partner">
+  </div>
+  <div *ngIf="this.authenticationService.userRole && this.authenticationService.userRole === this.partner">
   <span>
      <a [routerLink]="['/orders']" routerLinkActive="active"> Zamówienia</a>
     <a [routerLink]="['/changePasswordByLoggedUser']" routerLinkActive="active"> Zmień swoje hasło</a>
@@ -31,5 +31,5 @@
   </span>
 
 
-</div>
+  </div>
 </div>

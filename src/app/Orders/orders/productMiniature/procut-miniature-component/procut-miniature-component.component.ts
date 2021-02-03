@@ -49,4 +49,6 @@ export class ProcutMiniatureComponentComponent implements OnInit {
   }
 
 
+  makePictureLarger(): void {
+  }
 }

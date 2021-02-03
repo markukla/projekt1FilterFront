@@ -65,7 +65,9 @@ export class OrderBackendService {
     const updateUrl = `${this.rootURL + this.endpointUrl}/currents/${id}/newVersion`;
     return this.http.post<Order>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
+
       tap((record) => {
+        const recordbody = record.body;
         this.tableService.updateTableRecord(Number(id), this.createOrderTableCellFromOrderEntity(record.body));
       }));
   }

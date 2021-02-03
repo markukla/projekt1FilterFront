@@ -42,6 +42,8 @@ export class CreateProductComponent implements OnInit, AfterContentChecked, Afte
   selectBottomClicked = false;
   changeDrawingButtonDescription: string;
   productTypeOfProductToUpdate: ProductType;
+  operationSuccessStatusMessage: string;
+  operationFailerStatusMessage: string;
   @ViewChild('selectType', {read: ElementRef}) selectTypeElement: ElementRef;
   @ViewChild('selectTop', {read: ElementRef}) selectTopElement: ElementRef;
   @ViewChild('selectBottom', {read: ElementRef}) selectBottomElement: ElementRef;

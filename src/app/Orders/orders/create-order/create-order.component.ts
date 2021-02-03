@@ -35,6 +35,7 @@ import OrderDetails from '../../OrdersTypesAndClasses/orderDetail';
 import LocalizedName from '../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
 import {getSelectedLanguageFromNamesInAllLanguages} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
 import {ProductMiniatureService} from '../productMiniature/productMiniatureService/product-miniature.service';
+import {navigateToUrlAfterTimout} from '../../../helpers/otherGeneralUseFunction/navigateToUrlAfterTimeOut';
 
 @Component({
   selector: 'app-create-order',
@@ -82,6 +83,8 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   allusedForCreatingProductProductTops: ProductTop[];
   allusedForCreatinfProductProductBottoms: ProductBottom [];
   allProducts: Product[];
+  operationSuccessStatusMessage: string;
+  operationFailerStatusMessage: string;
   @ViewChild('commentToOrder', {read: ElementRef}) commentToOrder: ElementRef;
   constructor(
     private backendService: OrderBackendService,
@@ -305,13 +308,14 @@ get productMaterial() {
 
 async getDataToDropdownLists(): Promise<void> {
   if (this.isPartner === false) {
-  }
-  {
     this.partnersBackendService.getAllRecords().subscribe((records) => {
       this.allParntersToSelect = records.body;
     }, error => {
       console.log('error during requesting partners from db');
     });
+  }
+  else if(this.isPartner === true) {
+    this.selectedPartner = this.authenticationService.user;
   }
   this.materialBackendService.getRecords().subscribe((records) => {
     this.allMaterialsToSelect = records.body;
@@ -395,10 +399,11 @@ onSubmit(): void {
         this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
         this.backendService.addRecords(this.createOrderDto).subscribe((order) => {
-            this.operationMessage = 'dodano nowe zamówienie';
+            this.operationSuccessStatusMessage = 'dodano nowe zamówienie';
+            navigateToUrlAfterTimout('/orders', this.router, 2000);
           },
           error => {
-            this.operationMessage = 'nie udało się dodać nowego zamówienia';
+            this.operationFailerStatusMessage = 'nie udało się dodać nowego zamówienia';
 
           });
       }
@@ -408,10 +413,12 @@ onSubmit(): void {
         const updatedCreateOrderDto = this.updateCreateOrderDto(this.createOrderDto);
         this.createOrderDto = updatedCreateOrderDto;
         this.backendService.updateRecordById(String(this.selctedOrderId), this.createOrderDto).subscribe((order) => {
-            this.operationMessage = 'zaktualizowano zamówinie';
+            this.operationSuccessStatusMessage = 'zaktualizowano zamówinie';
+            navigateToUrlAfterTimout('/orders', this.router, 2000);
           },
           error => {
-            this.operationMessage = 'nie udało się zaktualizować zamówienia';
+          console.log(error);
+          this.operationFailerStatusMessage = 'nie udało się zaktualizować zamówienia';
           });
       }
       // tslint:disable-next-line:max-line-length

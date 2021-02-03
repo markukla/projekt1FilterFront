@@ -174,7 +174,9 @@ export class TableFormServiceService {
     if (createOrderDto && createOrderDto.orderDetails) {
       this.workingTemperature.setValue(createOrderDto.orderDetails.workingTemperature);
       this.workingSide.setValue(createOrderDto.orderDetails.workingSide);
-      this.antiEelectrostatic.setValue(createOrderDto.orderDetails.antiEelectrostatic);
+      if (createOrderDto.orderDetails.antiEelectrostatic) {
+        this.antiEelectrostatic.setValue(createOrderDto.orderDetails.antiEelectrostatic);
+      }
       if (createOrderDto.orderDetails.dimensions) {
         const dimensions = createOrderDto.orderDetails.dimensions;
         dimensions.forEach((dimension) => {
