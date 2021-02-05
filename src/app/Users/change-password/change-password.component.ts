@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UsersTableService} from '../UserServices/users-table.service';
 import CHangePasswordByAdminDto from '../users/userTypes/changePasswordDto';
 import {UserHasAdminRole} from '../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
+import {GeneralTableService} from "../../util/GeneralTableService/general-table.service";
 
 @Component({
   selector: 'app-change-password',
@@ -19,7 +20,7 @@ export class ChangePasswordComponent implements OnInit {
 
   constructor(
     private userBackendService: UserBackendService,
-    private userTableService: UsersTableService,
+    private userTableService: GeneralTableService,
     public userValidatorService: UserValidatorService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
