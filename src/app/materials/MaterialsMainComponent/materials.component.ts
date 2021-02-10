@@ -19,6 +19,7 @@ import {NgModel} from '@angular/forms';
 import {MaterialTableService} from '../MaterialServices/material-table.service';
 import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
+import {ConfirmDeleteServiceService} from "../../ConfirmDelete/confirm-delete-service.service";
 
 @Component({
   selector: 'app-materials',
@@ -39,6 +40,9 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   updateButtonInfo;
   materialId: number;
   recordNumbers: number;
+  showConfirmDeleteWindow: boolean;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
 
 
   constructor(public materialTableService: GeneralTableService,
@@ -113,6 +117,7 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
       console.log(`m.materialCode= ${m.materialCode}`);
     }
   });*/
+
   getRecords(): void {
     this.materialBackendService.getRecords().subscribe((materials) => {
       this.materialTableService.records.length = 0;
@@ -123,12 +128,22 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
 
   }
 
-  deleteSelectedRecord(materialId: number): void {
-    this.materialBackendService.deleteRecordById(String(materialId)).subscribe((response) => {
-      this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
-    }, error => {
-      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
-    });
+  selectRecordtoDeleteAndShowConfirmDeleteWindow(materialId: number): void {
+    this.showConfirmDeleteWindow = true;
+    this.materialTableService.selectedId = materialId;
+  }
+  deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
+    if (deleteConfirmed === true) {
+      this.materialBackendService.deleteRecordById(String(recordId)).subscribe((response) => {
+        this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
+        this.materialTableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+      }, error => {
+        this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+        this.materialTableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+      });
+    }
   }
 
   updateSelectedRecord(materialId: number): void {

@@ -80,4 +80,32 @@
   width: 40px;
   height: 40px;
 }
+.confirmOrWarnWindow {
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid darkred;
+  padding: 10px;
+  background-color: lightgray;
+
+}
+#confirmDeleteButton {
+  position: absolute;
+  left: 30%;
+  bottom: 2%;
+}
+#resignFromDeletingButton {
+  position: absolute;
+  right: 30%;
+  bottom: 2%;
+}
+.operationStatusMessage {
+  position: absolute;
+  z-index: 1000;
+  width:100%;
+  bottom: 2%
+
+}
 
