@@ -82,7 +82,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   dimensionRoleNoIndex: DimensionRoleEnum = DimensionRoleEnum.NOINDEXDIMENSION;
   dragable = true;
   createDimensionClicked = false;
-
+  userInputErrorMessages: string[] = [];
+  showUserInputErrorWindow = false;
   @ViewChild('drawingContainer', {read: ElementRef}) drawing: ElementRef;
   @ViewChildren('.inputDivHorizontal', {read: HTMLElement}) inputDivs: HTMLElement[];
   @ViewChild('mainContainer', {read: ElementRef}) mainContainer: ElementRef;
@@ -318,9 +319,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   onSubmit(): void {
     this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDtoToSaveInDatabase();
-    this.checkIfAllFieldsValidInCreateOrderDto(this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing);
+    const allowSubmit = this.checkIfAllFieldsValidInCreateOrderDto(this.orderBackendService.createOrderDtoForConfirmUpdateShowDrawing);
     // tslint:disable-next-line:max-line-length
-    if (this.allowSubmit === true) {
+    if (allowSubmit === true) {
       if (this.orderOperationMode === OrderOperationMode.CREATENEW && this.allowSubmit === true) {
         this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
       } else if (this.orderOperationMode === OrderOperationMode.UPDATE && this.allowSubmit === true) {
@@ -347,7 +348,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         this.router.navigateByUrl(`orders/addOrUpdateOrConfirmOrder?mode=${OrderOperationMode.CONFIRMNEW}`);
       }
     } else {
-      console.error(this.submitNotAllowedMessage);
     }
 
   }
@@ -369,7 +369,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
      this.enableOrDisableDraggingInputsEvent();
     /* in this method i create all drawing which does not require data from database but already have it stored in service*/
     // tslint:disable-next-line:max-line-length
-    if(this.orderOperationMode && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWPRODUCT) {
+     if(this.orderOperationMode && this.orderOperationMode !== OrderOperationMode.SHOWDRAWING && this.orderOperationMode !== OrderOperationMode.SHOWPRODUCT) {
       // tslint:disable-next-line:max-line-length
       if (this.orderOperationMode === OrderOperationMode.CREATENEW || this.orderOperationMode === OrderOperationMode.UPDATEWITHCHANGEDPRODUCT || this.orderOperationMode === OrderOperationMode.UPDATEPRODUCT || this.orderOperationMode === OrderOperationMode.CREATENEWPRODUCT) {
         this.createDimensionInputsBasingOnProductData();
@@ -464,27 +464,34 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     return orderDtoToSaveInDatabae;
   }
 
-  checkIfAllFieldsValidInCreateOrderDto(createOrderDto: CreateOrderDto): void {
-    this.submitNotAllowedMessage = '';
-    this.allowSubmit = true;
-    const dimensions: Dimension[] = createOrderDto.orderDetails.dimensions;
-    dimensions.forEach((dimension) => {
+  checkIfAllFieldsValidInCreateOrderDto(createOrderDto: CreateOrderDto): boolean {
+   let allowSubmit = true;
+   const dimensions: Dimension[] = createOrderDto.orderDetails.dimensions;
+    const notAllDimensionValueEnteredMessage = 'Prosze podać wartości wszystkich wymiarów';
+    let foundNotFilledDimensions = false;
+   dimensions.forEach((dimension) => {
       if (!dimension.dimensionvalue) {
-        this.allowSubmit = false;
-        this.submitNotAllowedMessage = 'Prosze podać wartości wszystkich wymiarów';
+        allowSubmit = false;
+        foundNotFilledDimensions = true;
       }
     });
-    if (!this.tableFormService.workingTemperature.value) {
-      this.allowSubmit = false;
-      this.submitNotAllowedMessage = this.submitNotAllowedMessage + '  , Prosze podać wartość temperatury pracy';
+   if (foundNotFilledDimensions === true) {
+     this.userInputErrorMessages.push(notAllDimensionValueEnteredMessage);
+   }
+   if (!this.tableFormService.workingTemperature.value) {
+      allowSubmit = false;
+      const foultMessage = 'Prosze podać wartość temperatury pracy';
+      this.userInputErrorMessages.push(foultMessage);
     }
-    if (!this.tableFormService.workingSide.value) {
-      this.allowSubmit = false;
-      this.submitNotAllowedMessage = this.submitNotAllowedMessage + '  , Prosze zaznaczyć stronę pracującą';
+   if(!this.tableFormService.workingSide.value) {
+      allowSubmit = false;
+      const foultMessage = 'Prosze zaznaczyć stronę pracującą';
+      this.userInputErrorMessages.push(foultMessage);
     }
-    if (this.allowSubmit === false) {
-      window.alert(this.submitNotAllowedMessage);
+   if (this.userInputErrorMessages.length > 0) {
+     this.showUserInputErrorWindow = true;
     }
+   return allowSubmit;
 
   }
 
@@ -520,6 +527,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   /* below all methods moved from create-product-drawing*/
+
 
   onSubmitForInputCreating(): void {
     this.setIdValue();
@@ -685,8 +693,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   validateCreateProductDtoBeforeSavingInDatab(createProductDto: CreateProductDto): boolean {
     const inputs = createProductDto.dimensionsTextFieldInfo;
     let createProductDtoValid: boolean = true;
-    const failerMessages: string [] = [];
-    let allFolutsmessage: string = '';
     if (inputs) {
       const collectionOfFirtstIndexDiMensionsInCreateProductDto: string[] = [];
       const collectionOfSecondtIndexDiMensionsInCreateProductDto: string [] = [];
@@ -706,35 +712,33 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
           // tslint:disable-next-line:max-line-length
           /* if index of current element in array is not equal index od its first occurence in array (indexOf returns first occurence) so it is duplicated*/
           const failMassage = `Wszystkie wymiary muszą być unikalne, Wymiar ${input} został dodany więcej niż jeden raz`;
-          failerMessages.push(failMassage);
+          this.userInputErrorMessages.push(failMassage);
         }
       });
       if (collectionOfFirtstIndexDiMensionsInCreateProductDto.length === 0) {
         createProductDtoValid = false;
         const failMessage = 'Proszę dodać wymiar będący pierwszym wymiarem indeksu';
-        failerMessages.push(failMessage);
+        this.userInputErrorMessages.push(failMessage);
       }
       if (collectionOfFirtstIndexDiMensionsInCreateProductDto.length > 1) {
         createProductDtoValid = false;
         const failMessage = 'Dodałeś więcej niż jeden wymiar będący pierwszym wymiarem indeksu. Możesz dodać tylko jeden ';
-        failerMessages.push(failMessage);
+        this.userInputErrorMessages.push(failMessage);
       }
       if (collectionOfSecondtIndexDiMensionsInCreateProductDto.length === 0) {
         createProductDtoValid = false;
         const failMessage = 'Proszę dodać wymiar będący drugim wymiarem do indeksu';
-        failerMessages.push(failMessage);
+        this.userInputErrorMessages.push(failMessage);
       }
       if (collectionOfSecondtIndexDiMensionsInCreateProductDto.length > 1) {
         createProductDtoValid = false;
         const failMessage = 'Dodałeś więcej niż jeden wymiar będący drugim wymiarem indeksu. Możesz dodać tylko jeden ';
-        failerMessages.push(failMessage);
+        this.userInputErrorMessages.push(failMessage);
       }
     }
-    if (failerMessages.length > 0) {
-      failerMessages.forEach((message) => {
-        allFolutsmessage = allFolutsmessage + ' ,' + message;
-      });
-      window.alert(allFolutsmessage);
+    if (this.userInputErrorMessages.length >0) {
+      createProductDtoValid = false;
+      this.showUserInputErrorWindow = true;
     }
     return createProductDtoValid;
   }
@@ -863,5 +867,10 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   }
   printDrawing(): void {
     window.print();
+  }
+
+  hideErrorMessagewindow(confirmButtonEvent: boolean): void {
+    this.showUserInputErrorWindow = !confirmButtonEvent;
+    this.userInputErrorMessages.length = 0;
   }
 }

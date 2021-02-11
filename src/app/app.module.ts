@@ -68,6 +68,7 @@ import { ChangePasswordForLoggedUserComponent } from './change-password-componen
 import { ProcutMiniatureComponentComponent } from './Orders/orders/productMiniature/procut-miniature-component/procut-miniature-component.component';
 import { ConfirmDeleteComponent } from './ConfirmDelete/confirm-delete/confirm-delete.component';
 import { OperationStatusComponent } from './OperationStatusComponent/operation-status/operation-status.component';
+import { ValidationErrorMessageComponent } from './ValidationMessage/validation-error-message/validation-error-message.component';
 
 
 
@@ -129,7 +130,8 @@ import { OperationStatusComponent } from './OperationStatusComponent/operation-s
     ChangePasswordForLoggedUserComponent,
     ProcutMiniatureComponentComponent,
     ConfirmDeleteComponent,
-    OperationStatusComponent
+    OperationStatusComponent,
+    ValidationErrorMessageComponent
     ],
   imports: [
     BrowserModule,

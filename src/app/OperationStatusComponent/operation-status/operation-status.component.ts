@@ -27,7 +27,7 @@ export class OperationStatusComponent implements OnInit,AfterContentChecked {
       if (this.operationFailerStatusMessage) {
         this.operationFailerStatusMessage = null;
       }
-    }, 3000);
+    }, 6000);
   }
 
 }

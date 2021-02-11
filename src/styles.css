@@ -104,8 +104,12 @@
 .operationStatusMessage {
   position: absolute;
   z-index: 1000;
+  background-color: darkgray;
   width:100%;
-  bottom: 2%
+  height: 10%;
+  top: 2%
 
 }
+
+
 

@@ -9,6 +9,7 @@
 </div>
 
 <div class="materialComponent">
+  <app-operation-status [operationFailerStatusMessage]="operationFailerStatusMessage" [operationSuccessStatusMessage]="operationSuccessStatusMessage"> </app-operation-status>
   <app-confirm-delete [showConfirmDeleteWindow]="showConfirmDeleteWindow"  *ngIf="showConfirmDeleteWindow === true" (deleteConfirmedEvent)="deleteSelectedRecordFromDatabase(this.materialTableService.selectedId, $event )"> </app-confirm-delete>
 
 <table class="table table-striped border mt-1">
@@ -44,8 +45,6 @@
   </tr>
   </tbody>
 </table>
-  <app-operation-status [operationFailerStatusMessage]="operationFailerStatusMessage" [operationSuccessStatusMessage]="operationSuccessStatusMessage"> </app-operation-status>
-
 </div>
 
 

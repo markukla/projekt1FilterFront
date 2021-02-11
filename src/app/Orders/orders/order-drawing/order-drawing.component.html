@@ -1,4 +1,9 @@
 <div id="mainCointener" class="mainContainerClass" #mainContainer>
+
+ <div *ngIf="this.showUserInputErrorWindow === true" id="validateUserInputsErrorsContainer">
+   <app-validation-error-message [userInputErrorsMessages]="userInputErrorMessages" (confirmButtonClickedEvent)="hideErrorMessagewindow($event)"></app-validation-error-message>
+ </div>
+
   <div id="drawingAndTableContainer" #drawingAndTableContainer class="drawingAndTableContainer">
     <div id="drawingContainer" #drawingContainer class="drawingContainer">
       <!--[style.background-image]="'url('+bgImageVariable+')'-->
