@@ -14,12 +14,10 @@ import {MaterialBackendService} from '../MaterialServices/material-backend.servi
 
 import {Material} from './material';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
-import {NavigationEvent} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-view-model';
-import {NgModel} from '@angular/forms';
-import {MaterialTableService} from '../MaterialServices/material-table.service';
 import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
-import {ConfirmDeleteServiceService} from "../../ConfirmDelete/confirm-delete-service.service";
+
+import {OperationStatusServiceService} from '../../OperationStatusComponent/operation-status/operation-status-service.service';
 
 @Component({
   selector: 'app-materials',
@@ -45,11 +43,13 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   operationSuccessStatusMessage: string;
 
 
-  constructor(public materialTableService: GeneralTableService,
-              public materialBackendService: MaterialBackendService,
+  constructor(public tableService: GeneralTableService,
+              public backendService: MaterialBackendService,
               private searChService: SearchService,
               private router: Router,
-              private activedIdParam: ActivatedRoute) {
+              private activedIdParam: ActivatedRoute,
+              public statusService: OperationStatusServiceService
+  ) {
   }
 
   /*
@@ -73,7 +73,7 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
     }*/
   ngOnInit(): void {
     this.getRecords();
-    this.materialId = this.materialTableService.selectedId;
+    this.materialId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
     this.updateButtonInfo = 'modyfikuj dane';
   }
@@ -119,35 +119,43 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   });*/
 
   getRecords(): void {
-    this.materialBackendService.getRecords().subscribe((materials) => {
-      this.materialTableService.records.length = 0;
-      this.materialTableService.records = materials.body;
-      this.materials = this.materialTableService.getRecords();
-      this.searChService.orginalArrayCopy = [...this.materialTableService.getRecords()];
+    this.backendService.getRecords().subscribe((materials) => {
+      this.tableService.records.length = 0;
+      this.tableService.records = materials.body;
+      this.materials = this.tableService.getRecords();
+      this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
     });
 
   }
 
   selectRecordtoDeleteAndShowConfirmDeleteWindow(materialId: number): void {
+    this.statusService.resetOperationStatus([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
     this.showConfirmDeleteWindow = true;
-    this.materialTableService.selectedId = materialId;
+    this.tableService.selectedId = materialId;
   }
   deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
     if (deleteConfirmed === true) {
-      this.materialBackendService.deleteRecordById(String(recordId)).subscribe((response) => {
+      this.backendService.deleteRecordById(String(recordId)).subscribe((response) => {
         this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
-        this.materialTableService.selectedId = null;
+        this.tableService.selectedId = null;
         this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
       }, error => {
         this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
-        this.materialTableService.selectedId = null;
+        this.tableService.selectedId = null;
         this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
       });
+    }
+    else {
+      this.showConfirmDeleteWindow = false;
     }
   }
 
   updateSelectedRecord(materialId: number): void {
-    this.materialTableService.selectedId = materialId;
+    this.tableService.selectedId = materialId;
     this.router.navigateByUrl('/materials/update');
   }
 }

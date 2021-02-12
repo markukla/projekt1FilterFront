@@ -10,6 +10,7 @@ import {UserHasAdminRole, UserHasEditorRoleButIsNotAdmin} from '../../helpers/ot
 import BlockUserDto from '../users/userTypes/blockUseDto';
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
+import {OperationStatusServiceService} from '../../OperationStatusComponent/operation-status/operation-status-service.service';
 
 @Component({
   selector: 'app-users',
@@ -29,20 +30,24 @@ export class UsersComponent implements OnInit, AfterContentChecked {
   updateButtonInfo;
   selectedId: number;
   recordNumbers: number;
+  showConfirmDeleteWindow: boolean;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
 
 
 
-  constructor(public userTableService: GeneralTableService,
-              public userBackendService: UserBackendService,
+  constructor(public tableService: GeneralTableService,
+              public backendService: UserBackendService,
               public searChService: SearchService,
               private router: Router,
-              private activedIdParam: ActivatedRoute) {
+              private activedIdParam: ActivatedRoute,
+              public statusService: OperationStatusServiceService) {
     this.admins = [];
     this.editors = [];
   }
   ngOnInit(): void {
     this.getRecords();
-    this.selectedId = this.userTableService.selectedId;
+    this.selectedId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
     this.updateButtonInfo = 'modyfikuj dane';
   }
@@ -81,13 +86,13 @@ else {
     }
   }
   getRecords(): void {
-    this.userBackendService.getAllPriviligedUsers().subscribe((users) => {
-      this.userTableService.records.length = 0;
-      this.userTableService.records = users.body;
-      this.allPriviligedUsers = this.userTableService.getRecords();
+    this.backendService.getAllPriviligedUsers().subscribe((users) => {
+      this.tableService.records.length = 0;
+      this.tableService.records = users.body;
+      this.allPriviligedUsers = this.tableService.getRecords();
       this.updateAdminsTable();
       this.updateEditorsTable();
-      this.searChService.orginalArrayCopy = [...this.userTableService.getRecords()];
+      this.searChService.orginalArrayCopy = [...this.tableService.getRecords()];
     });
 
   }
@@ -108,16 +113,33 @@ else {
     });
   }
 
-  deleteSelectedRecord(materialId: number): void {
-    this.userBackendService.deleteUserlById(String(materialId)).subscribe((response) => {
-      this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
-    }, error => {
-      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
-    });
+  selectRecordtoDeleteAndShowConfirmDeleteWindow(materialId: number): void {
+    this.statusService.resetOperationStatus([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+    this.showConfirmDeleteWindow = true;
+    this.tableService.selectedId = materialId;
   }
-
+  deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
+    if (deleteConfirmed === true) {
+      this.backendService.deleteUserlById(String(recordId)).subscribe((response) => {
+        this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      }, error => {
+        this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      });
+    }
+    else {
+      this.showConfirmDeleteWindow = false;
+    }
+  }
   updateSelectedRecord(userId: number): void {
-    this.userTableService.selectedId = userId;
+    this.tableService.selectedId = userId;
     this.router.navigateByUrl('/users/update');
   }
   blockOrUnblockUser(user: User): void {
@@ -133,7 +155,7 @@ else {
       active: updatedActiveStatus
     };
     // tslint:disable-next-line:no-shadowed-variable
-    this.userBackendService.blodkUserById(String(user.id), blockUserDto).subscribe((user) => {
+    this.backendService.blodkUserById(String(user.id), blockUserDto).subscribe((user) => {
       if (user.body.active) {
         this.operationStatusMessage = 'uzytkownik został odblokowany';
       }
@@ -143,7 +165,7 @@ else {
     });
   }
   changePaswordForUserId(id: number): void {
-    this.userTableService.selectedId = id;
+    this.tableService.selectedId = id;
     this.router.navigateByUrl('/users/changePassword');
   }
 

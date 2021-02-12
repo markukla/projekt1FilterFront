@@ -9,7 +9,8 @@
 
 
 <div class="materialComponent">
-
+  <app-operation-status [operationFailerStatusMessage]="operationFailerStatusMessage" [operationSuccessStatusMessage]="operationSuccessStatusMessage"> </app-operation-status>
+  <app-confirm-delete [showConfirmDeleteWindow]="showConfirmDeleteWindow"  *ngIf="showConfirmDeleteWindow === true" (deleteConfirmedEvent)="deleteSelectedRecordFromDatabase(this.tableService.selectedId, $event )"> </app-confirm-delete>
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
@@ -51,7 +52,7 @@
         <button class="updateButton" (click)="updateSelectedRecord(record.id);" [title]="updateButtonInfo">u</button>
         <button class="showDrawing" (click)="showDrawing(record.id)"> Zobacz Rysunek</button>
         <button class="showOrderHistory" (click)="showOrderHistory(record.id)">Zobacz Historię</button>
-        <button  class="deleteButton" (click)="this.deleteSelectedRecord(record.id)" [title]="deleteButtonInfo" >x</button>
+        <button  class="deleteButton" (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(record.id)" [title]="deleteButtonInfo" >x</button>
       </td>
 
     </tr>

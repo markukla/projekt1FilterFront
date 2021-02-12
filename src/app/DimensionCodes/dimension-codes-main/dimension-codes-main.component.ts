@@ -13,6 +13,7 @@ import {CreateDimensionCodeComponent} from '../create-dimension-code/create-dime
 import OperationModeEnum from '../../util/OperationModeEnum';
 import {SearchService} from '../../helpers/directive/SearchDirective/search.service';
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
+import {OperationStatusServiceService} from '../../OperationStatusComponent/operation-status/operation-status-service.service';
 
 @Component({
   selector: 'app-dimension-codes-main',
@@ -33,12 +34,16 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
   selectedLanguageLang: string;
   recordNumbers: number;
   languages: Language[]; // it will be obtained from database
+  showConfirmDeleteWindow: boolean;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
 
 
   constructor(public tableService: GeneralTableService,
               public backendService: DimensionCodeBackendService,
               private router: Router,
               private languageBackendService: LanguageBackendService,
+              public statusService: OperationStatusServiceService,
               private activedIdParam: ActivatedRoute,
               private searChService: SearchService) {
   }
@@ -69,12 +74,30 @@ export class DimensionCodesMainComponent implements OnInit, AfterContentChecked 
 
   }
 
-  deleteSelectedRecord(recordId: number): void {
-    this.backendService.deleteRecordById(String(recordId)).subscribe((response) => {
-      this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
-    }, error => {
-      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
-    });
+  selectRecordtoDeleteAndShowConfirmDeleteWindow(materialId: number): void {
+    this.statusService.resetOperationStatus([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+    this.showConfirmDeleteWindow = true;
+    this.tableService.selectedId = materialId;
+  }
+  deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
+    if (deleteConfirmed === true) {
+      this.backendService.deleteRecordById(String(recordId)).subscribe((response) => {
+        this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      }, error => {
+        this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      });
+    }
+    else {
+      this.showConfirmDeleteWindow = false;
+    }
   }
 
   updateSelectedRecord(recordId: number): void {

@@ -7,6 +7,7 @@ import {UserHasAdminRole, UserHasEditorRoleButIsNotAdmin} from '../../../helpers
 import BlockUserDto from '../../../Users/users/userTypes/blockUseDto';
 import {BusinessPartnerTableService} from '../BusinessPartnerServices/business-partner-table.service';
 import {BusinesPartnerBackendService} from '../BusinessPartnerServices/busines-partner-backend.service';
+import {OperationStatusServiceService} from '../../../OperationStatusComponent/operation-status/operation-status-service.service';
 
 @Component({
   selector: 'app-business-partners',
@@ -24,11 +25,15 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
   updateButtonInfo;
   selectedId: number;
   recordNumbers: number;
+  showConfirmDeleteWindow: boolean;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
 
 
 
   constructor(public tableService: BusinessPartnerTableService,
               public backendService: BusinesPartnerBackendService,
+              public statusService: OperationStatusServiceService,
               private router: Router,
               private activedIdParam: ActivatedRoute) {
   }
@@ -75,12 +80,30 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
 
   }
 
-  deleteSelectedRecord(materialId: number): void {
-    this.backendService.deleteOneRecordById(String(materialId)).subscribe((response) => {
-      this.operationStatusMessage = 'Usunięto Partnera Biznesowego z bazy Danych';
-    }, error => {
-      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc Parntera Biznesowego';
-    });
+  selectRecordtoDeleteAndShowConfirmDeleteWindow(materialId: number): void {
+    this.statusService.resetOperationStatus([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+    this.showConfirmDeleteWindow = true;
+    this.tableService.selectedId = materialId;
+  }
+  deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
+    if (deleteConfirmed === true) {
+      this.backendService.deleteOneRecordById(String(recordId)).subscribe((response) => {
+        this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      }, error => {
+        this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      });
+    }
+    else {
+      this.showConfirmDeleteWindow = false;
+    }
   }
 
   updateSelectedRecord(userId: number): void {
@@ -124,4 +147,5 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
     // });
     this.router.navigateByUrl(`orders?patnerId=${partnerId}`);
   }
+
 }

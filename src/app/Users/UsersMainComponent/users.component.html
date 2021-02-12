@@ -9,6 +9,8 @@
 </div>
 
 <div class="materialComponent">
+  <app-operation-status [operationFailerStatusMessage]="operationFailerStatusMessage" [operationSuccessStatusMessage]="operationSuccessStatusMessage"> </app-operation-status>
+  <app-confirm-delete [showConfirmDeleteWindow]="showConfirmDeleteWindow"  *ngIf="showConfirmDeleteWindow === true" (deleteConfirmedEvent)="deleteSelectedRecordFromDatabase(this.tableService.selectedId, $event )"> </app-confirm-delete>
 
   <table class="table table-striped border mt-1">
     <thead>
@@ -34,7 +36,7 @@
         <button (click)="changePaswordForUserId(admin.id)" [title]="'zmień hasło'">Zmień Hasło</button>
         <button (click)="updateSelectedRecord(admin.id);" [title]="updateButtonInfo">u</button>
         <button [title]="setBlockButtonActionInfoMessage(admin)" (click)="blockOrUnblockUser(admin)">{{setBlockButtonStatusMessage(admin)}}</button>
-        <button (click)="this.deleteSelectedRecord(admin.id)" [title]="deleteButtonInfo" >x</button>
+        <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(admin.id)" [title]="deleteButtonInfo" >x</button>
 
       </td>
 
@@ -49,7 +51,7 @@
         <button (click)="changePaswordForUserId(editor.id)" [title]="'zmień hasło'">Zmień Hasło</button>
         <button (click)="updateSelectedRecord(editor.id);" [title]="updateButtonInfo">u</button>
         <button [title]="setBlockButtonActionInfoMessage(editor)" (click)="blockOrUnblockUser(editor)">{{setBlockButtonStatusMessage(editor)}}</button>
-        <button (click)="this.deleteSelectedRecord(editor.id)" [title]="deleteButtonInfo" >x</button>
+        <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(editor.id)" [title]="deleteButtonInfo" >x</button>
       </td>
     </tr>
     </tbody>

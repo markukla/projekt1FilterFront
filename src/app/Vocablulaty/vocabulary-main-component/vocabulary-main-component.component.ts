@@ -29,6 +29,9 @@ export class VocabularyMainComponentComponent implements OnInit, AfterContentChe
   updateButtonInfo;
   materialId: number;
   recordNumbers: number;
+  showConfirmDeleteWindow: boolean;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
 
 
   constructor(public tableService: GeneralTableService,
@@ -62,13 +65,7 @@ export class VocabularyMainComponentComponent implements OnInit, AfterContentChe
 
   }
 
-  deleteSelectedRecord(materialId: number): void {
-    this.backendService.deleteRecordById(String(materialId)).subscribe((response) => {
-      this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
-    }, error => {
-      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
-    });
-  }
+
   updateSelectedRecord(recordId: number): void {
     this.tableService.selectedId = recordId;
     this.router.navigateByUrl(`/vocabularies/add?mode=${OperationModeEnum.UPDATE}&recordId=${recordId}`);

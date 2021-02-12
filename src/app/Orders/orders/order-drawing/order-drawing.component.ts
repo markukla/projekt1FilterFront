@@ -475,7 +475,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         foundNotFilledDimensions = true;
       }
     });
-   if (foundNotFilledDimensions === true) {
+   if (foundNotFilledDimensions) {
      this.userInputErrorMessages.push(notAllDimensionValueEnteredMessage);
    }
    if (!this.tableFormService.workingTemperature.value) {

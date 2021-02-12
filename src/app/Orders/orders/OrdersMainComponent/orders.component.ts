@@ -12,6 +12,7 @@ import {BusinesPartnerBackendService} from '../../../BusinessPartners/business-p
 import {GeneralTableService} from '../../../util/GeneralTableService/general-table.service';
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 import {ProductMiniatureService} from '../productMiniature/productMiniatureService/product-miniature.service';
+import {OperationStatusServiceService} from '../../../OperationStatusComponent/operation-status/operation-status-service.service';
 
 @Component({
   selector: 'app-orders',
@@ -33,6 +34,9 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   recordNumbers: number;
   partnerIdForOrdersShow: string;
   ordersOfBusinessPartner: Order[];
+  showConfirmDeleteWindow: boolean;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
 
 
   constructor(public tableService: GeneralTableService,
@@ -43,7 +47,8 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
               private route: ActivatedRoute,
               private searChService: SearchService,
               private activedIdParam: ActivatedRoute,
-              private authenticationService: AuthenticationService
+              private authenticationService: AuthenticationService,
+              public statusService: OperationStatusServiceService
   ) {
   }
 
@@ -101,14 +106,30 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
     }
   }
 
-  deleteSelectedRecord(currrentOrderId: number): void {
-    this.backendService.deleteOrderWithVersionRegisterByCurrentId(String(currrentOrderId)).subscribe((response) => {
-      this.operationStatusMessage = 'Usunięto Materiał z bazy danych';
-      console.log(`${this.operationStatusMessage}`);
-    }, error => {
-      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
-      console.log(`${this.operationStatusMessage}`);
-    });
+  selectRecordtoDeleteAndShowConfirmDeleteWindow(materialId: number): void {
+    this.statusService.resetOperationStatus([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+    this.showConfirmDeleteWindow = true;
+    this.tableService.selectedId = materialId;
+  }
+  deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
+    if (deleteConfirmed === true) {
+      this.backendService.deleteOrderWithVersionRegisterByCurrentId(String(recordId)).subscribe((response) => {
+        this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      }, error => {
+        this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      });
+    }
+    else {
+      this.showConfirmDeleteWindow = false;
+    }
   }
 
   updateSelectedRecord(selectedId: number): void {

@@ -9,6 +9,7 @@ import {GeneralTableService} from '../../util/GeneralTableService/general-table.
 import {LanguageBackendService} from '../languageServices/language-backend.service';
 import Language from '../LanguageTypesAndClasses/languageEntity';
 import {API_URL} from '../../Config/apiUrl';
+import {OperationStatusServiceService} from '../../OperationStatusComponent/operation-status/operation-status-service.service';
 
 @Component({
   selector: 'app-language-main',
@@ -33,13 +34,17 @@ export class LanguageMainComponent implements OnInit, AfterContentChecked {
   languageNameDescription: string;
   languageActiveDescription: string;
   tableColumnDescriptions: string[];
+  showConfirmDeleteWindow: boolean;
+  operationFailerStatusMessage: string;
+  operationSuccessStatusMessage: string;
 
 
   constructor(public tableService: GeneralTableService,
               public backendService: LanguageBackendService,
               private router: Router,
               private searChService: SearchService,
-              private activedIdParam: ActivatedRoute) {
+              private activedIdParam: ActivatedRoute,
+              public statusService: OperationStatusServiceService) {
   }
   ngOnInit(): void {
     this.selectedLanguageLang = 'PL';
@@ -49,7 +54,7 @@ export class LanguageMainComponent implements OnInit, AfterContentChecked {
     this.deleteButtonInfo = 'usuń';
     this.updateButtonInfo = 'modyfikuj dane';
   }
-  initColumnAndMessageDescriptionForSelectedLanguage (): void {
+  initColumnAndMessageDescriptionForSelectedLanguage(): void {
     this.tableColumnDescriptions = [];
     this.languageCodeDescription = 'Kod Języka';
     this.languageNameDescription = 'Nazwa Języka';
@@ -71,12 +76,30 @@ export class LanguageMainComponent implements OnInit, AfterContentChecked {
 
   }
 
-  deleteSelectedRecord(recordId: number): void {
-    this.backendService.deleteRecordById(String(recordId)).subscribe((response) => {
-      this.operationStatusMessage = 'Usunięto rekord z bazy danych';
-    }, error => {
-      this.operationStatusMessage = 'Wystąpił bład, nie udało się usunąc wybranego rekordu z bazy danych';
-    });
+  selectRecordtoDeleteAndShowConfirmDeleteWindow(materialId: number): void {
+    this.statusService.resetOperationStatus([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+    this.showConfirmDeleteWindow = true;
+    this.tableService.selectedId = materialId;
+  }
+  deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
+    if (deleteConfirmed === true) {
+      this.backendService.deleteRecordById(String(recordId)).subscribe((response) => {
+        this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      }, error => {
+        this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+        this.tableService.selectedId = null;
+        this.showConfirmDeleteWindow = false;
+        this.statusService.makeOperationStatusVisable();
+        this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
+      });
+    }
+    else {
+      this.showConfirmDeleteWindow = false;
+    }
   }
 
   updateSelectedRecord(recordId: number): void {
