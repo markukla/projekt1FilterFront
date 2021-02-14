@@ -7,6 +7,7 @@ import Language from '../../Languages/LanguageTypesAndClasses/languageEntity';
 import {Vocabulary} from '../../Vocablulaty/VocabularyTypesAndClasses/VocabularyEntity';
 import {filter} from 'rxjs/operators';
 import {NavigationEnd, Router} from '@angular/router';
+import {VocabularyForTableCell} from '../../Vocablulaty/VocabularyTypesAndClasses/VocabularyForTableCell';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class AuthenticationService {
   userRole: RoleEnum;
   selectedLanguageCode: string;
   languages: Language [];
-  vocabularies: Vocabulary[];
+  vocabulariesInSelectedLanguage: VocabularyForTableCell[];
   private previousUrl: string;
   private currentUrl: string;
   private routeHistory: string[];

@@ -15,9 +15,9 @@
 <table class="table table-striped border mt-1">
   <thead>
   <tr>
-    <th [appSort]="materials" data-order="desc" data-name="materialCode" scope="col">Kod Materiału <br></th>
-    <th [appSort]="materials" data-order="desc" data-name="materialName" scope="col">Nazwa Materiału</th>
-    <th>ilość</th>
+    <th [appSort]="materials" data-order="desc" data-name="materialCode" scope="col">{{materialNamesInSelectedLanguage.materialCode}} <br></th>
+    <th [appSort]="materials" data-order="desc" data-name="materialName" scope="col">{{materialNamesInSelectedLanguage.materialName}}</th>
+    <th>{{materialNamesInSelectedLanguage.quantity}}</th>
 
   </tr>
   <tr>

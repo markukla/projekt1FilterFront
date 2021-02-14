@@ -1,4 +1,5 @@
 import LocalizedName from '../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
+import {VocabularyForTableCell} from "../../Vocablulaty/VocabularyTypesAndClasses/VocabularyForTableCell";
 
 export const getSelectedLanguageFromNamesInAllLanguages = (localizedNames: LocalizedName[], selectedLanguageLang: string): string => {
   const localizedNameInGivenLanguage: LocalizedName[] = [];
@@ -13,4 +14,16 @@ export const getSelectedLanguageFromNamesInAllLanguages = (localizedNames: Local
   }
 
   return name;
+};
+
+
+// tslint:disable-next-line:max-line-length
+export const setTabelColumnAndOtherNamesForSelectedLanguage = (objectToSetPropertyInSelectedLanguage: any, vocabulariesInSelectedLanguage: VocabularyForTableCell[]) => {
+   Object.keys(objectToSetPropertyInSelectedLanguage).forEach((key) => {
+     vocabulariesInSelectedLanguage.forEach((vocabulary) => {
+       if (key === vocabulary.variableName) {
+         objectToSetPropertyInSelectedLanguage[key] = vocabulary.localizedNameInSelectedLanguage;
+       }
+     });
+   });
 };

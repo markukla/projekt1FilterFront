@@ -18,6 +18,8 @@ import {SearchService} from '../../helpers/directive/SearchDirective/search.serv
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
 
 import {OperationStatusServiceService} from '../../OperationStatusComponent/operation-status/operation-status-service.service';
+import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
 
 @Component({
   selector: 'app-materials',
@@ -41,6 +43,13 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   showConfirmDeleteWindow: boolean;
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
+  materialNamesInSelectedLanguage = {
+    materialCode: '',
+    materialName: '',
+    addNewMaterial: '',
+    quantity: '',
+    search: ''
+  };
 
 
   constructor(public tableService: GeneralTableService,
@@ -48,7 +57,8 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
               private searChService: SearchService,
               private router: Router,
               private activedIdParam: ActivatedRoute,
-              public statusService: OperationStatusServiceService
+              public statusService: OperationStatusServiceService,
+              private authenticationService: AuthenticationService
   ) {
   }
 
@@ -72,12 +82,13 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
         });
     }*/
   ngOnInit(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.materialNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
     this.getRecords();
     this.materialId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
     this.updateButtonInfo = 'modyfikuj dane';
   }
-
   ngOnChanges(changes: SimpleChanges): void {
   }
 

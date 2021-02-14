@@ -28,8 +28,8 @@ export class LoginComponent implements OnInit, AfterContentChecked {
 
   constructor(
     private loginBackendService: AuthenticationBackendService,
-    private vocabularyBackendService: VocabularyBackendServiceService,
     public loginService: AuthenticationService,
+    private vocabularyBackendService: VocabularyBackendServiceService,
     private languageBackendService: LanguageBackendService,
     public validateMaterialCodeUniqueService: ValidateMaterialCodeUniqueService,
     private formBuilder: FormBuilder,
@@ -83,7 +83,7 @@ export class LoginComponent implements OnInit, AfterContentChecked {
     this.activeLanguages = this.languages.filter(language =>
       language.active === true);
     this.loginService.languages = languages.body;
-    this.loginService.vocabularies = vocabularies.body;
+    this.vocabularies = vocabularies.body;
     try {
       if (this.loginService.loggedUser) {
         const logoutResponse = await this.loginBackendService.logout().toPromise();
@@ -100,6 +100,10 @@ export class LoginComponent implements OnInit, AfterContentChecked {
 
   setSelectedLanguageCode(languageCode: string): void {
     this.loginService.selectedLanguageCode = languageCode;
+    this.loginService.vocabulariesInSelectedLanguage = [];
+    // tslint:disable-next-line:max-line-length
+    this.vocabularies.forEach((vocabulary) => {this.loginService.vocabulariesInSelectedLanguage.push(this.vocabularyBackendService.createVocabularryForTableCellFromVocabulary(vocabulary));
+    });
   }
   getFlagUrl(language: Language): string {
     const flagUlr = API_URL + language.flagUrl;
