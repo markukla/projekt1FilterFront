@@ -33,9 +33,17 @@ import Product from '../../../Products/ProductTypesAndClasses/product.entity';
 import {TableFormServiceService} from '../../../Products/ProductMainComponent/product/product-table-form/table-form-service.service';
 import OrderDetails from '../../OrdersTypesAndClasses/orderDetail';
 import LocalizedName from '../../../DimensionCodes/DimensionCodesTypesAnClasses/localizedName';
-import {getSelectedLanguageFromNamesInAllLanguages} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {
+  getSelectedLanguageFromNamesInAllLanguages,
+  setTabelColumnAndOtherNamesForSelectedLanguage
+} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
 import {ProductMiniatureService} from '../productMiniature/productMiniatureService/product-miniature.service';
 import {navigateToUrlAfterTimout} from '../../../helpers/otherGeneralUseFunction/navigateToUrlAfterTimeOut';
+import {
+  generalNamesInSelectedLanguage,
+  generalUserNames,
+  orderNames
+} from "../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription";
 
 @Component({
   selector: 'app-create-order',
@@ -85,6 +93,9 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
   allProducts: Product[];
   operationSuccessStatusMessage: string;
   operationFailerStatusMessage: string;
+  orderNames = orderNames;
+  generalUserNames = generalUserNames;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
   @ViewChild('commentToOrder', {read: ElementRef}) commentToOrder: ElementRef;
   constructor(
     private backendService: OrderBackendService,
@@ -113,10 +124,19 @@ export class CreateOrderComponent implements OnInit, AfterContentChecked, AfterV
       businessPartner: new FormControl(null, Validators.required),
       productMaterial: new FormControl(null, Validators.required)
     }, {updateOn: 'change'});
+    this.initColumnNamesInSelectedLanguage();
     this.productHasBeenChanged = false;
     this.isPartner = this.authenticationService.userRole === RoleEnum.PARTNER;
     await this.getDataToDropdownLists();
     await this.setOrderOperatiomModeBasingOnQueryParamtersAndInitPropertyValues();
+  }
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalUserNames, this.authenticationService.vocabulariesInSelectedLanguage);
+
   }
 
    async setOrderOperatiomModeBasingOnQueryParamtersAndInitPropertyValues(): Promise<void> {
@@ -214,55 +234,55 @@ setFormControlValuesForUpdateOrShowDrawingMode(createOrderDto: CreateOrderDto): 
 
 setInitStateofConfirmOrCHangeButtonsAndSubmitButton(): void {
     if (this.orderOperationMode === OrderOperationMode.CREATENEW) {
-      this.submitButtonDescription = 'dalej';
+      this.submitButtonDescription = orderNames.submitButtonNext;
       if (this.createOrderDto.productMaterial) {
         this.materialConfirmed = true;
-        this.confirmOrCHangeMaterialButtonInfo = 'Zmień materiał worka';
+        this.confirmOrCHangeMaterialButtonInfo = orderNames.ChangeMaterialButtonInfo;
       }
       else {
         this.materialConfirmed = false;
-        this.confirmOrCHangeMaterialButtonInfo = 'zatwierdź materiał worka';
+        this.confirmOrCHangeMaterialButtonInfo = orderNames.ConfirmMaterial;
       }
       if (!this.productMiniatureService.selectedProduct) {
         this.productConfirmed = false;
-        this.confirmOrCHangeProductParmatersButtonInfo = 'zatwierdź parametry produktu';
+        this.confirmOrCHangeProductParmatersButtonInfo = orderNames.ConfirmProduct;
       }
       else {
         this.productConfirmed = true;
-        this.confirmOrCHangeProductParmatersButtonInfo = 'zmień parametry produktu';
+        this.confirmOrCHangeProductParmatersButtonInfo = orderNames.ChangeProduct;
       }
       if (this.createOrderDto.businessPartner) {
         this.partnerConfirmed = true;
-        this.confirmOrCHangePartnerButtonInfo = 'zmień partnera handlowego';
+        this.confirmOrCHangePartnerButtonInfo = orderNames.ChangePartner;
       }
       else {
         this.partnerConfirmed = false;
-        this.confirmOrCHangePartnerButtonInfo = 'zatwierdż partnera handlowego';
+        this.confirmOrCHangePartnerButtonInfo = orderNames.ConfirmPartner;
       }
-      this.onSubmitButtonInfo = 'dalej';
+      this.onSubmitButtonInfo = orderNames.submitButtonNext;
       this.operationModeEqualConfirmNewOrUpdate = false;
     }
     // tslint:disable-next-line:max-line-length
     else if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW || OrderOperationMode.CONFIRMUPDATE) {
       this.operationModeEqualConfirmNewOrUpdate = true;
-      this.submitButtonDescription = 'złóż zapytanie';
+      this.submitButtonDescription = orderNames.submitOrder;
       this.materialConfirmed = true;
       this.productConfirmed = true;
       this.partnerConfirmed = true;
-      this.onSubmitButtonInfo = 'złóż zapytanie';
-      this.confirmOrCHangeProductParmatersButtonInfo = 'zmień parametry produktu';
-      this.confirmOrCHangeMaterialButtonInfo = 'zmień materiał worka';
-      this.confirmOrCHangePartnerButtonInfo = 'zmień partnera handlowego';
+      this.onSubmitButtonInfo = orderNames.submitOrder;
+      this.confirmOrCHangeProductParmatersButtonInfo = orderNames.ChangeProduct;
+      this.confirmOrCHangeMaterialButtonInfo = orderNames.ChangeMaterialButtonInfo;
+      this.confirmOrCHangePartnerButtonInfo = orderNames.ChangeMaterialButtonInfo;
     } else if (this.orderOperationMode === OrderOperationMode.UPDATE) {
       this.operationModeEqualConfirmNewOrUpdate = true;
-      this.submitButtonDescription = 'aktualizuj zapytanie';
+      this.submitButtonDescription = orderNames.updateOrder;
       this.materialConfirmed = true;
       this.productConfirmed = true;
       this.partnerConfirmed = true;
-      this.onSubmitButtonInfo = 'złóż zapytanie';
-      this.confirmOrCHangeProductParmatersButtonInfo = 'zmień parametry produktu';
-      this.confirmOrCHangeMaterialButtonInfo = 'zmień materiał worka';
-      this.confirmOrCHangePartnerButtonInfo = 'zmień partnera handlowego';
+      this.onSubmitButtonInfo = orderNames.updateOrder;
+      this.confirmOrCHangeProductParmatersButtonInfo = orderNames.ChangeProduct;
+      this.confirmOrCHangeMaterialButtonInfo =  orderNames.ChangeMaterialButtonInfo;
+      this.confirmOrCHangePartnerButtonInfo = orderNames.ChangePartner;
     }
   }
 
@@ -390,7 +410,7 @@ onSubmit(): void {
         this.router.navigateByUrl(`/orders/drawing?mode=${OrderOperationMode.CREATENEW}`);
       }, error => {
         console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
-        this.operationMessage = 'nie udało się znaleźć produktu na postawie wybranych parametrów. Spróbuj ponownie';
+        this.operationMessage = orderNames.canNotFindProductForGivenParameters;
       });
       // tslint:disable-next-line:max-line-length
     } else if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
@@ -399,11 +419,11 @@ onSubmit(): void {
         this.createOrderDto = this.updateCreateOrderDto(this.createOrderDto);
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing = this.createOrderDto;
         this.backendService.addRecords(this.createOrderDto).subscribe((order) => {
-            this.operationSuccessStatusMessage = 'dodano nowe zamówienie';
+            this.operationSuccessStatusMessage = orderNames.orderAddSuccess;
             navigateToUrlAfterTimout('/orders', this.router, 2000);
           },
           error => {
-            this.operationFailerStatusMessage = 'nie udało się dodać nowego zamówienia';
+            this.operationFailerStatusMessage = orderNames.orderAddFailer;
 
           });
       }
@@ -413,12 +433,12 @@ onSubmit(): void {
         const updatedCreateOrderDto = this.updateCreateOrderDto(this.createOrderDto);
         this.createOrderDto = updatedCreateOrderDto;
         this.backendService.updateRecordById(String(this.selctedOrderId), this.createOrderDto).subscribe((order) => {
-            this.operationSuccessStatusMessage = 'zaktualizowano zamówinie';
+            this.operationSuccessStatusMessage = orderNames.orderUpdateSuccess;
             navigateToUrlAfterTimout('/orders', this.router, 2000);
           },
           error => {
           console.log(error);
-          this.operationFailerStatusMessage = 'nie udało się zaktualizować zamówienia';
+          this.operationFailerStatusMessage = orderNames.orderUpdateFailer;
           });
       }
       // tslint:disable-next-line:max-line-length
@@ -442,7 +462,7 @@ onSubmit(): void {
         this.router.navigateByUrl(`/orders/drawing?orderId=${this.selctedOrderId}&mode=${OrderOperationMode.UPDATEWITHCHANGEDPRODUCT}`);
       }, error => {
         console.log('nie udało się znaleźć produktu na postawie wybranych parametrów');
-        this.operationMessage = 'nie udało się znaleźć produktu na postawie wybranych parametrów. Spróbuj ponownie';
+        this.operationMessage = orderNames.canNotFindProductForGivenParameters;
       });
     }
   }
@@ -461,7 +481,7 @@ changeModeTOUpdatedWithChangedProductOrCreateNew(): void {
     if (this.productHasBeenChanged === true) {
       if (this.orderOperationMode === OrderOperationMode.UPDATE || this.orderOperationMode === OrderOperationMode.CONFIRMUPDATE) {
         this.orderOperationMode = OrderOperationMode.UPDATEWITHCHANGEDPRODUCT;
-        this.submitButtonDescription = 'dalej';
+        this.submitButtonDescription = orderNames.submitButtonNext;
       }
       else if (this.orderOperationMode === OrderOperationMode.CONFIRMNEW) {
         this.orderOperationMode = OrderOperationMode.CREATENEW;
@@ -469,7 +489,7 @@ changeModeTOUpdatedWithChangedProductOrCreateNew(): void {
         this.newOrderVersionNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderVersionNumber;
         this.newOrderTotalNumber = this.backendService.createOrderDtoForConfirmUpdateShowDrawing.orderTotalNumber;
         this.orderOperationMode = OrderOperationMode.CREATENEW;
-        this.submitButtonDescription = 'dalej';
+        this.submitButtonDescription = orderNames.submitButtonNext;
       }
     }
   }
@@ -502,14 +522,14 @@ changeOrConfirmPartnerButtonAction(): void {
     if (this.partnerConfirmed === false && this.businessPartner.value) {
       this.selectedPartner = this.businessPartner.value;
       this.businessPartner.disable({onlySelf: true});
-      this.confirmOrCHangePartnerButtonInfo = 'Zmień Partnera Handlowego';
+      this.confirmOrCHangePartnerButtonInfo = orderNames.ChangePartner;
       if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing.businessPartner = this.selectedPartner;
       }
       this.partnerConfirmed = true;
     } else if (this.partnerConfirmed === true && this.businessPartner) {
       this.businessPartner.enable({onlySelf: true});
-      this.confirmOrCHangePartnerButtonInfo = 'Zatwierdż Partnera Handlowego';
+      this.confirmOrCHangePartnerButtonInfo = orderNames.ConfirmPartner;
       this.partnerConfirmed = false;
     }
 
@@ -525,13 +545,13 @@ confirmOrchangeProductButtonAction(): void {
       this.top.disable({onlySelf: true});
       this.selectedBottom = this.bottom.value;
       this.bottom.disable({onlySelf: true});
-      this.confirmOrCHangeProductParmatersButtonInfo = 'Zmień parametry produktu';
+      this.confirmOrCHangeProductParmatersButtonInfo = orderNames.ChangeProduct;
       this.productConfirmed = true;
     } else if (this.productConfirmed === true) {
       this.type.enable({onlySelf: true});
       this.top.enable({onlySelf: true});
       this.bottom.enable({onlySelf: true});
-      this.confirmOrCHangeProductParmatersButtonInfo = 'Zatwierdź parametry produktu';
+      this.confirmOrCHangeProductParmatersButtonInfo = orderNames.ConfirmProduct;
       this.businessPartner.enable({onlySelf: true});
       this.productConfirmed = false;
     }
@@ -567,7 +587,7 @@ confirmOrchangeProductButtonAction(): void {
 confirmOrChangeMaterialButtonAction(): void {
     if (this.materialConfirmed === false) {
       this.productMaterial.disable({onlySelf: true});
-      this.confirmOrCHangeMaterialButtonInfo = 'Zmień materiał';
+      this.confirmOrCHangeMaterialButtonInfo = orderNames.ChangeMaterialButtonInfo
       this.selectedMaterial = this.productMaterial.value;
       if (this.backendService.createOrderDtoForConfirmUpdateShowDrawing) {
         this.backendService.createOrderDtoForConfirmUpdateShowDrawing.productMaterial = this.selectedMaterial;
@@ -575,7 +595,7 @@ confirmOrChangeMaterialButtonAction(): void {
       this.materialConfirmed = true;
     } else if (this.materialConfirmed === true) {
       this.productMaterial.enable({onlySelf: true});
-      this.confirmOrCHangeMaterialButtonInfo = 'Zatwierdż materiał';
+      this.confirmOrCHangeMaterialButtonInfo = orderNames.ConfirmMaterial;
       this.materialConfirmed = false;
     }
 

@@ -6,15 +6,14 @@
     <div *ngIf="!updateModeOrPartnerLogged">
       <div *ngIf="partnerConfirmed">
         <p>
-          Kod: {{this.selectedPartner.code}} <br>
-          Nazwa Partnera
-          Handlowego: {{ this.selectedPartner.fulName + ' - ' + this.selectedPartner.businesPartnerCompanyName}}
+          {{generalNamesInSelectedLanguage.code + ': ' + this.selectedPartner.code}} <br>
+          {{ orderNames.businessPartnerName + ':' + this.selectedPartner.fulName + ' - ' + this.selectedPartner.businesPartnerCompanyName}}
         </p>
       </div>
       <div *ngIf="!partnerConfirmed">
 
 
-        <label class="label" for="businessPartner"> Partner Handlowy</label>
+        <label class="label" for="businessPartner">{{orderNames.businessPartner}}</label>
         <select class="form-control" formControlName="businessPartner" id="businessPartner" #businessPartner>
           <option [ngValue]="null" disabled>-</option>
           <option *ngFor="let partner of allParntersToSelect" [ngValue]="partner">
@@ -25,7 +24,7 @@
              class="alert alert-danger">
 
           <div class="validatorInfo" *ngIf="type.errors.required">
-            Wybranie opcji z listy jest wymagane.
+            {{orderNames.choosingOptionFromListIsRequires}}
           </div>
         </div>
       </div>
@@ -36,28 +35,30 @@
            class="alert alert-danger">
 
         <div class="validatorInfo">
-          Wybranie i zatwierdzenie partnera handlowego jest wymagane
+          {{orderNames.choosingAndConfrimPartnerIsRequired}}
         </div>
       </div>
     </div>
 
     <div *ngIf="productConfirmed && type.value && top.value && bottom.value">
       <p>
-        Typ Produktu: {{this.type.value.code + ' - ' + getNameInSelectedLanguage(this.type.value.localizedNames)}}
+        {{orderNames.productType + ': ' + this.type.value.code + ' - ' + getNameInSelectedLanguage(this.type.value.localizedNames)}}
         <br>
-        Wykończenie Góry: {{this.top.value.code + ' - ' + getNameInSelectedLanguage(this.top.value.localizedNames)}}
+        {{orderNames.productTop + ': ' + this.top.value.code + ' - ' + getNameInSelectedLanguage(this.top.value.localizedNames)}}
         <br>
-        Wykończenie
-        Dna: {{this.bottom.value.code + ' - ' + getNameInSelectedLanguage(this.bottom.value.localizedNames)}} <br>
+
+        {{orderNames.productBottom + ': ' + this.bottom.value.code + ' - ' + getNameInSelectedLanguage(this.bottom.value.localizedNames)}}
+        <br>
       </p>
     </div>
     <div *ngIf="!productConfirmed">
-      <p> naciśnij przycisk aby wybrać product na podstawie rysunku </p>
-      <button type="button" (click)="chooseProductByMiniatureButtonAction();"> Wybierz Product klikając na rysunek</button>
+      <p>{{orderNames.pressButtonToChooseProductByDrawing}} </p>
+      <button type="button"
+              (click)="chooseProductByMiniatureButtonAction();"> {{orderNames.chooseProductByDrawingButtonDescription}}</button>
       <p> Lub <br>
-        Wybierz produkt określając parametry produktu
+        {{orderNames.chooseProductByParameters}}
       </p>
-      <label class="label" for="type"> Typ Produktu</label>
+      <label class="label" for="type">{{orderNames.productType}}</label>
       <select class="form-control" formControlName="type" id="type"
               (change)="setTopsAndBottomsToSelectAfterTypeSelected(this.type.value)">
         <option [ngValue]="null" disabled> -</option>
@@ -66,20 +67,20 @@
         </option>
       </select>
       <div *ngIf="type.value">
-      <label class="label" for="top"> Wykończenie góry</label>
-      <select class="form-control" formControlName="top" id="top">
-        <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
-        <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
-          {{ top.code + ' - ' + getNameInSelectedLanguage(top.localizedNames) }}
-        </option>
-      </select>
-      <label class="label" for="bottom"> Wykończenie Dna</label>
-      <select class="form-control" formControlName="bottom" id="bottom">
-        <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
-        <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
-          {{ bottom.code + ' - ' + getNameInSelectedLanguage(bottom.localizedNames) }}
-        </option>
-      </select>
+        <label class="label" for="top"> {{orderNames.productTop}}</label>
+        <select class="form-control" formControlName="top" id="top">
+          <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
+          <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
+            {{ top.code + ' - ' + getNameInSelectedLanguage(top.localizedNames) }}
+          </option>
+        </select>
+        <label class="label" for="bottom"> {{orderNames.productBottom}}</label>
+        <select class="form-control" formControlName="bottom" id="bottom">
+          <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
+          <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
+            {{ bottom.code + ' - ' + getNameInSelectedLanguage(bottom.localizedNames) }}
+          </option>
+        </select>
       </div>
     </div>
     <button type="button" class="confirmOrChangeButton" id="confirmOrchangeProduct"
@@ -88,13 +89,13 @@
          class="alert alert-danger">
 
       <div class="validatorInfo">
-        Wybranie i zatwierdzenie produktu jest wymagane
+        {{orderNames.choosingAndConfirmProductIsRequired}}
       </div>
     </div>
     <div *ngIf="materialConfirmed && selectedMaterial">
-      Materiał Produktu: <br>
-      Kod: {{selectedMaterial.materialCode}} <br>
-      Nazwa: {{selectedMaterial.materialName}}
+      {{orderNames.productMaterial}}: <br>
+      {{generalNamesInSelectedLanguage.code + ': ' + selectedMaterial.materialCode}} <br>
+      {{generalNamesInSelectedLanguage.name + ': ' + selectedMaterial.materialName}}
     </div>
     <div *ngIf="!materialConfirmed">
       <label class="label" for="productMaterial">Wybierz Materiał Produktu</label>
@@ -108,7 +109,7 @@
            class="alert alert-danger">
 
         <div class="validatorInfo" *ngIf="bottom.errors.required">
-          Wybranie opcji z listy jest wymagane.
+          {{orderNames.choosingOptionFromListIsRequires}}
         </div>
       </div>
     </div>
@@ -118,15 +119,15 @@
          class="alert alert-danger">
 
       <div class="validatorInfo">
-        Wybranie i zatwierdzenie materiału jest wymagane
+        {{orderNames.choosingAndConfirmMaterialIsRequired}}
       </div>
     </div>
     <div class="addButon">
       <div *ngIf="operationModeEqualConfirmNewOrUpdate">
-        <button type="button" class="confirmOrChangeButton" (click)="seeDrawing();"> Zobacz rysunek</button>
-        <button type="button" class="confirmOrChangeButton" (click)="updateDrawing();"> Zmień wymiary produktu
+        <button type="button" class="confirmOrChangeButton" (click)="seeDrawing();"> {{generalNamesInSelectedLanguage.seeDrawing}}</button>
+        <button type="button" class="confirmOrChangeButton" (click)="updateDrawing();"> {{orderNames.changeDrawingParameters}}
         </button>
-        <label for="commentToOrder">Twoje uwagi do zapytania </label> <br>
+        <label for="commentToOrder">{{orderNames.yourCommentToOrder}} </label> <br>
         <textarea id="commentToOrder" #commentToOrder>  </textarea>
 
       </div>
