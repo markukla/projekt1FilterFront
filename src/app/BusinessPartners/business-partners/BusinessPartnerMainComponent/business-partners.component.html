@@ -4,7 +4,7 @@
 <div>
 
   <a  [routerLink]="['/businessPartners/add']" routerLinkActive="active">
-    Dodaj Nowego Partner Handlowego
+    {{businessPartnerNamesInSelectedLanguage.addNewBusinessPartner}}
   </a>
 </div>
 
@@ -15,18 +15,18 @@
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
-      <th [appSort]="partners" data-order="desc" data-name="code" scope="col"> Kod <br></th>
-      <th [appSort]="partners" data-order="desc" data-name="businesPartnerCompanyName" scope="col"> Nazwa Partnera Handlowego> </th>
-      <th [appSort]="partners" data-order="desc" data-name="fulName" scope="col">Imię i nazwisko</th>
-      <th [appSort]="partners" data-order="desc" data-name="email" scope="col">Email</th>
+      <th [appSort]="partners" data-order="desc" data-name="code" scope="col"> {{businessPartnerNamesInSelectedLanguage.partnerCode}} <br></th>
+      <th [appSort]="partners" data-order="desc" data-name="businesPartnerCompanyName" scope="col"> {{businessPartnerNamesInSelectedLanguage.partnerCompanyName}}</th>
+      <th [appSort]="partners" data-order="desc" data-name="fulName" scope="col">{{businessPartnerNamesInSelectedLanguage.fullName}}</th>
+      <th [appSort]="partners" data-order="desc" data-name="email" scope="col">{{businessPartnerNamesInSelectedLanguage.email}}</th>
       <th>Ilość</th>
 
     </tr>
     <tr>
-      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="code"  placeholder="Wyszukaj"/> </th>
-      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="businesPartnerCompanyName"  placeholder="Wyszukaj"/>  </th>
-      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="fulName"  placeholder="Wyszukaj"/></th>
-      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="email"  placeholder="Wyszukaj"/></th>
+      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="code"  [placeholder]="generalNamesInSelectedLanguage.search"/> </th>
+      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="businesPartnerCompanyName"  [placeholder]="generalNamesInSelectedLanguage.search"/>  </th>
+      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="fulName"  [placeholder]="generalNamesInSelectedLanguage.search"/></th>
+      <th><input class="tableSearchInput" [appPartersSearch]="partners" serchedColumn="email"  [placeholder]="generalNamesInSelectedLanguage.search"/></th>
       <th>{{recordNumbers}}</th>
     </tr>
     </thead>
@@ -39,11 +39,11 @@
       <td>{{partner.email}}</td>
       <td>
         <br>
-        <button (click)="changePaswordForUserId(partner.id)" [title]="'zmień hasło'">Zmień Hasło</button>
-        <button (click)="updateSelectedRecord(partner.id);" [title]="updateButtonInfo">aktualizuj</button>
+        <button (click)="changePaswordForUserId(partner.id)" [title]="businessPartnerNamesInSelectedLanguage.changePassword">{{businessPartnerNamesInSelectedLanguage.changePassword}}</button>
+        <button (click)="updateSelectedRecord(partner.id);" [title]="generalNamesInSelectedLanguage.updateButtonInfo">{{generalNamesInSelectedLanguage.updateButtonInfo}}</button>
         <button [title]="setBlockButtonActionInfoMessage(partner)" (click)="blockOrUnblockUser(partner)">{{setBlockButtonStatusMessage(partner)}}</button>
-        <button (click)="showOrders(partner.id);" [title]="'Zapytania o indeks worka'">zapytania</button>
-        <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(partner.id)" [title]="deleteButtonInfo" >x</button>
+        <button (click)="showOrders(partner.id);" [title]="businessPartnerNamesInSelectedLanguage.businessPartnerOrders">{{businessPartnerNamesInSelectedLanguage.businessPartnerOrders}}</button>
+        <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(partner.id)" [title]="generalNamesInSelectedLanguage.deleteButtonInfo" >x</button>
 
       </td>
 

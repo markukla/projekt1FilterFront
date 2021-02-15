@@ -4,7 +4,7 @@
 <div>
 
   <a  [routerLink]="['/materials/add']" routerLinkActive="active">
-    {{ createNewMaterialDescription }}
+    {{materialNamesInSelectedLanguage.addNewMaterial}}
   </a>
 </div>
 
@@ -23,25 +23,22 @@
   <tr>
     <th>
 
-      <input class="tableSearchInput"[appSearch]="materials" serchedColumn="materialCode" id="serchInCodes" placeholder="Wyszukaj" />
+      <input class="tableSearchInput"[appSearch]="materials" serchedColumn="materialCode" id="serchInCodes" [placeholder]="generalNamesInSelectedLanguage.search" />
     </th>
-    <th><input class="tableSearchInput" [appSearch]="materials" serchedColumn="materialName" id="serchInNames" placeholder="Wyszukaj" /></th>
+    <th><input class="tableSearchInput" [appSearch]="materials" serchedColumn="materialName" id="serchInNames" [placeholder]="generalNamesInSelectedLanguage.search" /></th>
   <th>{{this.recordNumbers}}</th>
   </tr>
-
   </thead>
   <tbody>
-
   <tr *ngFor="let material of materials">
     <td>{{material.materialCode}}</td>
     <td>{{material.materialName}}</td>
     <td>
       <text *ngIf="deleTedMaterialMessage">{{deleTedMaterialMessage}}</text>
       <br>
-      <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(material.id)" [title]="deleteButtonInfo" >x</button>
-<button (click)="updateSelectedRecord(material.id);" [title]="updateButtonInfo">u</button>
+      <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(material.id)" [title]="generalNamesInSelectedLanguage.deleteButtonInfo" >x</button>
+<button (click)="updateSelectedRecord(material.id);" [title]="generalNamesInSelectedLanguage.updateButtonInfo">u</button>
     </td>
-
   </tr>
   </tbody>
 </table>

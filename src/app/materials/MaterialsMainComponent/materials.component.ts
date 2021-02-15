@@ -20,6 +20,7 @@ import {GeneralTableService} from '../../util/GeneralTableService/general-table.
 import {OperationStatusServiceService} from '../../OperationStatusComponent/operation-status/operation-status-service.service';
 import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {generalNamesInSelectedLanguage} from '../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
 
 @Component({
   selector: 'app-materials',
@@ -50,6 +51,7 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
     quantity: '',
     search: ''
   };
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
 
 
   constructor(public tableService: GeneralTableService,
@@ -83,17 +85,20 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
     }*/
   ngOnInit(): void {
     // tslint:disable-next-line:max-line-length
-    setTabelColumnAndOtherNamesForSelectedLanguage(this.materialNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    this.initColumnNamesInSelectedLanguage();
     this.getRecords();
     this.materialId = this.tableService.selectedId;
-    this.deleteButtonInfo = 'usuń';
-    this.updateButtonInfo = 'modyfikuj dane';
   }
-  ngOnChanges(changes: SimpleChanges): void {
+
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.materialNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
   }
 
   ngAfterContentChecked(): void {
-    if (this.materials){
+    if (this.materials) {
       this.recordNumbers = this.materials.length;
     }
   }
@@ -144,23 +149,23 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
     this.showConfirmDeleteWindow = true;
     this.tableService.selectedId = materialId;
   }
+
   deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
     if (deleteConfirmed === true) {
       this.backendService.deleteRecordById(String(recordId)).subscribe((response) => {
-        this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
+        this.operationSuccessStatusMessage = this.generalNamesInSelectedLanguage.operationDeleteSuccessStatusMessage;
         this.tableService.selectedId = null;
         this.showConfirmDeleteWindow = false;
         this.statusService.makeOperationStatusVisable();
         this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
       }, error => {
-        this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+        this.operationFailerStatusMessage = this.generalNamesInSelectedLanguage.operationDeleteFailerStatusMessage;
         this.tableService.selectedId = null;
         this.showConfirmDeleteWindow = false;
         this.statusService.makeOperationStatusVisable();
         this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
       });
-    }
-    else {
+    } else {
       this.showConfirmDeleteWindow = false;
     }
   }
@@ -168,5 +173,8 @@ export class MaterialsComponent implements OnChanges, OnInit, AfterContentChecke
   updateSelectedRecord(materialId: number): void {
     this.tableService.selectedId = materialId;
     this.router.navigateByUrl('/materials/update');
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
   }
 }

@@ -4,7 +4,7 @@
 <div>
 
   <a  [routerLink]="['/users/add']" routerLinkActive="active">
-   Dodaj nowego użytkownika
+  {{generalUserNames.addNewUser}}
   </a>
 </div>
 
@@ -16,39 +16,39 @@
     <thead>
     <tr>
       <th> L.p <br></th>
-      <th [appSort]="allPriviligedUsers" data-order="desc" data-name="fulName" scope="col"> Imię i Nazwisko </th>
-      <th [appSort]="allPriviligedUsers" data-order="desc" data-name="email" scope="col">Email</th>
+      <th [appSort]="allPriviligedUsers" data-order="desc" data-name="fulName" scope="col">{{generalUserNames.fullName}} </th>
+      <th [appSort]="allPriviligedUsers" data-order="desc" data-name="email" scope="col">{{generalUserNames.email}}</th>
     </tr>
     <tr>
       <th></th>
-      <th><input class="tableSearchInput" [appSearch]="allPriviligedUsers" serchedColumn="fulName" id="serchInCodes" placeholder="Wyszukaj" /></th>
-      <th><input class="tableSearchInput" [appSearch]="allPriviligedUsers" serchedColumn="email" id="serchInNames" placeholder="Wyszukaj" /></th>
+      <th><input class="tableSearchInput" [appSearch]="allPriviligedUsers" serchedColumn="fulName" id="serchInCodes" [placeholder]="generalNamesInSelectedLanguage.search" /></th>
+      <th><input class="tableSearchInput" [appSearch]="allPriviligedUsers" serchedColumn="email" id="serchInNames" [placeholder]="generalNamesInSelectedLanguage.search" /></th>
     </tr>
     </thead>
     <tbody>
-    <p>Administratorzy</p>
+    <p>{{generalUserNames.admins}}</p>
     <tr *ngFor="let admin of admins; let i=index">
       <td>{{i+1}}</td>
       <td>{{admin.fulName}}</td>
       <td>{{admin.email}}</td>
       <td>
         <br>
-        <button (click)="changePaswordForUserId(admin.id)" [title]="'zmień hasło'">Zmień Hasło</button>
-        <button (click)="updateSelectedRecord(admin.id);" [title]="updateButtonInfo">u</button>
+        <button (click)="changePaswordForUserId(admin.id)" [title]="generalUserNames.changePassword">{{generalUserNames.changePassword}}</button>
+        <button (click)="updateSelectedRecord(admin.id);" [title]="updateButtonInfo">{{generalNamesInSelectedLanguage.updateButtonInfo}}</button>
         <button [title]="setBlockButtonActionInfoMessage(admin)" (click)="blockOrUnblockUser(admin)">{{setBlockButtonStatusMessage(admin)}}</button>
         <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(admin.id)" [title]="deleteButtonInfo" >x</button>
 
       </td>
 
     </tr>
-    <p>Edytorzy</p>
+    <p>{{generalUserNames.editors}}</p>
     <tr *ngFor="let editor of editors;let i=index">
       <td>{{i+1}}</td>
       <td>{{editor.fulName}}</td>
       <td>{{editor.email}}</td>
       <td>
         <br>
-        <button (click)="changePaswordForUserId(editor.id)" [title]="'zmień hasło'">Zmień Hasło</button>
+        <button (click)="changePaswordForUserId(editor.id)" [title]="generalUserNames.changePassword">{{generalUserNames.changePassword}}</button>
         <button (click)="updateSelectedRecord(editor.id);" [title]="updateButtonInfo">u</button>
         <button [title]="setBlockButtonActionInfoMessage(editor)" (click)="blockOrUnblockUser(editor)">{{setBlockButtonStatusMessage(editor)}}</button>
         <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(editor.id)" [title]="deleteButtonInfo" >x</button>

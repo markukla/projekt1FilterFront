@@ -13,6 +13,11 @@ import {GeneralTableService} from '../../../util/GeneralTableService/general-tab
 import {SearchService} from '../../../helpers/directive/SearchDirective/search.service';
 import {ProductMiniatureService} from '../productMiniature/productMiniatureService/product-miniature.service';
 import {OperationStatusServiceService} from '../../../OperationStatusComponent/operation-status/operation-status-service.service';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from "../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage";
+import {
+  generalNamesInSelectedLanguage,
+  orderNames
+} from "../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription";
 
 @Component({
   selector: 'app-orders',
@@ -37,6 +42,8 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   showConfirmDeleteWindow: boolean;
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
+  orderNames = orderNames;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
 
 
   constructor(public tableService: GeneralTableService,
@@ -56,10 +63,17 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
     this.route.queryParamMap.subscribe(queryParams => {
       this.partnerIdForOrdersShow = queryParams.get('patnerId');
     });
+    this.initColumnNamesInSelectedLanguage();
     this.getRecords();
     this.materialId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
     this.updateButtonInfo = 'modyfikuj dane';
+  }
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
   }
 
   ngAfterContentChecked(): void {
