@@ -5,48 +5,48 @@
       <td id="2RowsInOneCell" rowspan="2">
         <form [formGroup]="tableForm">
         <div class="form-group" >
-          <label for="workingTemperature">Temperatura pracy:</label>
+          <label for="workingTemperature">{{drawingTableFormNames.workingTemperature}}</label>
           <input type="text"  formControlName="workingTemperature" id="workingTemperature">
           <p> [oC]</p>
         </div>
         <div class="form-group">
-          <label  for="antiElectrostatic">Antyelektrostatczność</label>
+          <label  for="antiElectrostatic">{{drawingTableFormNames.antielectrostatic}}</label>
           <input type="checkbox"  formControlName="antiEelectrostatic" id="antiElectrostatic">
         </div>
 
         <div class="form-group">
-          <p>Strona pracująca:</p>
+          <p>{{drawingTableFormNames.workingSide}}:</p>
 
           <input type="radio"  formControlName="workingSide" name="workingSide" id="workingSideInternal" [value]="workingSideInternal"
           >
-          <label  for="workingSideInternal">Wewnętrzna</label>
+          <label  for="workingSideInternal">{{drawingTableFormNames.workingSideInternal}}</label>
         </div>
         <div class="form-group">
 
 
           <input type="radio"  formControlName="workingSide" name="workingSide" id="workingSideExternal" [value]="workingSideExterinal"
           >
-          <label  for="workingSideExternal">Zewnętrzna</label>
+          <label  for="workingSideExternal">{{drawingTableFormNames.workingSideExternal}} </label>
         </div>
         </form>
       </td>
       <td class="normalCell">
         <div>
-          <p>Nr zapytania: </p> <br>
+          <p>{{orderNames.orderNumber}} </p> <br>
           <p>{{orderTotalNumber}}</p>
         </div>
       </td>
 
       <td>
         <div>
-          <p>Index: </p> <br>
+          <p>{{orderNames.index}} </p> <br>
           <p>{{index}}</p>
         </div>
       </td>
 
       <td>
         <div>
-          <p>Opracował: </p> <br>
+          <p>{{orderNames.creator}}: </p> <br>
           <p>{{orderCreator}}</p>
         </div>
       </td>
@@ -54,13 +54,13 @@
     <tr>
       <td>
         <div>
-          <p>Nazwa </p> <br>
+          <p>{{generalNamesInSelectedLanguage.name}}</p> <br>
           <p>{{orderName}}</p>
         </div>
       </td>
       <td>
         <div>
-          <p>Data: </p> <br>
+          <p>{{orderNames.date}} </p> <br>
           <p>{{date}}</p>
         </div>
       </td>
@@ -70,7 +70,7 @@
 
       <td>
         <div>
-          <p>Materiał: </p> <br>
+          <p>{{drawingTableFormNames.material}}: </p> <br>
           <p>{{materialName +' ' + materialCode}}</p>
         </div>
       </td>

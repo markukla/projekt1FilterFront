@@ -15,9 +15,9 @@ import {ProductMiniatureService} from '../productMiniature/productMiniatureServi
 import {OperationStatusServiceService} from '../../../OperationStatusComponent/operation-status/operation-status-service.service';
 import {setTabelColumnAndOtherNamesForSelectedLanguage} from "../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage";
 import {
-  generalNamesInSelectedLanguage,
+  generalNamesInSelectedLanguage, generalUserNames,
   orderNames
-} from "../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription";
+} from '../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
 
 @Component({
   selector: 'app-orders',
@@ -28,7 +28,7 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
 
   @Input()
   records: OrderforTableCell[];
-  createNewRecordDescription = 'Dodaj Nowy';
+  createNewRecordDescription: string;
   // tslint:disable-next-line:ban-types
   deleTedMaterialMessage: any;
   operationStatusMessage: string;
@@ -43,6 +43,7 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
   orderNames = orderNames;
+  generalUserNames = generalUserNames;
   generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
 
 
@@ -66,14 +67,16 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
     this.initColumnNamesInSelectedLanguage();
     this.getRecords();
     this.materialId = this.tableService.selectedId;
-    this.deleteButtonInfo = 'usuń';
-    this.updateButtonInfo = 'modyfikuj dane';
   }
   initColumnNamesInSelectedLanguage(): void {
     // tslint:disable-next-line:max-line-length
     setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
     // tslint:disable-next-line:max-line-length
     setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalUserNames, this.authenticationService.vocabulariesInSelectedLanguage);
+    this.deleteButtonInfo = this.generalNamesInSelectedLanguage.deleteButtonInfo;
+    this.updateButtonInfo = this.generalNamesInSelectedLanguage.updateButtonInfo;
+    this.createNewRecordDescription = this.orderNames.createNewOrder;
   }
 
   ngAfterContentChecked(): void {
@@ -128,13 +131,13 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   deleteSelectedRecordFromDatabase(recordId: number, deleteConfirmed: boolean): void {
     if (deleteConfirmed === true) {
       this.backendService.deleteOrderWithVersionRegisterByCurrentId(String(recordId)).subscribe((response) => {
-        this.operationSuccessStatusMessage = 'Usunięto Materiał z bazy danych';
+        this.operationSuccessStatusMessage = this.generalNamesInSelectedLanguage.operationDeleteSuccessStatusMessage;
         this.tableService.selectedId = null;
         this.showConfirmDeleteWindow = false;
         this.statusService.makeOperationStatusVisable();
         this.statusService.resetOperationStatusAfterTimeout([this.operationFailerStatusMessage, this.operationSuccessStatusMessage]);
       }, error => {
-        this.operationFailerStatusMessage = 'Wystąpił bład, nie udało się usunąc materiału';
+        this.operationFailerStatusMessage = this.generalNamesInSelectedLanguage.operationDeleteFailerStatusMessage;
         this.tableService.selectedId = null;
         this.showConfirmDeleteWindow = false;
         this.statusService.makeOperationStatusVisable();

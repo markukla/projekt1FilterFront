@@ -3,6 +3,13 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ProductBackendService} from '../ProductServices/product-backend.service';
 import WorkingSideEnum from '../../../../Orders/OrdersTypesAndClasses/workingSideEnum';
 import {TableFormServiceService} from './table-form-service.service';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {
+  drawingTableFormNames,
+  generalNamesInSelectedLanguage,
+  orderNames
+} from '../../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
 
 @Component({
   selector: 'app-product-table-form',
@@ -30,14 +37,27 @@ export class ProductTableFormComponent implements OnInit, AfterContentChecked {
   materialPartialCodeForIndex: string;
   firstIndexDimension: string;
   secondIndexDimension: string;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames = orderNames;
+  drawingTableFormNames = drawingTableFormNames;
 
   constructor(
     private backendService: ProductBackendService,
-    private tableFormService: TableFormServiceService
+    private tableFormService: TableFormServiceService,
+    private authenticationService: AuthenticationService
   ) { }
   ngOnInit(): void {
+    this.initColumnNamesInSelectedLanguage();
     this.setPropertiesTOEqualTableFormServiceProperties();
   }
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.drawingTableFormNames, this.authenticationService.vocabulariesInSelectedLanguage);
+  }
+
 
   ngAfterContentChecked(): void {
    this.setPropertiesTOEqualTableFormServiceProperties();

@@ -14,13 +14,13 @@
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
-      <th [appSort]="records" data-order="desc" data-name="orderTotalNumber" scope="col"> <br></th>
-      <th [appSort]="records" data-order="desc" data-name="businessPartnerCompanyName" scope="col">Partner handlowy</th>
-      <th [appSort]="records" data-order="desc" data-name="businessPartnerFulname">Opracował</th>
-      <th [appSort]="records" data-order="desc" data-name="businessPartnerEmail">Email</th>
-      <th [appSort]="records" data-order="desc" data-name="index">Index</th>
-      <th [appSort]="records" data-order="desc" data-name="orderName">Nazwa</th>
-      <th [appSort]="records" data-order="desc" data-name="date" data-typ="date">Data</th>
+      <th [appSort]="records" data-order="desc" data-name="orderTotalNumber" scope="col">{{orderNames.orderNumber}} </th>
+      <th [appSort]="records" data-order="desc" data-name="businessPartnerCompanyName" scope="col">{{orderNames.businessPartner}}</th>
+      <th [appSort]="records" data-order="desc" data-name="businessPartnerFulname">{{orderNames.creator}}</th>
+      <th [appSort]="records" data-order="desc" data-name="businessPartnerEmail">{{generalUserNames.email}}</th>
+      <th [appSort]="records" data-order="desc" data-name="index">{{orderNames.index}}</th>
+      <th [appSort]="records" data-order="desc" data-name="orderName">{{generalNamesInSelectedLanguage.name}}</th>
+      <th [appSort]="records" data-order="desc" data-name="date" data-typ="date">{{orderNames.date}}</th>
       <th>Ilość</th>
     </tr>
     <tr>
@@ -50,8 +50,8 @@
         <br>
 
         <button class="updateButton" (click)="updateSelectedRecord(record.id);" [title]="updateButtonInfo">u</button>
-        <button class="showDrawing" (click)="showDrawing(record.id)"> Zobacz Rysunek</button>
-        <button class="showOrderHistory" (click)="showOrderHistory(record.id)">Zobacz Historię</button>
+        <button class="showDrawing" [title]="generalNamesInSelectedLanguage.seeDrawing" (click)="showDrawing(record.id)"> Zobacz Rysunek</button>
+        <button class="showOrderHistory" [title]="generalNamesInSelectedLanguage.seeHistory" (click)="showOrderHistory(record.id)">Zobacz Historię</button>
         <button  class="deleteButton" (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(record.id)" [title]="deleteButtonInfo" >x</button>
       </td>
 
