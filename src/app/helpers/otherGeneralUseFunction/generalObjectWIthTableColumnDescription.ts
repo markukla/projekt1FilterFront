@@ -60,7 +60,12 @@ export const generalUserNames = {
   repeatPassword: '',
   repeatingPasswordIsRequired: '',
   password: '',
-  active: ''
+  active: '',
+  passwordChangeSuccessStatus: '',
+  passwordChangeFailerStatus: '',
+  admin: '',
+  editor: '',
+  status: '',
 };
 
 export const orderNames = {

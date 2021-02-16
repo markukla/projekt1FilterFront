@@ -1,7 +1,7 @@
 
 <div class="createOrUpdateFormWindow">
   <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='generalNamesInSelectedLanguage.closeButtonDescription'>x</button>
-  <h2>{{businessPartnerNamesInSelectedLanguage.addNewBusinessPartner}}</h2>
+  <h2>{{userNamesInSelectedLanguage.addNewBusinessPartner}}</h2>
   <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="form-group col-md-6">
@@ -39,7 +39,7 @@
           </div>
         </div>
       <div class="form-group col-md-6">
-        <label class="label" for="fullName" >{{businessPartnerNamesInSelectedLanguage.fullName}}</label>
+        <label class="label" for="fullName" >{{userNamesInSelectedLanguage.fullName}}</label>
         <input type="text" class="form-control" formControlName="fulName" id="fullName">
         <div  *ngIf="fulName.invalid && (fulName.dirty || fulName.touched)"
               class="alert alert-danger">
@@ -56,7 +56,7 @@
         </div>
         </div>
         <div class="form-group col-md-6">
-          <label class="label" for="email">{{businessPartnerNamesInSelectedLanguage.email}}</label>
+          <label class="label" for="email">{{userNamesInSelectedLanguage.email}}</label>
           <input type="text" class="form-control" formControlName="email" id="email">
           <div *ngIf="email.invalid && (email.dirty || email.touched)"
                class="alert alert-danger">
@@ -71,7 +71,7 @@
             <div class="validatorInfo" *ngIf="email.errors?.taken">
               <label
                 class="text-danger">
-                {{businessPartnerNamesInSelectedLanguage.emailIsAlreadyTaken}}
+                {{userNamesInSelectedLanguage.emailIsAlreadyTaken}}
               </label>
 
 
@@ -79,7 +79,7 @@
             <div class="validatorInfo" *ngIf="email.errors.email">
               <label
                 class="text-danger">
-                {{businessPartnerNamesInSelectedLanguage.emailMustBeValid}}
+                {{userNamesInSelectedLanguage.emailMustBeValid}}
               </label>
 
 
@@ -88,41 +88,41 @@
 
         </div>
         <div class="form-group col-md-6">
-          <label class="label" for="password">{{businessPartnerNamesInSelectedLanguage.password}}</label>
+          <label class="label" for="password">{{userNamesInSelectedLanguage.password}}</label>
           <input type="password" class="form-control" formControlName="password" id="password">
           <div *ngIf="password.invalid && (password.dirty || password.touched)"
                class="alert alert-danger">
 
             <div class="validatorInfo" *ngIf="password.errors.required">
-              {{businessPartnerNamesInSelectedLanguage.passwordIsRequired}}
+              {{userNamesInSelectedLanguage.passwordIsRequired}}
             </div>
             <div class="validatorInfo" *ngIf="password.errors.minlength">
-              {{businessPartnerNamesInSelectedLanguage.passwordMustContain8Characters}}
+              {{userNamesInSelectedLanguage.passwordMustContain8Characters}}
             </div>
 
             <div class="validatorInfo" *ngIf="password.hasError('hasNumber')">
-              {{businessPartnerNamesInSelectedLanguage.passwordMustContain2Digest}}
+              {{userNamesInSelectedLanguage.passwordMustContain2Digest}}
             </div>
             <div class="validatorInfo" *ngIf="password.hasError('hasCapitalCase')">
-              {{businessPartnerNamesInSelectedLanguage.passwordMustContain1CapitalLetter}}
+              {{userNamesInSelectedLanguage.passwordMustContain1CapitalLetter}}
             </div>
             <div class="validatorInfo" *ngIf="password.hasError('hasSmallCase')">
-              {{businessPartnerNamesInSelectedLanguage.passwordMustContain1smallLetter}}
+              {{userNamesInSelectedLanguage.passwordMustContain1smallLetter}}
             </div>
           </div>
 
         </div>
         <div class="form-group col-md-6">
-          <label class="label" for="confirmPassword">{{businessPartnerNamesInSelectedLanguage.repeatPassword}}</label>
+          <label class="label" for="confirmPassword">{{userNamesInSelectedLanguage.repeatPassword}}</label>
           <input type="password" class="form-control" formControlName="confirmPassword" id="confirmPassword">
           <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
                class="alert alert-danger">
 
             <div class="validatorInfo" *ngIf="confirmPassword.errors.required">
-              {{businessPartnerNamesInSelectedLanguage.repeatingPasswordIsRequired}}
+              {{userNamesInSelectedLanguage.repeatingPasswordIsRequired}}
             </div>
             <div class="validatorInfo" *ngIf="userForm.errors?.NoPassswordMatch">
-              {{businessPartnerNamesInSelectedLanguage.noMatchBetweenPasswords}}
+              {{userNamesInSelectedLanguage.noMatchBetweenPasswords}}
             </div>
 
           </div>
@@ -131,7 +131,7 @@
 
         <div class="form-group col-md-6">
           <Span>
-            <label for="active" class="label">{{businessPartnerNamesInSelectedLanguage.active}}</label><input type="checkbox" class="form-control" formControlName="active" id="active">
+            <label for="active" class="label">{{userNamesInSelectedLanguage.active}}</label><input type="checkbox" class="form-control" formControlName="active" id="active">
           </Span>
 
         </div>

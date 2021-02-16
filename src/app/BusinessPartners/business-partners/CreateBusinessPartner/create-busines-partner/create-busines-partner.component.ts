@@ -20,7 +20,7 @@ import {
 export class CreateBusinesPartnerComponent implements OnInit {
 
   operationStatusMessage: string;
-  businessPartnerNamesInSelectedLanguage = generalUserNames;
+  userNamesInSelectedLanguage = generalUserNames;
   generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
   orderNames = orderNames;
   constructor(
@@ -86,11 +86,11 @@ export class CreateBusinesPartnerComponent implements OnInit {
 
   onSubmit(): void {
     this.bakcendService.addOneRecord(this.userForm.value).subscribe((user) => {
-      this.operationStatusMessage = this.businessPartnerNamesInSelectedLanguage.partnerAddSuccessStatusMessage;
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.partnerAddSuccessStatusMessage;
       this.cleanOperationMessage();
       this.userForm.reset();
     }, error => {
-      this.operationStatusMessage = this.businessPartnerNamesInSelectedLanguage.partnerAddFailerStatusMessage;
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.partnerAddFailerStatusMessage;
       this.cleanOperationMessage();
     });
   }
@@ -103,10 +103,10 @@ export class CreateBusinesPartnerComponent implements OnInit {
   }
   initColumnNamesInSelectedLanguage(): void {
     // tslint:disable-next-line:max-line-length
-    setTabelColumnAndOtherNamesForSelectedLanguage(this.businessPartnerNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.userNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
     // tslint:disable-next-line:max-line-length
     setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
-    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage)
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
   }
   cleanOperationMessage(): void {
     setTimeout(() => {

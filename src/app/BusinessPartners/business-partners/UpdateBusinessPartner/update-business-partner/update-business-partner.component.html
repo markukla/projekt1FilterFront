@@ -1,19 +1,18 @@
 <div class="createOrUpdateFormWindow">
-  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
-  <h2>Modyfikuj Dane</h2>
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='generalNamesInSelectedLanguage.closeButtonDescription'>x</button>
+  <h2>{{userNamesInSelectedLanguage.updateBusinessPartner}}</h2>
   <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="form-group col-md-6">
-        <label class="label" for="partnercode" >Kod</label>
-        <input type="text" class="form-control" formControlName="code" id="partnercode"
-               placeholder="Kod">
+        <label class="label" for="partnercode" >{{generalNamesInSelectedLanguage.code}}</label>
+        <input type="text" class="form-control" formControlName="code" id="partnercode">
         <div  *ngIf="code.invalid && (code.dirty || code.touched)"
               class="alert alert-danger">
 
           <div class="validatorInfo" *ngIf="code.errors.required">
             <label
               class="text-danger">
-              To pole jest wymagane
+              {{generalNamesInSelectedLanguage.thisFieldIsRequired}}
             </label>
 
           </div>
@@ -22,16 +21,15 @@
         </div>
       </div>
         <div class="form-group col-md-6">
-          <label class="label" for="businesPartnerCompanyName" >Nazwa Partnera Handlowego</label>
-          <input type="text" class="form-control" formControlName="businesPartnerCompanyName" id="businesPartnerCompanyName"
-                 placeholder="Nazwa Partnera Handlowego">
+          <label class="label" for="businesPartnerCompanyName" >{{orderNames.businessPartnerName}}</label>
+          <input type="text" class="form-control" formControlName="businesPartnerCompanyName" id="businesPartnerCompanyName">
           <div  *ngIf="businesPartnerCompanyName.invalid && (businesPartnerCompanyName.dirty || businesPartnerCompanyName.touched)"
                 class="alert alert-danger">
 
             <div class="validatorInfo" *ngIf="businesPartnerCompanyName.errors.required">
               <label
                 class="text-danger">
-                To pole jest wymagane
+                {{generalNamesInSelectedLanguage.thisFieldIsRequired}}
               </label>
 
             </div>
@@ -40,16 +38,15 @@
           </div>
         </div>
       <div class="form-group col-md-6">
-        <label class="label" for="fullName" id="materialCodeLabel">Imię i nazwisko</label>
-        <input type="text" class="form-control" formControlName="fulName" id="fullName"
-               placeholder="Imię i nazwisko">
+        <label class="label" for="fullName" id="materialCodeLabel">{{userNamesInSelectedLanguage.fullName}}</label>
+        <input type="text" class="form-control" formControlName="fulName" id="fullName">
         <div  *ngIf="fulName.invalid && (fulName.dirty || fulName.touched)"
               class="alert alert-danger">
 
           <div class="validatorInfo" *ngIf="fulName.errors.required">
             <label
               class="text-danger">
-              To pole jest wymagane
+              {{generalNamesInSelectedLanguage.thisFieldIsRequired}}
             </label>
 
           </div>
@@ -58,23 +55,22 @@
         </div>
       </div>
         <div class="form-group col-md-6">
-          <label class="label" for="email">Email</label>
-          <input type="text" class="form-control" formControlName="email" id="email"
-                 placeholder="email">
+          <label class="label" for="email">{{userNamesInSelectedLanguage.email}}</label>
+          <input type="text" class="form-control" formControlName="email" id="email">
           <div *ngIf="email.invalid && (email.dirty || email.touched)"
                class="alert alert-danger">
 
             <div class="validatorInfo" *ngIf="email.errors.required">
               <label
                 class="text-danger">
-                Email jest wymagany
+                {{generalNamesInSelectedLanguage.thisFieldIsRequired}}
               </label>
 
             </div>
             <div class="validatorInfo" *ngIf="email.errors?.taken">
               <label
                 class="text-danger">
-                Podany email jest już zajęty
+                {{userNamesInSelectedLanguage.emailIsAlreadyTaken}}
               </label>
 
 
@@ -82,7 +78,7 @@
             <div class="validatorInfo" *ngIf="email.errors.email">
               <label
                 class="text-danger">
-                Podany email musi być prawidłowym adresem email.
+               {{userNamesInSelectedLanguage.emailMustBeValid}}
               </label>
 
 
@@ -92,14 +88,14 @@
         </div>
         <div class="form-group col-md-6">
           <Span>
-            <label for="active" class="label">Aktywny</label><input type="checkbox" class="form-control" formControlName="active" id="active">
+            <label for="active" class="label">{{userNamesInSelectedLanguage.active}}</label><input type="checkbox" class="form-control" formControlName="active" id="active">
           </Span>
 
         </div>
 
     </div>
     <div class="addButon">
-      <button type="submit" [disabled]="!userForm.valid" class="btn btn-danger">Zapisz</button>
+      <button type="submit" [disabled]="!userForm.valid" class="btn btn-danger">{{generalNamesInSelectedLanguage.saveButtonDescription}}</button>
     </div>
   </form>
 

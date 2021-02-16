@@ -4,7 +4,7 @@
 <div>
 
   <a  [routerLink]="['/businessPartners/add']" routerLinkActive="active">
-    {{businessPartnerNamesInSelectedLanguage.addNewBusinessPartner}}
+    {{userNamesInSelectedLanguage.addNewBusinessPartner}}
   </a>
 </div>
 
@@ -15,10 +15,10 @@
   <table class="table table-striped border mt-1">
     <thead>
     <tr>
-      <th [appSort]="partners" data-order="desc" data-name="code" scope="col"> {{businessPartnerNamesInSelectedLanguage.partnerCode}} <br></th>
-      <th [appSort]="partners" data-order="desc" data-name="businesPartnerCompanyName" scope="col"> {{businessPartnerNamesInSelectedLanguage.partnerCompanyName}}</th>
-      <th [appSort]="partners" data-order="desc" data-name="fulName" scope="col">{{businessPartnerNamesInSelectedLanguage.fullName}}</th>
-      <th [appSort]="partners" data-order="desc" data-name="email" scope="col">{{businessPartnerNamesInSelectedLanguage.email}}</th>
+      <th [appSort]="partners" data-order="desc" data-name="code" scope="col"> {{userNamesInSelectedLanguage.partnerCode}} <br></th>
+      <th [appSort]="partners" data-order="desc" data-name="businesPartnerCompanyName" scope="col"> {{userNamesInSelectedLanguage.partnerCompanyName}}</th>
+      <th [appSort]="partners" data-order="desc" data-name="fulName" scope="col">{{userNamesInSelectedLanguage.fullName}}</th>
+      <th [appSort]="partners" data-order="desc" data-name="email" scope="col">{{userNamesInSelectedLanguage.email}}</th>
       <th>Ilość</th>
 
     </tr>
@@ -39,10 +39,10 @@
       <td>{{partner.email}}</td>
       <td>
         <br>
-        <button (click)="changePaswordForUserId(partner.id)" [title]="businessPartnerNamesInSelectedLanguage.changePassword">{{businessPartnerNamesInSelectedLanguage.changePassword}}</button>
+        <button (click)="changePaswordForUserId(partner.id)" [title]="userNamesInSelectedLanguage.changePassword">{{userNamesInSelectedLanguage.changePassword}}</button>
         <button (click)="updateSelectedRecord(partner.id);" [title]="generalNamesInSelectedLanguage.updateButtonInfo">{{generalNamesInSelectedLanguage.updateButtonInfo}}</button>
         <button [title]="setBlockButtonActionInfoMessage(partner)" (click)="blockOrUnblockUser(partner)">{{setBlockButtonStatusMessage(partner)}}</button>
-        <button (click)="showOrders(partner.id);" [title]="businessPartnerNamesInSelectedLanguage.businessPartnerOrders">{{businessPartnerNamesInSelectedLanguage.businessPartnerOrders}}</button>
+        <button (click)="showOrders(partner.id);" [title]="userNamesInSelectedLanguage.businessPartnerOrders">{{userNamesInSelectedLanguage.businessPartnerOrders}}</button>
         <button (click)="this.selectRecordtoDeleteAndShowConfirmDeleteWindow(partner.id)" [title]="generalNamesInSelectedLanguage.deleteButtonInfo" >x</button>
 
       </td>

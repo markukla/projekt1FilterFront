@@ -6,7 +6,13 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UsersTableService} from '../UserServices/users-table.service';
 import CHangePasswordByAdminDto from '../users/userTypes/changePasswordDto';
 import {UserHasAdminRole} from '../../helpers/otherGeneralUseFunction/checkUserRolesFunction';
-import {GeneralTableService} from "../../util/GeneralTableService/general-table.service";
+import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {
+  generalNamesInSelectedLanguage,
+  generalUserNames, orderNames
+} from '../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
+import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-change-password',
@@ -17,12 +23,18 @@ export class ChangePasswordComponent implements OnInit {
 
   operationStatusMessage: string;
   selectedId: string;
+  userNamesInSelectedLanguage = generalUserNames;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames = orderNames;
+  admin: string;
+  editor: string;
 
   constructor(
     private userBackendService: UserBackendService,
     private userTableService: GeneralTableService,
     public userValidatorService: UserValidatorService,
     private formBuilder: FormBuilder,
+    private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router) {
     this.selectedId = String(this.userTableService.selectedId);
@@ -51,10 +63,10 @@ export class ChangePasswordComponent implements OnInit {
   onSubmit(): void {
     const changePasswordData: CHangePasswordByAdminDto = {newPassword: this.password.value};
     this.userBackendService.changeUserPasswordById(this.selectedId, changePasswordData).subscribe((user) => {
-      this.operationStatusMessage = 'Hasło zostało zmienione';
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.passwordChangeSuccessStatus;
       this.cleanOperationMessage();
     }, error => {
-      this.operationStatusMessage = 'Wystąpił bląd, nie udało się zmienić hasła';
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.passwordChangeFailerStatus;
       this.cleanOperationMessage();
     });
   }
@@ -63,7 +75,17 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initColumnNamesInSelectedLanguage();
     this.getSelectedUserData();
+  }
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.userNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
+    this.admin = this.userNamesInSelectedLanguage.admin;
+    this.editor = this.userNamesInSelectedLanguage.editor;
   }
   cleanOperationMessage(): void {
     setTimeout(() => {
@@ -76,10 +98,10 @@ export class ChangePasswordComponent implements OnInit {
         this.userFulname = user.body.fulName;
         this.userEmail = user.body.email;
         if (UserHasAdminRole(user.body)) {
-          this.userStatus = 'Administrator';
+          this.userStatus = this.userNamesInSelectedLanguage.admin;
         }
         else {
-          this.userStatus = 'Edytor';
+          this.userStatus = this.userNamesInSelectedLanguage.editor;
         }
       }
     });

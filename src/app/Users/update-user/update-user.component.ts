@@ -1,4 +1,12 @@
-import {AfterContentChecked, AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewChildren} from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {UserBackendService} from '../UserServices/user-backend.service';
 import {UserValidatorService} from '../UserServices/user-validator.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -8,6 +16,11 @@ import {UserHasAdminRole} from '../../helpers/otherGeneralUseFunction/checkUserR
 import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
 import User from '../users/userTypes/user';
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
+import {
+  generalNamesInSelectedLanguage,
+  generalUserNames, orderNames
+} from '../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
 
 @Component({
   selector: 'app-update-user',
@@ -20,6 +33,9 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked, AfterVi
   admin: string;
   editor: string;
   userToUpdate: User;
+  userNamesInSelectedLanguage = generalUserNames;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames = orderNames;
   @ViewChild('selectStatus', {read: ElementRef}) selectStatusElement: ElementRef;
   @ViewChildren('optionForSelectStatus', {read: ElementRef}) optionsForSelectStatus: ElementRef[];
 
@@ -85,10 +101,10 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked, AfterVi
 
   onSubmit(): void {
     this.userBackendService.updateUserById(this.selectedId, this.userForm.value).subscribe((user) => {
-      this.operationStatusMessage = 'Zaktualizowano dane użytkownika';
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.userUpdateSuccessStatusMessage;
       this.cleanOperationMessageAndGoBack();
     }, error => {
-      this.operationStatusMessage = 'Wystąpił bląd, nie udało się zmienić danych użytownika';
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.userUpdateFailerStatusMessage;
       this.cleanOperationMessageAndGoBack();
     });
   }
@@ -98,13 +114,18 @@ export class UpdateUserComponent implements OnInit, AfterContentChecked, AfterVi
   }
 
   ngOnInit(): void {
-    this.initNamesForSelectedLanguage();
+    this.initColumnNamesInSelectedLanguage();
     this.setCurrentValueOfFormFields();
   }
 
-  initNamesForSelectedLanguage(): void {
-    this.admin = 'Administator';
-    this.editor = 'Edytor';
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.userNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
+    this.admin = this.userNamesInSelectedLanguage.admin;
+    this.editor = this.userNamesInSelectedLanguage.editor;
   }
 
   cleanOperationMessageAndGoBack(): void {

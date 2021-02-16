@@ -9,6 +9,11 @@ import {BusinesPartnerBackendService} from '../../BusinessPartnerServices/busine
 import {BusinessPartnerTableService} from '../../BusinessPartnerServices/business-partner-table.service';
 import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/business-partner-validator.service';
 import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {
+  generalNamesInSelectedLanguage,
+  generalUserNames, orderNames
+} from '../../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
 
 @Component({
   selector: 'app-update-business-partner',
@@ -19,6 +24,9 @@ export class UpdateBusinessPartnerComponent implements OnInit, AfterContentCheck
 
   operationStatusMessage: string;
   selectedId = String(this.tableService.selectedId);
+  userNamesInSelectedLanguage = generalUserNames;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames = orderNames;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -106,7 +114,15 @@ export class UpdateBusinessPartnerComponent implements OnInit, AfterContentCheck
   }
 
   ngOnInit(): void {
+    this.initColumnNamesInSelectedLanguage();
     this.setCurrentValueOfFormFields();
+  }
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.userNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
   }
 
   cleanOperationMessageAndGoBack(): void {

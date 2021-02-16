@@ -37,7 +37,7 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
   showConfirmDeleteWindow: boolean;
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
-  businessPartnerNamesInSelectedLanguage = generalUserNames;
+  userNamesInSelectedLanguage = generalUserNames;
   generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
   orderNames = orderNames;
 
@@ -60,7 +60,7 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
 
   initColumnNamesInSelectedLanguage(): void {
     // tslint:disable-next-line:max-line-length
-    setTabelColumnAndOtherNamesForSelectedLanguage(this.businessPartnerNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.userNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
     // tslint:disable-next-line:max-line-length
     setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
     setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
@@ -69,9 +69,9 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
   setBlockButtonActionInfoMessage(user: User): string {
     let blockButtonActionInfoMessage: string;
     if (user && user.active) {
-      blockButtonActionInfoMessage = this.businessPartnerNamesInSelectedLanguage.blockUser;
+      blockButtonActionInfoMessage = this.userNamesInSelectedLanguage.blockUser;
     } else {
-      blockButtonActionInfoMessage = this.businessPartnerNamesInSelectedLanguage.unblockUser;
+      blockButtonActionInfoMessage = this.userNamesInSelectedLanguage.unblockUser;
     }
     return blockButtonActionInfoMessage;
   }
@@ -79,9 +79,9 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
   setBlockButtonStatusMessage(user: User): string {
     let blockButtonStatusMessage: string;
     if (user && user.active) {
-      blockButtonStatusMessage = this.businessPartnerNamesInSelectedLanguage.userStatusActive;
+      blockButtonStatusMessage = this.userNamesInSelectedLanguage.userStatusActive;
     } else {
-      blockButtonStatusMessage = this.businessPartnerNamesInSelectedLanguage.userStatusBlocked;
+      blockButtonStatusMessage = this.userNamesInSelectedLanguage.userStatusBlocked;
     }
     return blockButtonStatusMessage;
   }
@@ -146,9 +146,9 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
     // tslint:disable-next-line:no-shadowed-variable
     this.backendService.blodkUserById(String(user.id), blockUserDto).subscribe((user) => {
       if (user.body.active) {
-        this.operationStatusMessage = this.businessPartnerNamesInSelectedLanguage.userHasBeenUnblockedMessage;
+        this.operationStatusMessage = this.userNamesInSelectedLanguage.userHasBeenUnblockedMessage;
       } else {
-        this.operationStatusMessage = this.businessPartnerNamesInSelectedLanguage.userHasBennBlockedMessage;
+        this.operationStatusMessage = this.userNamesInSelectedLanguage.userHasBennBlockedMessage;
       }
     });
   }

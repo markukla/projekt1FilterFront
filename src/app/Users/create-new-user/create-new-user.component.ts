@@ -6,6 +6,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserBackendService} from '../UserServices/user-backend.service';
 import {UserValidatorService} from '../UserServices/user-validator.service';
 import {AuthenticationService} from '../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {
+  generalNamesInSelectedLanguage,
+  generalUserNames, orderNames
+} from '../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from "../../helpers/otherGeneralUseFunction/getNameInGivenLanguage";
 
 @Component({
   selector: 'app-create-new-user',
@@ -18,6 +23,9 @@ export class CreateNewUserComponent implements OnInit {
   admin: string;
   editor: string;
   userForm: FormGroup;
+  userNamesInSelectedLanguage = generalUserNames;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames = orderNames;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -43,7 +51,7 @@ export class CreateNewUserComponent implements OnInit {
       isAdmin: new FormControl(false, [Validators.required])
     }, {updateOn: 'change', validators: [this.userValidatorService.passwordMatchValidator({NoPassswordMatch: true})]});
 
-    this.initNamesForSelectedLanguage();
+    this.initColumnNamesInSelectedLanguage();
   }
 
   // tslint:disable-next-line:typedef
@@ -75,21 +83,25 @@ export class CreateNewUserComponent implements OnInit {
 
   onSubmit(): void {
     this.userBackendService.addUsers(this.userForm.value).subscribe((user) => {
-      this.operationStatusMessage = 'Dodano nowego użytkownika';
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.userAddSuccessStatusMessage;
       this.cleanOperationMessage();
       this.userForm.reset();
     }, error => {
-      this.operationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego użytkownika';
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.userAddFailerStatusMessage;
       this.cleanOperationMessage();
     });
   }
   closeAndGoBack(): void {
     this.router.navigateByUrl(this.authenticationService._previousUrl);
   }
-
-  initNamesForSelectedLanguage(): void {
-    this.admin = 'Administator';
-    this.editor = 'Edytor';
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.userNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
+    this.admin = this.userNamesInSelectedLanguage.admin;
+    this.editor = this.userNamesInSelectedLanguage.editor;
   }
   cleanOperationMessage(): void {
     setTimeout(() => {

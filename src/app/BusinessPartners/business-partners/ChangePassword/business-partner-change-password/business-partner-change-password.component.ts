@@ -10,6 +10,11 @@ import {BusinesPartnerBackendService} from '../../BusinessPartnerServices/busine
 import {BusinessPartnerTableService} from '../../BusinessPartnerServices/business-partner-table.service';
 import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/business-partner-validator.service';
 import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {
+  generalNamesInSelectedLanguage,
+  generalUserNames, orderNames
+} from '../../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
 
 @Component({
   selector: 'app-business-partner-change-password',
@@ -20,6 +25,9 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
 
   operationStatusMessage: string;
   selectedId: string;
+  userNamesInSelectedLanguage = generalUserNames;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames = orderNames;
 
   constructor(
     private backendService: BusinesPartnerBackendService,
@@ -47,7 +55,8 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
   // tslint:disable-next-line:typedef
   userFulname: string;
   userEmail: string;
-  userStatus: string;
+  userCompanyName: string;
+  userPartnerCode: string;
   // tslint:disable-next-line:typedef
   get password() {
     return this.userForm.get('password');
@@ -55,10 +64,10 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
   onSubmit(): void {
     const changePasswordData: CHangePasswordByAdminDto = {newPassword: this.password.value};
     this.backendService.changeUserPasswordById(this.selectedId, changePasswordData).subscribe((user) => {
-      this.operationStatusMessage = 'Hasło zostało zmienione';
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.passwordChangeSuccessStatus;
       this.cleanOperationMessage();
     }, error => {
-      this.operationStatusMessage = 'Wystąpił bląd, nie udało się zmienić hasła';
+      this.operationStatusMessage = this.userNamesInSelectedLanguage.passwordChangeFailerStatus;
       this.cleanOperationMessage();
     });
   }
@@ -68,6 +77,13 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSelectedUserData();
+  }
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.userNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
   }
   cleanOperationMessage(): void {
     setTimeout(() => {
@@ -79,12 +95,8 @@ export class BusinessPartnerChangePasswordComponent implements OnInit {
       if (user.body) {
         this.userFulname = user.body.fulName;
         this.userEmail = user.body.email;
-        if (UserHasAdminRole(user.body)) {
-          this.userStatus = 'Administrator';
-        }
-        else {
-          this.userStatus = 'Edytor';
-        }
+        this.userCompanyName = user.body.businesPartnerCompanyName;
+        this.userPartnerCode = user.body.code;
       }
     });
   }
