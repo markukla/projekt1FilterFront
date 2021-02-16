@@ -11,7 +11,11 @@ export const generalNamesInSelectedLanguage = {
   operationDeleteSuccessStatusMessage: '',
   operationDeleteFailerStatusMessage: '',
   name: '',
-  code: ''
+  code: '',
+  select: '',
+  closeButtonDescription: '',
+  thisFieldIsRequired: '',
+  saveButtonDescription: '',
 };
 
 export const generalUserNames = {
@@ -31,7 +35,32 @@ export const generalUserNames = {
   userHasBeenUnblockedMessage: '',
   admins: '',
   editors: '',
-
+  userAddSuccessStatusMessage: '',
+  userAddFailerStatusMessage: '',
+  userUpdateSuccessStatusMessage: '',
+  userUpdateFailerStatusMessage: '',
+  userDeleteSuccessStatusMessage: '',
+  userDeleteFailerStatusMessage: '',
+  partnerAddSuccessStatusMessage: '',
+  partnerAddFailerStatusMessage: '',
+  partnerUpdateSuccessStatusMessage: '',
+  partnerUpdateFailerStatusMessage: '',
+  partnerDeleteSuccessStatusMessage: '',
+  partnerDeleteFailerStatusMessage: '',
+  updateBusinessPartner: '',
+  updateUser: '',
+  emailIsAlreadyTaken: '',
+  emailMustBeValid: '',
+  passwordIsRequired: '',
+  passwordMustContain8Characters: '',
+  passwordMustContain1CapitalLetter: '',
+  passwordMustContain2Digest: '',
+  passwordMustContain1smallLetter: '',
+  noMatchBetweenPasswords: '',
+  repeatPassword: '',
+  repeatingPasswordIsRequired: '',
+  password: '',
+  active: ''
 };
 
 export const orderNames = {

@@ -1,6 +1,6 @@
 <div class="createOrUpdateOrder">
-  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='"zamknij"'>x</button>
-  <h2>Dodaj nowe zamówienie</h2>
+  <button id="close button" class="closeButton" (click)="closeAndGoBack() " [title]='generalNamesInSelectedLanguage.closeButtonDescription'>x</button>
+  <h2>{{orderNames.createNewOrder}}</h2>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div *ngIf="!updateModeOrPartnerLogged">
@@ -69,14 +69,14 @@
       <div *ngIf="type.value">
         <label class="label" for="top"> {{orderNames.productTop}}</label>
         <select class="form-control" formControlName="top" id="top">
-          <option [ngValue]="null" disabled>Wybierz wykończenia góry</option>
+          <option [ngValue]="null" disabled>{{generalNamesInSelectedLanguage.select +' '+orderNames.productTop}}</option>
           <option *ngFor="let top of allTopsToSelect" [ngValue]="top">
             {{ top.code + ' - ' + getNameInSelectedLanguage(top.localizedNames) }}
           </option>
         </select>
         <label class="label" for="bottom"> {{orderNames.productBottom}}</label>
         <select class="form-control" formControlName="bottom" id="bottom">
-          <option [ngValue]="null" disabled>Wybierz wykończenia dna</option>
+          <option [ngValue]="null" disabled>{{generalNamesInSelectedLanguage.select +' '+orderNames.productBottom}}</option>
           <option *ngFor="let bottom of allBotomsToselect" [ngValue]="bottom">
             {{ bottom.code + ' - ' + getNameInSelectedLanguage(bottom.localizedNames) }}
           </option>
@@ -98,7 +98,7 @@
       {{generalNamesInSelectedLanguage.name + ': ' + selectedMaterial.materialName}}
     </div>
     <div *ngIf="!materialConfirmed">
-      <label class="label" for="productMaterial">Wybierz Materiał Produktu</label>
+      <label class="label" for="productMaterial">{{generalNamesInSelectedLanguage.select +' '+orderNames.productMaterial}}</label>
       <select class="form-control" formControlName="productMaterial" id="productMaterial">
         <option [ngValue]="null" disabled> -</option>
         <option *ngFor="let material of allMaterialsToSelect" [ngValue]="material">

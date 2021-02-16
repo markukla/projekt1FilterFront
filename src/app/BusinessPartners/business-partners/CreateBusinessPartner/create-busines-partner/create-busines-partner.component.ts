@@ -6,6 +6,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BusinesPartnerBackendService} from '../../BusinessPartnerServices/busines-partner-backend.service';
 import {BusinessPartnerValidatorService} from '../../BusinessPartnerServices/business-partner-validator.service';
 import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationServices/authentication.service';
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {
+  generalNamesInSelectedLanguage,
+  generalUserNames, orderNames
+} from '../../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
 
 @Component({
   selector: 'app-create-busines-partner',
@@ -15,6 +20,9 @@ import {AuthenticationService} from '../../../../LoginandLogOut/AuthenticationSe
 export class CreateBusinesPartnerComponent implements OnInit {
 
   operationStatusMessage: string;
+  businessPartnerNamesInSelectedLanguage = generalUserNames;
+  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames = orderNames;
   constructor(
     private authenticationService: AuthenticationService,
     private bakcendService: BusinesPartnerBackendService,
@@ -78,11 +86,11 @@ export class CreateBusinesPartnerComponent implements OnInit {
 
   onSubmit(): void {
     this.bakcendService.addOneRecord(this.userForm.value).subscribe((user) => {
-      this.operationStatusMessage = 'Dodano nowego użytkownika';
+      this.operationStatusMessage = this.businessPartnerNamesInSelectedLanguage.partnerAddSuccessStatusMessage;
       this.cleanOperationMessage();
       this.userForm.reset();
     }, error => {
-      this.operationStatusMessage = 'Wystąpił bląd, nie udało się dodać nowego użytkownika';
+      this.operationStatusMessage = this.businessPartnerNamesInSelectedLanguage.partnerAddFailerStatusMessage;
       this.cleanOperationMessage();
     });
   }
@@ -91,6 +99,14 @@ export class CreateBusinesPartnerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initColumnNamesInSelectedLanguage();
+  }
+  initColumnNamesInSelectedLanguage(): void {
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.businessPartnerNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-length
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage)
   }
   cleanOperationMessage(): void {
     setTimeout(() => {

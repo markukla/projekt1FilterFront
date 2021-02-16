@@ -13,10 +13,10 @@ import {BusinesPartnerBackendService} from '../BusinessPartnerServices/busines-p
 import {OperationStatusServiceService} from '../../../OperationStatusComponent/operation-status/operation-status-service.service';
 import {
   generalNamesInSelectedLanguage,
-  generalUserNames
+  generalUserNames, orderNames
 } from '../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
-import {setTabelColumnAndOtherNamesForSelectedLanguage} from "../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage";
-import {AuthenticationService} from "../../../LoginandLogOut/AuthenticationServices/authentication.service";
+import {setTabelColumnAndOtherNamesForSelectedLanguage} from '../../../helpers/otherGeneralUseFunction/getNameInGivenLanguage';
+import {AuthenticationService} from '../../../LoginandLogOut/AuthenticationServices/authentication.service';
 
 @Component({
   selector: 'app-business-partners',
@@ -39,6 +39,7 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
   operationSuccessStatusMessage: string;
   businessPartnerNamesInSelectedLanguage = generalUserNames;
   generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames = orderNames;
 
 
   constructor(public tableService: BusinessPartnerTableService,
@@ -50,7 +51,7 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit(): void {
-    this.initColumnNamesInSelectedLanguage()
+    this.initColumnNamesInSelectedLanguage();
     this.getRecords();
     this.selectedId = this.tableService.selectedId;
     this.deleteButtonInfo = 'usuń';
@@ -62,6 +63,7 @@ export class BusinessPartnersComponent implements OnInit, AfterContentChecked {
     setTabelColumnAndOtherNamesForSelectedLanguage(this.businessPartnerNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
     // tslint:disable-next-line:max-line-length
     setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
+    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
   }
 
   setBlockButtonActionInfoMessage(user: User): string {

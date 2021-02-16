@@ -43,7 +43,7 @@ import {
   generalNamesInSelectedLanguage,
   generalUserNames,
   orderNames
-} from "../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription";
+} from '../../../helpers/otherGeneralUseFunction/generalObjectWIthTableColumnDescription';
 
 @Component({
   selector: 'app-create-order',
