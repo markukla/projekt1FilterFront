@@ -279,7 +279,9 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       this.rotateTextField(input);
       this.makeInputDivDragable(input);
       this.renderer.setProperty(input, 'value', dimensionInfo.dimensionId);
-      this.renderer.setProperty(input, 'disable', 'true');
+      input.onkeyup = (event) => {
+        this.renderer.setProperty(input, 'value', input.id);
+      };
     }
     this.renderer.appendChild(this.drawing.nativeElement, input);
   }
@@ -287,8 +289,6 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   setInputPositionAndSeizeBazingOnDatabaseData(dimensionInfo: DimensionTextFIeldInfo, input: HTMLElement): void {
     // tslint:disable-next-line:max-line-length
     if (dimensionInfo) {
-
-
     const dimensionXInRelationToDiv = Number(dimensionInfo.dimensionTexfieldXposition) * this.drawing.nativeElement.getBoundingClientRect().width;
     // tslint:disable-next-line:max-line-length
     const dimensionYInRelationToDiv = Number(dimensionInfo.dimensionTexfieldYposition) * this.drawing.nativeElement.getBoundingClientRect().height;
@@ -418,6 +418,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
   bindInputWithIndex(event: any): void {
     const inputId = event.target.id;
     if (event.target.className === 'dimensionInputHorizontal') {
+      if (this.orderOperationMode !== OrderOperationMode.UPDATEPRODUCT && this.orderOperationMode !== OrderOperationMode.CREATENEWPRODUCT){
       if (this.secondIndexDimensions.includes(event.target.id)) {
         const maxLength = 5;
         if (event.target.value.length > maxLength) {
@@ -442,6 +443,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
           event.target.value = event.target.value.slice(0, maxLength);
         }
       }
+    }
     }
 
   }
@@ -539,10 +541,15 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
     // this.renderer.setProperty(input, 'type', 'number');
     console.log(`inputId= ${input.id}`);
     input.className = 'dimensionInputHorizontal';
+
+    input.onkeyup = (event) => {
+      this.renderer.setProperty(input, 'value', this.idValue);
+    };
     /* const drawing = document.getElementById('drawingContainer'); */
     this.makeInputDivDragable(input);
     this.rotateTextField(input);
     this.renderer.appendChild(this.drawing.nativeElement, input);
+    this.dragable = true;
     this.createDimensionClicked = false;
 
 
@@ -551,7 +558,8 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
 
   rotateTextField(textField): void {
 
-    textField.addEventListener('dblclick', () => {
+    textField.ondblclick =  ( event) => {
+      if (this.dragable === false) {
 
       console.log(this.angle);
       textField.style.transform = `rotate(${this.angle}deg)`;
@@ -573,24 +581,26 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
       }
       /*  it is always horizontal, because rotation means that horizontal dimension become also vertical*/
      // textField.style.resize = 'horizontal';
-    });
+      }
+      };
   }
 
   makeInputDivDragable(input: HTMLElement): void {
-    input.addEventListener('contextmenu', (ev) => {
+    input.oncontextmenu = ( event) => {
 
-      ev.preventDefault();
+      event.preventDefault();
       this.drawing.nativeElement.removeChild(input);
-    });
+    };
     input.onmousedown = (event) => {
-
       console.log(`event.type= ${event.type}`);
       console.log(`textfield.style.transform= ${input.style.transform}`);
       console.log(`textfield.style.width= ${input.style.width}`);
       console.log(`textfield.style.height= ${input.style.height}`);
       const texfieldWith = document.getElementById(input.id).style.width;
       console.log(`texfieldWith= ${texfieldWith}`);
-      if (this.dragable === true && event.type !== 'dblclick') {
+
+      if (this.dragable === true) {
+        event.preventDefault();
         // event.clientX and event.clientY are mouse pointer coordinates
         //  textField.getBoundingClientRect().left distance from left corner to html.element
         const transform = input.style.transform;
@@ -599,7 +609,7 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
         const widthMinusHeightDevidedBy2 = (inputWidth - inputHeight) / 2 ;
         let shiftX: number;
         let shiftY: number;
-        if (!transform || transform === '') {
+        if (!transform || transform === '' || transform === 'rotate(0deg)') {
           shiftX = event.clientX - input.getBoundingClientRect().left;
           shiftY = event.clientY - input.getBoundingClientRect().top;
         } else if (transform && (transform === 'rotate(-90deg)' || transform === 'rotate(90deg)')) {
@@ -639,11 +649,11 @@ export class OrderDrawingComponent implements OnInit, AfterViewInit, AfterConten
           document.removeEventListener('mousemove', onMouseMove);
           input.onmouseup = null;
         };
-
+        input.ondragstart = () => {
+          return false;
+        };
       }
-      input.ondragstart = () => {
-        return false;
-      };
+
     };
   }
 
