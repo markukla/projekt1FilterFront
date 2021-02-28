@@ -91,7 +91,7 @@ export class CreateOrUpdateVocabularyComponent implements OnInit {
       variableName: this.code.value,
     };
     if(this.operatiomMode === OperationModeEnum.CREATENEW) {
-      this.backendService.addRecords(this.createVocabularyDto).subscribe((record) => {
+      this.backendService.addRecords(this.createVocabularyDto, this.authenticationService.selectedLanguageCode).subscribe((record) => {
         this.showoperationStatusMessage = this.backendMessageService.returnSuccessMessageToUserForSuccessBackendResponse();
         this.cleanOperationMessage();
       }, error => {
@@ -99,7 +99,7 @@ export class CreateOrUpdateVocabularyComponent implements OnInit {
         this.cleanOperationMessage();
       });
     } else if (this.operatiomMode === OperationModeEnum.UPDATE) {
-      this.backendService.updateRecordById(this.selectedRecordToupdateId, this.createVocabularyDto).subscribe((material) => {
+      this.backendService.updateRecordById(this.selectedRecordToupdateId, this.createVocabularyDto, this.authenticationService.selectedLanguageCode).subscribe((material) => {
         this.showoperationStatusMessage = this.backendMessageService.returnSuccessMessageToUserForSuccessBackendResponse();
         this.cleanOperationMessage();
       }, error => {

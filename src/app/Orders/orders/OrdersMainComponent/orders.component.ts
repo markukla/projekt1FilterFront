@@ -42,9 +42,9 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
   showConfirmDeleteWindow: boolean;
   operationFailerStatusMessage: string;
   operationSuccessStatusMessage: string;
-  orderNames = orderNames;
-  generalUserNames = generalUserNames;
-  generalNamesInSelectedLanguage = generalNamesInSelectedLanguage;
+  orderNames: any;
+  generalUserNames: any;
+  generalNamesInSelectedLanguage: any;
 
 
   constructor(public tableService: GeneralTableService,
@@ -69,11 +69,10 @@ export class OrdersComponent implements OnInit, AfterContentChecked {
     this.materialId = this.tableService.selectedId;
   }
   initColumnNamesInSelectedLanguage(): void {
-    // tslint:disable-next-line:max-line-length
-    setTabelColumnAndOtherNamesForSelectedLanguage(this.orderNames, this.authenticationService.vocabulariesInSelectedLanguage);
-    // tslint:disable-next-line:max-line-length
-    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalNamesInSelectedLanguage, this.authenticationService.vocabulariesInSelectedLanguage);
-    setTabelColumnAndOtherNamesForSelectedLanguage(this.generalUserNames, this.authenticationService.vocabulariesInSelectedLanguage);
+    // tslint:disable-next-line:max-line-lengt
+    this.orderNames = this.authenticationService.orderNamesInSelectedLanguage;
+    this.generalUserNames = this.authenticationService.userNamesInSelectedLanguage;
+    this.generalNamesInSelectedLanguage = this.authenticationService.generalNamesInSelectedLanguage;
     this.deleteButtonInfo = this.generalNamesInSelectedLanguage.deleteButtonInfo;
     this.updateButtonInfo = this.generalNamesInSelectedLanguage.updateButtonInfo;
     this.createNewRecordDescription = this.orderNames.createNewOrder;

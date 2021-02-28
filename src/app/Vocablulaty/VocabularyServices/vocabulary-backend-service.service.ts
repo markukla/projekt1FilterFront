@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {API_URL} from '../../Config/apiUrl';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {GeneralTableService} from '../../util/GeneralTableService/general-table.service';
@@ -22,7 +22,7 @@ export class VocabularyBackendServiceService {
 
   constructor(private http: HttpClient,
               private tableService: GeneralTableService,
-              private authenticationService: AuthenticationService) {
+  ) {
   }
 
   getRecords(): Observable<HttpResponse<Vocabulary[]>> {
@@ -30,12 +30,12 @@ export class VocabularyBackendServiceService {
   }
 
   // tslint:disable-next-line:typedef
-  addRecords(record: CreateVocabularyDto): Observable<HttpResponse<Vocabulary>> {
+  addRecords(record: CreateVocabularyDto, selectedLanguageCode: string): Observable<HttpResponse<Vocabulary>> {
     // tslint:disable-next-line:max-line-length
     return this.http.post<Vocabulary>(this.rootURL + this.endpointUrl, record, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.addRecordToTable(this.createVocabularryForTableCellFromVocabulary(record.body));
+        this.tableService.addRecordToTable(this.createVocabularryForTableCellFromVocabulary(record.body, selectedLanguageCode));
       }));
   }
 
@@ -48,12 +48,12 @@ export class VocabularyBackendServiceService {
       }));
   }
 
-  updateRecordById(id: string, updatedRecord: CreateVocabularyDto): Observable<HttpResponse<Vocabulary>>{
+  updateRecordById(id: string, updatedRecord: CreateVocabularyDto, selectedLanguageCode: string): Observable<HttpResponse<Vocabulary>> {
     const updateUrl = `${this.rootURL + this.endpointUrl}/${id}`;
     return this.http.patch<Vocabulary>(updateUrl, updatedRecord, {observe: 'response'}).pipe(
       // tslint:disable-next-line:no-shadowed-variable
       tap((record) => {
-        this.tableService.updateTableRecord(Number(id), this.createVocabularryForTableCellFromVocabulary(record.body));
+        this.tableService.updateTableRecord(Number(id), this.createVocabularryForTableCellFromVocabulary(record.body, selectedLanguageCode));
       }));
   }
 
@@ -61,14 +61,15 @@ export class VocabularyBackendServiceService {
     const url = `${this.rootURL + this.endpointUrl}/variableNames/${name}`;
     return this.http.get<boolean>(url);
   }
+
   findRecordById(recordToUpdateId: string): Observable<HttpResponse<Vocabulary>> {
     const getUrl = `${this.rootURL + this.endpointUrl}/${recordToUpdateId}`;
     return this.http.get<Vocabulary>(getUrl, {observe: 'response'});
   }
 
-  createVocabularryForTableCellFromVocabulary(vocabulary: Vocabulary): VocabularyForTableCell {
+  createVocabularryForTableCellFromVocabulary(vocabulary: Vocabulary, selectedLanguageCode: string): VocabularyForTableCell {
     // tslint:disable-next-line:max-line-length
-    const localizedNameInSelectedLanguage = getSelectedLanguageFromNamesInAllLanguages(vocabulary.localizedNames, this.authenticationService.selectedLanguageCode);
+    const localizedNameInSelectedLanguage = getSelectedLanguageFromNamesInAllLanguages(vocabulary.localizedNames, selectedLanguageCode);
     const productTopForTableCell: VocabularyForTableCell = {
       ...vocabulary,
       localizedNameInSelectedLanguage,
